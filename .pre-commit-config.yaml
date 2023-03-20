@@ -23,6 +23,24 @@ repos:
       - id: shellcheck-system
         name: shellcheck
 
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: yarn run lint
+        language: system
+        types:
+          - ts
+        exclude: ^dist/
+      - id: prettier
+        name: prettier
+        entry: yarn run prettier:check
+        types:
+          - ts
+        language: system
+        exclude: ^dist/
+
+
   - repo: https://github.com/specklesystems/pre-commit
     rev: '0.2.0'
     hooks:
