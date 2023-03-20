@@ -1,0 +1,32 @@
+name: 'Speckle Automate Function Publisher'
+description: 'Builds and publishes a Speckle Automate Function to the Speckle Server.'
+author: 'Speckle Systems'
+branding:
+  icon: 'upload-cloud'
+  color: 'blue'
+inputs:
+  speckle_server_url:
+    description: 'Speckle Automate Server URL.'
+    required: false
+    default: 'https://automate.speckle.xyz'
+  speckle_token:
+    description: 'Token for authentication to Speckle Automate Server, allowing publishing of Speckle Functions. **The token must be stored in GitHub as an encrypted secret**.'
+    required: true
+  speckle_function_path:
+    description: 'Path to the Speckle Function definition (`specklefunction.yaml`) to be published.'
+    required: false
+    default: '.' # root directory of the checked out source code, ${GITHUB_WORKSPACE}
+outputs:
+  function_id:
+    description: 'The unique identifier of the function.'
+  version_id:
+    description: 'The unique identifier of the function version.'
+  image_name:
+    description: 'The required name of the image of the built function.' #FIXME not sure if this is required, of if the API can amend this on the fly as data is sent through it to the server
+  dockerfile_path:
+    description: 'The path to the Dockerfile used to build the function.'
+  docker_context_path:
+    description: 'The path to the Docker context used to build the function.'
+runs:
+  using: 'node18'
+  main: 'dist/index.js'

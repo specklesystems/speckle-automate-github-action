@@ -1,0 +1,30 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 'v4.4.0'
+    hooks:
+      - id: check-yaml
+        args:
+          - --allow-multiple-documents
+        exclude: deploy/helm
+      - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-vcs-permalinks
+        exclude: dist/
+      - id: trailing-whitespace
+        exclude: ^schemas/spec|dist/
+      - id: end-of-file-fixer
+        exclude: ^schemas/spec|dist/
+
+  - repo: https://github.com/Jarmos-san/shellcheck-precommit
+    rev: 'v0.2.0'
+    hooks:
+      - id: shellcheck-system
+        name: shellcheck
+
+  - repo: https://github.com/specklesystems/pre-commit
+    rev: '0.2.0'
+    hooks:
+      - id: ggshield-not-ci
+        name: ggshield
