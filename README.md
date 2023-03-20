@@ -1,43 +1,20 @@
-# Speckle Repo Management Templates
+# Speckle Automate GitHub Action
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/SpeckleSystems?style=social)](https://twitter.com/SpeckleSystems) [![Community forum users](https://img.shields.io/discourse/users?server=https%3A%2F%2Fdiscourse.speckle.works&style=flat-square&logo=discourse&logoColor=white)](https://discourse.speckle.works) [![website](https://img.shields.io/badge/https://-speckle.systems-royalblue?style=flat-square)](https://speckle.systems) [![docs](https://img.shields.io/badge/docs-speckle.guide-orange?style=flat-square&logo=read-the-docs&logoColor=white)](https://speckle.guide/dev/)
 
 ## Introduction
 
-This section should hold a quick intro on what this repo's about. For example:
-
-This repo holds Speckle's:
-
-- Default [Code of Conduct](.github/CODE_OF_CONDUCT.md),
-- Default [Contribution Guidelines](.github/CONTRIBUTING.md),
-- README template (you're reading it now),
-- Default [Issue Template](.github/ISSUE_TEMPLATE/ISSUE_TEMPLATE.md),
-- Default [Pull Request Template](.github/PULL_REQUEST_TEMPLATE/PR_TEMPLATE.md),
-- OSS License (Apache 2.0)
-
-Either copy paste the parts that are useful in existing repos, or use this as a base when creating a new repository.
+This repository contains the source code for the Speckle Automate GitHub Action. It is a GitHub Action that builds a Speckle Automate Function from your source code.
 
 ## Documentation
 
 Comprehensive developer and user documentation can be found in our:
 
-#### 📚 [Speckle Docs website](https://speckle.guide/dev/)
-
-## This Readme Template
-
-Is rather straightforward. It includes several default sections and one section that requires special attention.
-
-Default sections:
-
-- Badges: has several default social badges. Feel free to add more.
-- Developing & Debugging - needs filling in!
-- Community - can be left as is.
-
-**License section**: If this is a pure OSS repo, like Core, remove everything after the first phrase. Otherwise, we need to plan ahead before releasing and make sure we're covered.
+**📚 [Speckle Docs website](https://speckle.guide/dev/)**
 
 ## Developing & Debugging
 
-This doesn't make sense here, but in general, we should try to provide a small "how to" guide on local development and debugging, as it lowers the barrier to contributions.
+- **TODO**
 
 ## Contributing
 
