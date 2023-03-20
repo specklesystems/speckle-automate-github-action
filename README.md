@@ -8,9 +8,23 @@ This repository contains the source code for the Speckle Automate GitHub Action.
 
 ## Documentation
 
-Comprehensive developer and user documentation can be found in our:
+### Inputs
 
-**📚 [Speckle Docs website](https://speckle.guide/dev/)**
+#### `who-to-greet`
+
+**Required** The name of the person to greet. Default `"World"`.
+
+### Outputs
+
+#### `time`
+
+The time we greeted you.
+
+### Example usage
+
+uses: actions/speckle-automate-github-action@v2
+with:
+  who-to-greet: 'Mona the Octocat'
 
 ## Developing & Debugging
 
