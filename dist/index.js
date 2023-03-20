@@ -2831,9 +2831,10 @@ async function run() {
     try {
         const speckleServerUrl = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('speckle_server_url');
         const speckleServerToken = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('speckle_server_token');
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.setSecret(speckleServerToken);
         const speckleFunctionPath = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('speckle_function_path');
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Speckle Server URL: ${speckleServerUrl}`);
-        _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`Speckle Server Token: ${speckleServerToken}`); //FIXME remove this as it's secret
+        _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`Speckle Server Token: ${speckleServerToken}`); //this should be masked in the logs?
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Speckle Function Path: ${speckleFunctionPath}`);
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('function_id', new Date().toTimeString());
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.setOutput('version_id', new Date().toTimeString());
