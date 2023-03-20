@@ -28,5 +28,5 @@ outputs:
   docker_context_path:
     description: 'The path to the Docker context used to build the function.'
 runs:
-  using: 'node18'
+  using: 'node16' #FIXME bump to node18 when available
   main: 'dist/index.js'

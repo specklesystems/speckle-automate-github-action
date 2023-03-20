@@ -1,0 +1,10 @@
+{
+  "clearMocks": true,
+  "moduleFileExtensions": ["js", "ts"],
+  "testMatch": ["<rootDir>/**/*.spec.ts"],
+  "modulePathIgnorePatterns": ["<rootDir>/dist/", "<rootDir>/node_modules/", "<rootDir>/scratch/"],
+  "transform": {
+    "^.+\\.ts$": "ts-jest"
+  },
+  "verbose": true
+}
