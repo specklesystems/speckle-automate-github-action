@@ -27,4 +27,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v3
+    - name: Yarn Install
+      run: yarn install
     - uses: pre-commit/action@v3.0.0

@@ -1,16 +1,20 @@
 import * as core from '@actions/core'
-import { wait } from './wait.js'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    const speckleServerUrl: string = core.getInput('speckle_server_url')
+    const speckleServerToken: string = core.getInput('speckle_server_token')
+    const speckleFunctionPath: string = core.getInput('speckle_function_path')
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    core.info(`Speckle Server URL: ${speckleServerUrl}`)
+    core.debug(`Speckle Server Token: ${speckleServerToken}`) //FIXME remove this as it's secret
+    core.info(`Speckle Function Path: ${speckleFunctionPath}`)
 
-    core.setOutput('time', new Date().toTimeString())
+    core.setOutput('function_id', new Date().toTimeString())
+    core.setOutput('version_id', new Date().toTimeString())
+    core.setOutput('image_name', new Date().toTimeString())
+    core.setOutput('dockerfile_path', new Date().toTimeString())
+    core.setOutput('docker_context_path', new Date().toTimeString())
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
