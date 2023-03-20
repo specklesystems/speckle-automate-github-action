@@ -12,7 +12,7 @@
     "build": "tsc",
     "build:image": "docker build -t speckle/speckle-automate-github-action:local .",
     "lint": "eslint **/*.ts",
-    "package": "ncc build --source-map --license licenses.txt",
+    "package": "ncc build --target es2022 --source-map --license licenses.txt",
     "precommit": "pre-commit run --all-files",
     "prettier:check": "prettier --check '**/*.ts'",
     "prettier:fix": "prettier --write '**/*.ts'",
