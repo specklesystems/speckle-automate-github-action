@@ -1,4 +1,5 @@
-import './sourcemap-register.cjs';/******/ var __webpack_modules__ = ({
+import './sourcemap-register.cjs';import { createRequire as __WEBPACK_EXTERNAL_createRequire } from "module";
+/******/ var __webpack_modules__ = ({
 
 /***/ 416:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
@@ -2679,77 +2680,77 @@ exports["default"] = _default;
 /***/ 491:
 /***/ ((module) => {
 
-module.exports = require("assert");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("assert");
 
 /***/ }),
 
 /***/ 113:
 /***/ ((module) => {
 
-module.exports = require("crypto");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("crypto");
 
 /***/ }),
 
 /***/ 361:
 /***/ ((module) => {
 
-module.exports = require("events");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("events");
 
 /***/ }),
 
 /***/ 147:
 /***/ ((module) => {
 
-module.exports = require("fs");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("fs");
 
 /***/ }),
 
 /***/ 685:
 /***/ ((module) => {
 
-module.exports = require("http");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("http");
 
 /***/ }),
 
 /***/ 687:
 /***/ ((module) => {
 
-module.exports = require("https");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("https");
 
 /***/ }),
 
 /***/ 808:
 /***/ ((module) => {
 
-module.exports = require("net");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("net");
 
 /***/ }),
 
 /***/ 37:
 /***/ ((module) => {
 
-module.exports = require("os");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("os");
 
 /***/ }),
 
 /***/ 17:
 /***/ ((module) => {
 
-module.exports = require("path");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("path");
 
 /***/ }),
 
 /***/ 404:
 /***/ ((module) => {
 
-module.exports = require("tls");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("tls");
 
 /***/ }),
 
 /***/ 837:
 /***/ ((module) => {
 
-module.exports = require("util");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("util");
 
 /***/ })
 
@@ -2797,7 +2798,7 @@ var __webpack_exports__ = {};
 
 // EXTERNAL MODULE: ./.yarn/cache/@actions-core-npm-1.10.0-6885534582-0a75621e00.zip/node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(735);
-;// CONCATENATED MODULE: ./lib/wait.js
+;// CONCATENATED MODULE: ./src/wait.ts
 async function wait(milliseconds) {
     return new Promise((resolve) => {
         if (isNaN(milliseconds)) {
@@ -2807,7 +2808,7 @@ async function wait(milliseconds) {
     });
 }
 
-;// CONCATENATED MODULE: ./lib/main.js
+;// CONCATENATED MODULE: ./src/main.ts
 
 
 async function run() {
