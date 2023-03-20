@@ -39,6 +39,13 @@ repos:
           - ts
         language: system
         exclude: ^dist/
+      - id: build-dist
+        name: build dist directory
+        entry: yarn run build
+        types:
+          - ts
+        language: system
+        exclude: ^dist/
 
 
   - repo: https://github.com/specklesystems/pre-commit
