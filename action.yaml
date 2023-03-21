@@ -16,24 +16,16 @@ inputs:
     description: 'Path to the Speckle Function definition (`specklefunction.yaml`) to be published.'
     required: false
     default: '.' # root directory of the checked out source code, ${GITHUB_WORKSPACE}
-  is_draft:
-    description: 'Whether the Speckle Function should be published as a draft.'
-    required: false
-    default: 'false'
   function_id:
-    description: 'The unique identifier of the function. If not provided, Speckle Automate will try to find the function ID based on the url, ref, and path. If there are no matches, a new function Id will be generated.'
+    description: '(Optional) The unique identifier of the function if it has already been created. If not provided, Speckle Automate will try to find the function ID based on the url, ref, and path. If there are no matches, a new function Id will be generated.'
     required: false
 outputs:
-  # function_id:
-  #   description: 'The unique identifier of the function.'
-  # version_id:
-  #   description: 'The unique identifier of the function version.'
+  function_id:
+    description: 'The unique identifier of the function.'
+  version_id:
+    description: 'The unique identifier of the function version.'
   image_name:
-    description: 'The required name of the image of the built function.' #FIXME not sure if this is required, of if the API can amend this on the fly as data is sent through it to the server
-  # dockerfile_path:
-  #   description: 'The path to the Dockerfile used to build the function.'
-  # docker_context_path:
-  #   description: 'The path to the Docker context used to build the function.'
+    description: 'The required name of the image of the built function.'
 runs:
   using: 'node16' #FIXME bump to node18 when available
   main: 'dist/index.js'

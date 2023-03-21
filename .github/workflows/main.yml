@@ -22,6 +22,7 @@ jobs:
       - uses: ./
         with:
           speckle_token: 'lolzSuperSecretzToken'
+          speckle_function_path: 'examples/minimal'
   pre-commit:
     runs-on: ubuntu-latest
     steps:

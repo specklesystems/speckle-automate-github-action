@@ -11,7 +11,7 @@ async function run(): Promise<void> {
     const gitRefRaw = process.env.GITHUB_REF_NAME
     const gitCommitShaRaw = process.env.GITHUB_SHA
 
-    const { imageName } = await registerSpeckleFunction({
+    const { imageName, functionId, versionId } = await registerSpeckleFunction({
       speckleServerUrl: speckleServerUrlRaw,
       speckleToken: speckleTokenRaw,
       speckleFunctionPath: speckleFunctionPathRaw,
@@ -21,11 +21,9 @@ async function run(): Promise<void> {
       logger: core
     })
 
-    // core.setOutput('function_id', functionId)
-    // core.setOutput('version_id', versionId)
+    core.setOutput('function_id', functionId)
+    core.setOutput('version_id', versionId)
     core.setOutput('image_name', imageName)
-    // core.setOutput('dockerfile_path', dockerfilePath)
-    // core.setOutput('docker_context_path', dockerContextPath)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
