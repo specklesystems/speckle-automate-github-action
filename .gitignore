@@ -36,6 +36,5 @@ node_modules
 .env.test
 
 # Ignore built ts files
-tests/runner/*
 lib
 scratch

@@ -1,21 +1,26 @@
 import * as core from '@actions/core'
+import { processSpeckleFunction } from './speckleautomate.js'
 
 async function run(): Promise<void> {
   try {
-    const speckleServerUrl: string = core.getInput('speckle_server_url')
-    const speckleServerToken: string = core.getInput('speckle_server_token')
-    core.setSecret(speckleServerToken)
-    const speckleFunctionPath: string = core.getInput('speckle_function_path')
+    const speckleServerUrlRaw: string = core.getInput('speckle_server_url')
+    const speckleTokenRaw: string = core.getInput('speckle_token')
+    core.setSecret(speckleTokenRaw)
+    const speckleFunctionPathRaw: string = core.getInput('speckle_function_path')
 
-    core.info(`Speckle Server URL: ${speckleServerUrl}`)
-    core.debug(`Speckle Server Token: ${speckleServerToken}`) //this should be masked in the logs?
-    core.info(`Speckle Function Path: ${speckleFunctionPath}`)
+    const { functionId, versionId, imageName, dockerfilePath, dockerContextPath } =
+      await processSpeckleFunction({
+        speckleServerUrl: speckleServerUrlRaw,
+        speckleToken: speckleTokenRaw,
+        speckleFunctionPath: speckleFunctionPathRaw,
+        logger: core
+      })
 
-    core.setOutput('function_id', new Date().toTimeString())
-    core.setOutput('version_id', new Date().toTimeString())
-    core.setOutput('image_name', new Date().toTimeString())
-    core.setOutput('dockerfile_path', new Date().toTimeString())
-    core.setOutput('docker_context_path', new Date().toTimeString())
+    core.setOutput('function_id', functionId)
+    core.setOutput('version_id', versionId)
+    core.setOutput('image_name', imageName)
+    core.setOutput('dockerfile_path', dockerfilePath)
+    core.setOutput('docker_context_path', dockerContextPath)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }

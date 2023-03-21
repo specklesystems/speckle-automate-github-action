@@ -28,6 +28,7 @@ repos:
       - id: eslint
         name: eslint
         entry: yarn run lint
+        pass_filenames: false
         language: system
         types:
           - ts
@@ -35,17 +36,18 @@ repos:
       - id: prettier
         name: prettier
         entry: yarn run prettier:check
+        pass_filenames: false
         types:
           - ts
         language: system
         exclude: ^dist/
       - id: build-dist
         name: build dist directory
-        entry: yarn run build
+        entry: yarn run package
+        pass_filenames: false
         types:
           - ts
         language: system
-        exclude: ^dist/
 
 
   - repo: https://github.com/specklesystems/pre-commit

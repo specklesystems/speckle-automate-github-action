@@ -11,5 +11,5 @@
     "lib": ["ESNext"],
     "types": ["node"]
   },
-  "exclude": ["node_modules", "**/*.spec.ts", "scratch"]
+  "exclude": ["node_modules", "scratch", "vite.config.ts", "vitest.config.ts"]
 }

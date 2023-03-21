@@ -1,9 +1,10 @@
 {
-  "plugins": ["jest", "@typescript-eslint", "import"],
+  "plugins": ["eslint-plugin-vitest", "@typescript-eslint", "import"],
   "extends": [
     "plugin:github/recommended",
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"],
+    "plugin:@typescript-eslint/recommended",
+    "plugin:vitest/recommended"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 9,
@@ -52,8 +53,7 @@
   },
   "env": {
     "node": true,
-    "es6": true,
-    "jest/globals": true
+    "es6": true
   },
   "settings": {
     "import/parsers": {
