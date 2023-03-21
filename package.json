@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "all": "yarn run build && yarn run prettier:check && yarn run lint && yarn run package && yarn run test",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.json",
     "build:image": "docker build -t speckle/speckle-automate-github-action:local .",
     "coverage": "vitest run --coverage --run",
     "lint": "eslint **/*.ts",
