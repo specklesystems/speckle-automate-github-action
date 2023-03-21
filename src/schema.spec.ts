@@ -4,7 +4,7 @@ import {
   SpeckleFunctionPathSchema,
   SpeckleServerUrlSchema,
   SpeckleTokenSchema
-} from './schema'
+} from './schema/inputs.js'
 import { ZodError } from 'zod'
 
 describe('schema', () => {

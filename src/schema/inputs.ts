@@ -8,3 +8,6 @@ export const SpeckleFunctionPathSchema = z
   .refine((value: string) => !value.startsWith('/'), {
     message: 'Must not be an absolute path.'
   })
+export const SpeckleFunctionIdSchema = z.string().optional()
+export const GitRefSchema = z.string().nonempty()
+export const GitCommitShaSchema = z.string().nonempty()

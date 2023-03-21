@@ -3,4 +3,4 @@ lib/
 node_modules/
 vitest.config.ts
 vite.config.ts
-scratch/
+.yarn/

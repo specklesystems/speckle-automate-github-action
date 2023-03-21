@@ -37,4 +37,5 @@ node_modules
 
 # Ignore built ts files
 lib
-scratch
+
+coverage/
