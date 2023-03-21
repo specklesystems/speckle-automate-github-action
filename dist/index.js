@@ -15740,7 +15740,7 @@ var z = /*#__PURE__*/Object.freeze({
 
 
 
-;// CONCATENATED MODULE: ./src/schema/xspeckleFunction.ts
+;// CONCATENATED MODULE: ./src/schema/speckleFunction.ts
 
 const SpeckleFunctionKind = 'SpeckleFunction';
 const SpeckleFunctionApiVersionV1Alpha1 = 'speckle.systems/v1alpha1';

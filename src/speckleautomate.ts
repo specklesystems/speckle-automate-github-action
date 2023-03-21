@@ -9,7 +9,7 @@ import {
   GitRefSchema,
   GitCommitShaSchema
 } from './schema/inputs.js'
-import { SpeckleFunction, SpeckleFunctionSchema } from './schema/xspeckleFunction.js'
+import { SpeckleFunction, SpeckleFunctionSchema } from './schema/speckleFunction.js'
 import * as path from 'path'
 import { handleZodError } from './utils/errors.js'
 import { SpeckleFunctionPostRequestBody } from './client/schema.js'
