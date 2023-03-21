@@ -55,7 +55,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["node-fetch", "npm:3.3.1"],\
             ["pino", "npm:8.11.0"],\
             ["pino-pretty", "npm:10.0.0"],\
-            ["prettier", "npm:2.8.5"],\
+            ["prettier", "npm:2.8.6"],\
             ["sinon", "npm:15.0.2"],\
             ["sinon-chai", "virtual:8b174f3f57ba7447d613b9974a3239a131f8d568d79e2cc369fb7c0d89db8400d945a07278b8775e6601b36c4ab1b7292e56af206386b80c8f90bd4f21f989ef#npm:3.7.0"],\
             ["typescript", "patch:typescript@npm%3A5.0.2#~builtin<compat/typescript>::version=5.0.2&hash=85af82"],\
@@ -2611,7 +2611,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/prettier", null],\
             ["eslint", "npm:8.36.0"],\
             ["eslint-config-prettier", null],\
-            ["prettier", "npm:2.8.5"],\
+            ["prettier", "npm:2.8.6"],\
             ["prettier-linter-helpers", "npm:1.0.0"]\
           ],\
           "packagePeers": [\
@@ -4848,6 +4848,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["prettier", "npm:2.8.5"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:2.8.6", {\
+          "packageLocation": "./.yarn/cache/prettier-npm-2.8.6-24bd3d3356-8ac94fa67a.zip/node_modules/prettier/",\
+          "packageDependencies": [\
+            ["prettier", "npm:2.8.6"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["prettier-linter-helpers", [\
@@ -5393,7 +5400,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["node-fetch", "npm:3.3.1"],\
             ["pino", "npm:8.11.0"],\
             ["pino-pretty", "npm:10.0.0"],\
-            ["prettier", "npm:2.8.5"],\
+            ["prettier", "npm:2.8.6"],\
             ["sinon", "npm:15.0.2"],\
             ["sinon-chai", "virtual:8b174f3f57ba7447d613b9974a3239a131f8d568d79e2cc369fb7c0d89db8400d945a07278b8775e6601b36c4ab1b7292e56af206386b80c8f90bd4f21f989ef#npm:3.7.0"],\
             ["typescript", "patch:typescript@npm%3A5.0.2#~builtin<compat/typescript>::version=5.0.2&hash=85af82"],\
