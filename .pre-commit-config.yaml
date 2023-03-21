@@ -11,11 +11,11 @@ repos:
       - id: check-shebang-scripts-are-executable
       - id: check-symlinks
       - id: check-vcs-permalinks
-        exclude: ^dist/|^mockserver/
+        exclude: ^dist/
       - id: trailing-whitespace
-        exclude: ^schemas/spec|^dist/|^mockserver/
+        exclude: ^dist/
       - id: end-of-file-fixer
-        exclude: ^schemas/spec|^dist/|^mockserver/
+        exclude: ^dist/
 
   - repo: https://github.com/Jarmos-san/shellcheck-precommit
     rev: 'v0.2.0'
@@ -33,7 +33,7 @@ repos:
         types:
           - ts
         language: system
-        exclude: ^dist/|^mockserver/
+        exclude: ^dist/
       - id: eslint
         name: eslint
         entry: yarn run lint
@@ -41,7 +41,7 @@ repos:
         language: system
         types:
           - ts
-        exclude: ^dist/|^mockserver/
+        exclude: ^dist/
       - id: build-dist
         name: build dist package
         entry: yarn run package
@@ -63,7 +63,7 @@ repos:
         language: system
         types:
           - ts
-        exclude: ^dist/|^mockserver/
+        exclude: ^dist/
 
   - repo: https://github.com/specklesystems/pre-commit
     rev: '0.2.0'

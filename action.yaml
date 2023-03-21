@@ -28,4 +28,4 @@ outputs:
     description: 'The required name of the image of the built function.'
 runs:
   using: 'node16' #FIXME bump to node18 when available
-  main: 'dist/index.js'
+  main: 'dist/action/index.js'
