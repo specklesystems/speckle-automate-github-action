@@ -1,0 +1,6 @@
+dist/
+mockserver/
+lib/
+node_modules/
+*.cjs
+*.mjs

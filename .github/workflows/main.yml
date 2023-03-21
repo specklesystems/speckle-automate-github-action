@@ -1,19 +1,41 @@
-on: [push]
+name: 'build-test'
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'releases/*'
 
 jobs:
-  hello_world_job:
+  integration-test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
-    name: A job to say hello
     steps:
-      # To use this repository's private action,
-      # you must check out the repository
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Hello world action step
-        uses: ./ # Uses an action in the root directory
-        id: hello
+      - uses: actions/checkout@v3.4.0
+      - run: |
+          yarn run run:mockserver & # run mockserver in background, will be killed when test finishes
+      - uses: ./
         with:
-          who-to-greet: 'Mona the Octocat'
-      # Use the output from the `hello` step
-      - name: Get the output time
-        run: echo "The time was ${{ steps.hello.outputs.time }}"
+          speckle_server_url: 'http://127.0.0.1:3000'
+          speckle_token: 'lolzSuperSecretzToken'
+          speckle_function_path: 'examples/minimal'
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+    - uses: actions/cache/restore@v3
+      id: cache-restore
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+    - name: Yarn Install
+      run: yarn install
+    - uses: actions/cache/save@v3
+      id: cache-save
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+    - uses: pre-commit/action@v3.0.0

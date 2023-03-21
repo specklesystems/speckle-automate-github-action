@@ -1,0 +1,31 @@
+name: 'Speckle Automate Function Publisher'
+description: 'Builds and publishes a Speckle Automate Function to the Speckle Server.'
+author: 'Speckle Systems'
+branding:
+  icon: 'upload-cloud'
+  color: 'blue'
+inputs:
+  speckle_server_url:
+    description: 'Speckle Automate Server URL.'
+    required: false
+    default: 'https://automate.speckle.xyz'
+  speckle_token:
+    description: 'Token for authentication to Speckle Automate Server, allowing publishing of Speckle Functions. **The token must be stored in GitHub as an encrypted secret**.'
+    required: true
+  speckle_function_path:
+    description: 'Path to the Speckle Function definition (`specklefunction.yaml`) to be published.'
+    required: false
+    default: '.' # root directory of the checked out source code, ${GITHUB_WORKSPACE}
+  function_id:
+    description: '(Optional) The unique identifier of the function if it has already been created. If not provided, Speckle Automate will try to find the function ID based on the url, ref, and path. If there are no matches, a new function Id will be generated.'
+    required: false
+outputs:
+  function_id:
+    description: 'The unique identifier of the function.'
+  version_id:
+    description: 'The unique identifier of the function version.'
+  image_name:
+    description: 'The required name of the image of the built function.'
+runs:
+  using: 'node16' #FIXME bump to node18 when available
+  main: 'dist/index.js'

@@ -1,0 +1,10 @@
+apiVersion: speckle.systems/v1alpha1
+kind: SpeckleFunction
+metadata:
+  name: minimal
+spec:
+  steps:
+    - name: example
+      params: []
+      command: [] # use default command from Dockerfile
+      args: []
