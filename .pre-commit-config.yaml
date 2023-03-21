@@ -25,14 +25,7 @@ repos:
 
   - repo: local
     hooks:
-      - id: eslint
-        name: eslint
-        entry: yarn run lint
-        pass_filenames: false
-        language: system
-        types:
-          - ts
-        exclude: ^dist/|^mockserver/
+      # this is effectively running `yarn run all` but individually so we can identify which step failed
       - id: prettier
         name: prettier
         entry: yarn run prettier:check
@@ -40,6 +33,14 @@ repos:
         types:
           - ts
         language: system
+        exclude: ^dist/|^mockserver/
+      - id: eslint
+        name: eslint
+        entry: yarn run lint
+        pass_filenames: false
+        language: system
+        types:
+          - ts
         exclude: ^dist/|^mockserver/
       - id: build-dist
         name: build dist package
@@ -55,7 +56,14 @@ repos:
         types:
           - ts
         language: system
-
+      - id: unit tests
+        name: unit tests
+        entry: yarn run test
+        pass_filenames: false
+        language: system
+        types:
+          - ts
+        exclude: ^dist/|^mockserver/
 
   - repo: https://github.com/specklesystems/pre-commit
     rev: '0.2.0'
