@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3.4.0
       - run: |
-          yarn run run:mockserver
+          yarn run run:mockserver & # run mockserver in background, will be killed when test finishes
       - uses: ./
         with:
           speckle_server_url: 'http://127.0.0.1:3000'
