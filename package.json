@@ -8,15 +8,17 @@
   "main": "lib/main.js",
   "type": "module",
   "scripts": {
-    "all": "yarn run build && yarn run prettier:check && yarn run lint && yarn run package && yarn run test",
+    "all": "yarn run build && yarn run prettier:check && yarn run lint && yarn run package && yarn run package:mockserver && yarn run test",
     "build": "tsc -p tsconfig.json",
     "build:image": "docker build -t speckle/speckle-automate-github-action:local .",
     "coverage": "vitest run --coverage --run",
     "lint": "eslint **/*.ts",
     "package": "ncc build --target es2020 --source-map --license licenses.txt -o dist src/main.ts",
+    "package:mockserver": "ncc build --target es2020 --source-map --license licenses.txt -o mockserver src/tests/mock-server.ts",
     "precommit": "pre-commit run --all-files",
     "prettier:check": "prettier --check '**/*.ts'",
     "prettier:fix": "prettier --write '**/*.ts'",
+    "run:mockserver": "node mockserver/index.js",
     "test": "vitest --run"
   },
   "dependencies": {

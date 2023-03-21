@@ -11,11 +11,11 @@ repos:
       - id: check-shebang-scripts-are-executable
       - id: check-symlinks
       - id: check-vcs-permalinks
-        exclude: dist/
+        exclude: ^dist/|^mockserver/
       - id: trailing-whitespace
-        exclude: ^schemas/spec|dist/
+        exclude: ^schemas/spec|^dist/|^mockserver/
       - id: end-of-file-fixer
-        exclude: ^schemas/spec|dist/
+        exclude: ^schemas/spec|^dist/|^mockserver/
 
   - repo: https://github.com/Jarmos-san/shellcheck-precommit
     rev: 'v0.2.0'
@@ -32,7 +32,7 @@ repos:
         language: system
         types:
           - ts
-        exclude: ^dist/
+        exclude: ^dist/|^mockserver/
       - id: prettier
         name: prettier
         entry: yarn run prettier:check
@@ -40,10 +40,17 @@ repos:
         types:
           - ts
         language: system
-        exclude: ^dist/
+        exclude: ^dist/|^mockserver/
       - id: build-dist
-        name: build dist directory
+        name: build dist package
         entry: yarn run package
+        pass_filenames: false
+        types:
+          - ts
+        language: system
+      - id: build-mockserver
+        name: build mockserver package
+        entry: yarn run package:mockserver
         pass_filenames: false
         types:
           - ts

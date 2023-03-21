@@ -1,4 +1,5 @@
 dist/
+mockserver/
 lib/
 node_modules/
 vitest.config.ts

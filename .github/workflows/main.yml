@@ -19,8 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.4.0
+      - run: |
+          yarn run run:mockserver
       - uses: ./
         with:
+          speckle_server_url: 'http://127.0.0.1:3000'
           speckle_token: 'lolzSuperSecretzToken'
           speckle_function_path: 'examples/minimal'
   pre-commit:
