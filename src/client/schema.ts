@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { SpeckleFunctionSchema } from '../schema/speckle_function.js'
+import { SpeckleFunctionSchema } from '../schema/specklefunction.js'
 import { URL } from 'url'
 
 export const SpeckleFunctionPostRequestBodySchema = z.object({

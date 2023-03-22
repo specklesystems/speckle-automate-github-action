@@ -1,5 +1,5 @@
 import { FileSystem } from './files.js'
-import { SpeckleFunction, SpeckleFunctionSchema } from '../schema/speckle_function.js'
+import { SpeckleFunction, SpeckleFunctionSchema } from '../schema/specklefunction.js'
 import * as path from 'path'
 import { Logger } from '../logging/logger.js'
 import { handleZodError } from '../schema/errors.js'

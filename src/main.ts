@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import { registerSpeckleFunction } from './register_speckle_function.js'
+import { registerSpeckleFunction } from './registerspecklefunction.js'
 import fileUtil from './filesystem/files.js'
 
 async function run(): Promise<void> {

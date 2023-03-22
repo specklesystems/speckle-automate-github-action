@@ -1,9 +1,9 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
-import { registerSpeckleFunction } from '../register_speckle_function.js'
+import { registerSpeckleFunction } from '../registerspecklefunction.js'
 import { getLogger } from './logger.js'
-import { getMinimalSpeckleFunctionExample } from '../schema/speckle_function.spec.js'
+import { getMinimalSpeckleFunctionExample } from '../schema/specklefunction.spec.js'
 
 describe('integration', () => {
   const restHandlers = [

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { getMinimalSpeckleFunctionExample } from '../schema/speckle_function.spec.js'
+import { getMinimalSpeckleFunctionExample } from '../schema/specklefunction.spec.js'
 import { getLogger } from '../tests/logger.js'
 import { findAndParseManifest } from './parser.js'
 

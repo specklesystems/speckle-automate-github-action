@@ -15740,7 +15740,7 @@ var z = /*#__PURE__*/Object.freeze({
 
 
 
-;// CONCATENATED MODULE: ./src/schema/speckle_function.ts
+;// CONCATENATED MODULE: ./src/schema/specklefunction.ts
 
 const SpeckleFunctionKind = 'SpeckleFunction';
 const SpeckleFunctionApiVersionV1Alpha1 = 'speckle.systems/v1alpha1';
@@ -18072,7 +18072,7 @@ async function findAndParseManifest(pathToSpeckleFunctionFile, opts) {
     return speckleFunction;
 }
 
-;// CONCATENATED MODULE: ./src/register_speckle_function.ts
+;// CONCATENATED MODULE: ./src/registerspecklefunction.ts
 
 
 

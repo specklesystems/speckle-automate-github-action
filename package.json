@@ -8,7 +8,7 @@
   "main": "lib/main.js",
   "type": "module",
   "scripts": {
-    "all": "yarn run build && yarn run prettier:check && yarn run package && yarn run package:mockserver && yarn run test",
+    "all": "yarn run build && yarn run prettier:check && yarn run lint && yarn run package && yarn run package:mockserver && yarn run test",
     "build": "tsc -p tsconfig.json",
     "build:image": "docker build -t speckle/speckle-automate-github-action:local .",
     "coverage": "vitest run --coverage --run",
