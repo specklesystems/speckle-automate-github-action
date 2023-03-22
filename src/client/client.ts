@@ -4,7 +4,7 @@ import {
   SpeckleFunctionPostRequestBody
 } from './schema.js'
 import { URL } from 'url'
-import { handleZodError } from '../utils/errors.js'
+import { handleZodError } from '../schema/errors.js'
 import { Logger } from '../logging/logger.js'
 import fetch from 'node-fetch'
 

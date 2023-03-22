@@ -1,5 +1,0 @@
-{
-  "yaml.schemas": {
-    "kubernetes://schema/speckle.systems/v1alpha1@specklefunction": "file:///Users/iainsproat/workspace/speckle-automate-github-action/examples/minimal/specklefunction.yaml"
-  }
-}

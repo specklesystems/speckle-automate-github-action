@@ -1,6 +1,5 @@
 import client from './client/client.js'
 import { Logger } from './logging/logger.js'
-import fileUtil from './utils/files.js'
 import {
   SpeckleServerUrlSchema,
   SpeckleTokenSchema,
@@ -9,10 +8,10 @@ import {
   GitRefSchema,
   GitCommitShaSchema
 } from './schema/inputs.js'
-import { SpeckleFunction, SpeckleFunctionSchema } from './schema/speckleFunction.js'
-import * as path from 'path'
-import { handleZodError } from './utils/errors.js'
+
+import { handleZodError } from './schema/errors.js'
 import { SpeckleFunctionPostRequestBody } from './client/schema.js'
+import { findAndParseManifest } from './filesystem/parser.js'
 
 type ProcessOptions = {
   speckleServerUrl: string | undefined
@@ -76,31 +75,4 @@ export async function registerSpeckleFunction(
     `Successfully registered Speckle Function with ID: ${response.functionId}`
   )
   return response
-}
-
-async function findAndParseManifest(logger: Logger, pathToSpeckleFunctionFile: string) {
-  if (!pathToSpeckleFunctionFile.toLocaleLowerCase().endsWith('specklefunction.yaml')) {
-    pathToSpeckleFunctionFile = path.join(
-      pathToSpeckleFunctionFile,
-      'specklefunction.yaml'
-    )
-  }
-
-  let speckleFunctionRaw: unknown
-  try {
-    speckleFunctionRaw = await fileUtil.loadYaml(pathToSpeckleFunctionFile)
-  } catch (err) {
-    if (err instanceof Error) {
-      logger.error(err)
-    }
-    throw err
-  }
-
-  let speckleFunction: SpeckleFunction
-  try {
-    speckleFunction = await SpeckleFunctionSchema.parseAsync(speckleFunctionRaw)
-  } catch (err) {
-    throw handleZodError(err, logger)
-  }
-  return speckleFunction
 }

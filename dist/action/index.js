@@ -15748,7 +15748,7 @@ const SpeckleFunctionSchema = z.object({
     kind: z.literal(SpeckleFunctionKind),
     apiVersion: z["enum"]([SpeckleFunctionApiVersionV1Alpha1]),
     metadata: z.object({
-        name: z.string(),
+        name: z.string().nonempty(),
         annotations: z.object({
             'speckle.systems/v1alpha1/publishing/status': z["enum"](['publish', 'draft', 'archive'])
                 .default('draft'),
@@ -15772,7 +15772,7 @@ const SpeckleFunctionSchema = z.object({
         }))
             .optional(),
         steps: z.array(z.object({
-            name: z.string().optional()
+            name: z.string().nonempty()
             //TODO
         }))
             .nonempty(),
@@ -15829,7 +15829,7 @@ const SpeckleFunctionPostResponseBodySchema = z.object({
 
 // EXTERNAL MODULE: ./.yarn/__virtual__/zod-validation-error-virtual-4e86bacc63/0/cache/zod-validation-error-npm-1.1.0-d5dd7c9f91-4850e8bd88.zip/node_modules/zod-validation-error/dist/cjs/index.js
 var cjs = __nccwpck_require__(2619);
-;// CONCATENATED MODULE: ./src/utils/errors.ts
+;// CONCATENATED MODULE: ./src/schema/errors.ts
 
 
 function handleZodError(err, logger) {
@@ -18027,6 +18027,19 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
         return responseBody;
     }
 });
+
+;// CONCATENATED MODULE: ./src/schema/inputs.ts
+
+const SpeckleServerUrlSchema = z.string().url().nonempty();
+const SpeckleTokenSchema = z.string().nonempty();
+const SpeckleFunctionPathSchema = z.string()
+    .nonempty()
+    .refine((value) => !value.startsWith('/'), {
+    message: 'Must not be an absolute path.'
+});
+const SpeckleFunctionIdSchema = z.string().optional();
+const GitRefSchema = z.string().nonempty();
+const GitCommitShaSchema = z.string().nonempty();
 
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(7147);
@@ -21883,7 +21896,7 @@ var jsYaml = {
 /* harmony default export */ const js_yaml = (jsYaml);
 
 
-;// CONCATENATED MODULE: ./src/utils/files.ts
+;// CONCATENATED MODULE: ./src/filesystem/files.ts
 
 
 
@@ -21894,24 +21907,38 @@ const fileUtil = {
 };
 /* harmony default export */ const files = (fileUtil);
 
-;// CONCATENATED MODULE: ./src/schema/inputs.ts
-
-const SpeckleServerUrlSchema = z.string().url().nonempty();
-const SpeckleTokenSchema = z.string().nonempty();
-const SpeckleFunctionPathSchema = z.string()
-    .nonempty()
-    .refine((value) => !value.startsWith('/'), {
-    message: 'Must not be an absolute path.'
-});
-const SpeckleFunctionIdSchema = z.string().optional();
-const GitRefSchema = z.string().nonempty();
-const GitCommitShaSchema = z.string().nonempty();
-
 // EXTERNAL MODULE: external "path"
 var external_path_ = __nccwpck_require__(1017);
+;// CONCATENATED MODULE: ./src/filesystem/parser.ts
+
+
+
+
+async function findAndParseManifest(logger, pathToSpeckleFunctionFile) {
+    if (!pathToSpeckleFunctionFile.toLocaleLowerCase().endsWith('specklefunction.yaml')) {
+        pathToSpeckleFunctionFile = external_path_.join(pathToSpeckleFunctionFile, 'specklefunction.yaml');
+    }
+    let speckleFunctionRaw;
+    try {
+        speckleFunctionRaw = await files.loadYaml(pathToSpeckleFunctionFile);
+    }
+    catch (err) {
+        if (err instanceof Error) {
+            logger.error(err);
+        }
+        throw err;
+    }
+    let speckleFunction;
+    try {
+        speckleFunction = await SpeckleFunctionSchema.parseAsync(speckleFunctionRaw);
+    }
+    catch (err) {
+        throw handleZodError(err, logger);
+    }
+    return speckleFunction;
+}
+
 ;// CONCATENATED MODULE: ./src/speckleautomate.ts
-
-
 
 
 
@@ -21950,29 +21977,6 @@ async function registerSpeckleFunction(opts) {
     const response = await client.postManifest(speckleServerUrl, speckleToken, body, opts.logger);
     opts.logger.info(`Successfully registered Speckle Function with ID: ${response.functionId}`);
     return response;
-}
-async function findAndParseManifest(logger, pathToSpeckleFunctionFile) {
-    if (!pathToSpeckleFunctionFile.toLocaleLowerCase().endsWith('specklefunction.yaml')) {
-        pathToSpeckleFunctionFile = external_path_.join(pathToSpeckleFunctionFile, 'specklefunction.yaml');
-    }
-    let speckleFunctionRaw;
-    try {
-        speckleFunctionRaw = await files.loadYaml(pathToSpeckleFunctionFile);
-    }
-    catch (err) {
-        if (err instanceof Error) {
-            logger.error(err);
-        }
-        throw err;
-    }
-    let speckleFunction;
-    try {
-        speckleFunction = await SpeckleFunctionSchema.parseAsync(speckleFunctionRaw);
-    }
-    catch (err) {
-        throw handleZodError(err, logger);
-    }
-    return speckleFunction;
 }
 
 ;// CONCATENATED MODULE: ./src/main.ts

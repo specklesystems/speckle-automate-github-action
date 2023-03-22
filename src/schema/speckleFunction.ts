@@ -12,7 +12,7 @@ export const SpeckleFunctionSchema = z.object({
   kind: z.literal(SpeckleFunctionKind),
   apiVersion: z.enum([SpeckleFunctionApiVersionV1Alpha1]),
   metadata: z.object({
-    name: z.string(),
+    name: z.string().nonempty(),
     annotations: z
       .object({
         'speckle.systems/v1alpha1/publishing/status': z
@@ -47,7 +47,7 @@ export const SpeckleFunctionSchema = z.object({
     steps: z
       .array(
         z.object({
-          name: z.string().optional()
+          name: z.string().nonempty()
           //TODO
         })
       )

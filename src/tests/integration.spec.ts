@@ -1,64 +1,45 @@
-import chai from './chai-config.js'
-import sinon from 'sinon'
-import { describe, it, afterEach, beforeEach } from 'vitest'
-import {
-  App,
-  eventHandler,
-  createApp,
-  createRouter,
-  H3Event,
-  Router,
-  toNodeListener
-} from 'h3'
-import { listen } from 'listhen'
-import { getRandomPort } from 'get-port-please'
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
+import { setupServer } from 'msw/node'
+import { rest } from 'msw'
 import { registerSpeckleFunction } from '../speckleautomate.js'
 import { getLogger } from './logger.js'
-import { SpeckleFunctionPostResponseBody } from '../client/schema.js'
-
-const expect = chai.expect
 
 describe('integration', () => {
+  const restHandlers = [
+    rest.post(
+      'https://automate.speckle.example.org/api/v1/functions',
+      async (req, res, ctx) => {
+        return res(
+          ctx.status(201),
+          ctx.json({
+            functionId: 'minimalfunctionid',
+            versionId: 'minimalversionid',
+            imageName: 'speckle/minimalfunctionid:minimalversionid'
+          })
+        )
+      }
+    )
+  ]
+
+  const server = setupServer(...restHandlers)
+
+  beforeAll(() => {
+    server.listen({ onUnhandledRequest: 'error' })
+  })
+  afterAll(() => {
+    server.close()
+  })
   afterEach(() => {
-    sinon.restore()
+    server.resetHandlers()
+    vi.restoreAllMocks()
   })
 
   describe('Load from ./examples directory', () => {
-    let app: App
-    let router: Router
-    let port: number
-    const hostname = '127.0.0.1'
-
-    beforeEach(() => {
-      app = createApp({ debug: false })
-    })
-
     describe('registerSpeckleAutomate', () => {
       it('should respond with Function name and id', async () => {
-        // set up the fake server
-        router = createRouter().post(
-          '/api/v1/functions',
-          eventHandler((event: H3Event): SpeckleFunctionPostResponseBody => {
-            event.node.res.statusCode = 201
-            event.node.res.statusMessage = 'Created'
-            event.node.res.setHeader('Content-Type', 'application/json')
-            return {
-              functionId: 'minimalfunctionid',
-              versionId: 'minimalversionid',
-              imageName: 'speckle/minimalfunctionid:minimalversionid'
-            }
-          })
-        )
-        app.use(router)
-        port = await getRandomPort(hostname)
-        listen(toNodeListener(app), {
-          hostname,
-          port
-        })
-
         const result = await registerSpeckleFunction({
           speckleFunctionId: undefined,
-          speckleServerUrl: `http://${hostname}:${port}`,
+          speckleServerUrl: 'https://automate.speckle.example.org', // should default to 'https://automate.speckle.xyz',
           speckleToken: 'token',
           speckleFunctionPath: 'examples/minimal',
           ref: 'main',
