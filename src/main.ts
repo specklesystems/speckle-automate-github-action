@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
-import { registerSpeckleFunction } from './speckleautomate.js'
+import { registerSpeckleFunction } from './register_speckle_function.js'
+import fileUtil from './filesystem/files.js'
 
 async function run(): Promise<void> {
   try {
@@ -8,17 +9,21 @@ async function run(): Promise<void> {
     core.setSecret(speckleTokenRaw)
     const speckleFunctionPathRaw = core.getInput('speckle_function_path')
     const speckleFunctionIdRaw = core.getInput('speckle_function_id')
+    const gitServerUrl = process.env.GITHUB_SERVER_URL
+    const gitRepository = process.env.GITHUB_REPOSITORY
     const gitRefRaw = process.env.GITHUB_REF_NAME
     const gitCommitShaRaw = process.env.GITHUB_SHA
 
     const { imageName, functionId, versionId } = await registerSpeckleFunction({
       speckleServerUrl: speckleServerUrlRaw,
       speckleToken: speckleTokenRaw,
+      speckleFunctionRepositoryUrl: `${gitServerUrl}/${gitRepository}`,
       speckleFunctionPath: speckleFunctionPathRaw,
       speckleFunctionId: speckleFunctionIdRaw,
       ref: gitRefRaw,
       commitsha: gitCommitShaRaw,
-      logger: core
+      logger: core,
+      fileSystem: fileUtil
     })
 
     core.setOutput('function_id', functionId)

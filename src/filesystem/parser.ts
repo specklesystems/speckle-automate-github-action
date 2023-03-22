@@ -1,12 +1,17 @@
-import fileUtil from './files.js'
-import { SpeckleFunction, SpeckleFunctionSchema } from '../schema/speckleFunction.js'
+import { FileSystem } from './files.js'
+import { SpeckleFunction, SpeckleFunctionSchema } from '../schema/speckle_function.js'
 import * as path from 'path'
 import { Logger } from '../logging/logger.js'
 import { handleZodError } from '../schema/errors.js'
 
+export type ParserOptions = {
+  logger: Logger
+  fileSystem: FileSystem
+}
+
 export async function findAndParseManifest(
-  logger: Logger,
-  pathToSpeckleFunctionFile: string
+  pathToSpeckleFunctionFile: string,
+  opts: ParserOptions
 ): Promise<SpeckleFunction> {
   if (!pathToSpeckleFunctionFile.toLocaleLowerCase().endsWith('specklefunction.yaml')) {
     pathToSpeckleFunctionFile = path.join(
@@ -17,10 +22,10 @@ export async function findAndParseManifest(
 
   let speckleFunctionRaw: unknown
   try {
-    speckleFunctionRaw = await fileUtil.loadYaml(pathToSpeckleFunctionFile)
+    speckleFunctionRaw = await opts.fileSystem.loadYaml(pathToSpeckleFunctionFile)
   } catch (err) {
     if (err instanceof Error) {
-      logger.error(err)
+      opts.logger.error(err)
     }
     throw err
   }
@@ -29,7 +34,7 @@ export async function findAndParseManifest(
   try {
     speckleFunction = await SpeckleFunctionSchema.parseAsync(speckleFunctionRaw)
   } catch (err) {
-    throw handleZodError(err, logger)
+    throw handleZodError(err, opts.logger)
   }
   return speckleFunction
 }

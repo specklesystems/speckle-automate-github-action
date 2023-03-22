@@ -1,9 +1,9 @@
 import { z } from 'zod'
-import { SpeckleFunctionSchema } from '../schema/speckleFunction.js'
+import { SpeckleFunctionSchema } from '../schema/speckle_function.js'
 import { URL } from 'url'
 
 export const SpeckleFunctionPostRequestBodySchema = z.object({
-  functionId: z.string().optional(),
+  functionId: z.union([z.string().optional(), z.null()]),
   url: z
     .string()
     .url()

@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { getMinimalSpeckleFunctionExample } from '../schema/speckle_function.spec.js'
 import { getLogger } from '../tests/logger.js'
 import { findAndParseManifest } from './parser.js'
 
@@ -9,28 +10,40 @@ describe('filesystem/parser', () => {
   describe('No Yaml file', () => {
     it('should throw', async () => {
       expect(async () =>
-        findAndParseManifest(getLogger(), 'doesNotExist')
+        findAndParseManifest('doesNotExist', {
+          logger: getLogger(),
+          fileSystem: {
+            loadYaml: async () => {
+              throw new Error('File does not exist')
+            }
+          }
+        })
       ).rejects.toThrow()
     })
   })
-  describe('Minimal yaml file', () => {
+})
+describe('Minimal yaml file', () => {
+  it('should parse', async () => {
+    const speckleFunction = await findAndParseManifest('examples/minimal', {
+      logger: getLogger(),
+      fileSystem: { loadYaml: async () => getMinimalSpeckleFunctionExample() }
+    })
+    expect(speckleFunction).toBeDefined()
+    expect(speckleFunction.metadata.name).toBe('minimal')
+  })
+  describe('with filename in path', () => {
     it('should parse', async () => {
       const speckleFunction = await findAndParseManifest(
-        getLogger(),
-        'examples/minimal'
+        'examples/minimal/specklefunction.yaml',
+        {
+          logger: getLogger(),
+          fileSystem: {
+            loadYaml: async () => getMinimalSpeckleFunctionExample()
+          }
+        }
       )
       expect(speckleFunction).toBeDefined()
       expect(speckleFunction.metadata.name).toBe('minimal')
-    })
-    describe('with filename in path', () => {
-      it('should parse', async () => {
-        const speckleFunction = await findAndParseManifest(
-          getLogger(),
-          'examples/minimal/specklefunction.yaml'
-        )
-        expect(speckleFunction).toBeDefined()
-        expect(speckleFunction.metadata.name).toBe('minimal')
-      })
     })
   })
 })
