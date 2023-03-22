@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { getMinimalSpeckleFunctionExample } from '../schema/specklefunction.spec.js'
 import { getLogger } from '../tests/logger.js'
 import { findAndParseManifest } from './parser.js'
+import { ValidationError } from 'zod-validation-error'
 
 describe('filesystem/parser', () => {
   afterEach(async () => {
@@ -44,6 +45,20 @@ describe('Minimal yaml file', () => {
       )
       expect(speckleFunction).toBeDefined()
       expect(speckleFunction.metadata.name).toBe('minimal')
+    })
+  })
+  describe('Invalid yaml file', () => {
+    it('should throw', async () => {
+      expect(async () =>
+        findAndParseManifest('src/tests/data/invalid', {
+          logger: getLogger(),
+          fileSystem: {
+            loadYaml: async () => {
+              return 'invalid: yaml'
+            }
+          }
+        })
+      ).rejects.toThrow(ValidationError)
     })
   })
 })

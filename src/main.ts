@@ -17,7 +17,7 @@ async function run(): Promise<void> {
     const { imageName, functionId, versionId } = await registerSpeckleFunction({
       speckleServerUrl: speckleServerUrlRaw,
       speckleToken: speckleTokenRaw,
-      speckleFunctionRepositoryUrl: `${gitServerUrl}/${gitRepository}`,
+      speckleFunctionRepositoryUrl: `${gitServerUrl}/${gitRepository}.git`,
       speckleFunctionPath: speckleFunctionPathRaw,
       speckleFunctionId: speckleFunctionIdRaw,
       ref: gitRefRaw,

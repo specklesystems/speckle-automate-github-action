@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { SpeckleFunctionSchema } from './specklefunction.js'
 import { ZodError } from 'zod'
 
-type NonConformantSpeckleFunction = {
+export type NonConformantSpeckleFunction = {
   apiVersion: string | undefined
   kind: string | undefined
   metadata:

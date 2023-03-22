@@ -57,10 +57,10 @@ export async function registerSpeckleFunction(
     throw handleZodError(err, opts.logger)
   }
 
-  opts.logger.info(`Speckle Server URL: ${speckleServerUrl}`)
+  opts.logger.info(`Speckle Server URL: '${speckleServerUrl}'`)
   //token is masked in the logs, so no need to print it here.
-  opts.logger.info(`Speckle Function Path: ${speckleFunctionPath}`)
-  opts.logger.info(`Speckle Function ID: ${speckleFunctionId}`)
+  opts.logger.info(`Speckle Function Path: '${speckleFunctionPath}'`)
+  opts.logger.info(`Speckle Function ID (optional): '${speckleFunctionId}'`)
 
   const manifest = await findAndParseManifest(speckleFunctionPath, {
     logger: opts.logger,

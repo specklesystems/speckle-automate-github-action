@@ -3,7 +3,7 @@ import { SpeckleFunctionSchema } from '../schema/specklefunction.js'
 import { URL } from 'url'
 
 export const SpeckleFunctionPostRequestBodySchema = z.object({
-  functionId: z.union([z.string().optional(), z.null()]),
+  functionId: z.union([z.string().nonempty(), z.null()]),
   url: z
     .string()
     .url()
@@ -29,6 +29,7 @@ export const SpeckleFunctionPostRequestBodySchema = z.object({
     ),
   path: z
     .string()
+    .nonempty()
     .refine(
       () => true, //TODO validate it is a path, and the path is not a directory traversal attack out of the source code directory (such as ../../etc/passwd). We can take much of the directory traversal code from build-instructions-step.
       {
@@ -36,8 +37,8 @@ export const SpeckleFunctionPostRequestBodySchema = z.object({
       }
     )
     .default('.'),
-  ref: z.string(),
-  commitSha: z.string(),
+  ref: z.string().nonempty(),
+  commitSha: z.string().nonempty(),
   manifest: SpeckleFunctionSchema
 })
 

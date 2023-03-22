@@ -15792,7 +15792,7 @@ const external_url_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.met
 
 
 const SpeckleFunctionPostRequestBodySchema = z.object({
-    functionId: z.union([z.string().optional(), z["null"]()]),
+    functionId: z.union([z.string().nonempty(), z["null"]()]),
     url: z.string()
         .url()
         .refine((data) => {
@@ -15812,13 +15812,14 @@ const SpeckleFunctionPostRequestBodySchema = z.object({
         message: 'HTTP basic authentication is not allowed within the Url. The Url is not stored as an encrypted value and we cannot guarantee the safety of the basic authentication credentials.'
     }),
     path: z.string()
+        .nonempty()
         .refine(() => true, //TODO validate it is a path, and the path is not a directory traversal attack out of the source code directory (such as ../../etc/passwd). We can take much of the directory traversal code from build-instructions-step.
     {
         message: 'Must be a valid path.'
     })
         .default('.'),
-    ref: z.string(),
-    commitSha: z.string(),
+    ref: z.string().nonempty(),
+    commitSha: z.string().nonempty(),
     manifest: SpeckleFunctionSchema
 });
 const SpeckleFunctionPostResponseBodySchema = z.object({
@@ -18015,7 +18016,7 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
             body: JSON.stringify(body)
         });
         if (!response.ok) {
-            throw new Error(`Failed to register Speckle Function: ${response.statusText}`);
+            throw new Error(`Failed to register Speckle Function. Status Code: ${response.status}. Status Text: ${response.statusText}. Response Body: ${await response.text()}`); //FIXME use a more specific error type
         }
         let responseBody;
         try {
@@ -18097,10 +18098,10 @@ async function registerSpeckleFunction(opts) {
     catch (err) {
         throw handleZodError(err, opts.logger);
     }
-    opts.logger.info(`Speckle Server URL: ${speckleServerUrl}`);
+    opts.logger.info(`Speckle Server URL: '${speckleServerUrl}'`);
     //token is masked in the logs, so no need to print it here.
-    opts.logger.info(`Speckle Function Path: ${speckleFunctionPath}`);
-    opts.logger.info(`Speckle Function ID: ${speckleFunctionId}`);
+    opts.logger.info(`Speckle Function Path: '${speckleFunctionPath}'`);
+    opts.logger.info(`Speckle Function ID (optional): '${speckleFunctionId}'`);
     const manifest = await findAndParseManifest(speckleFunctionPath, {
         logger: opts.logger,
         fileSystem: opts.fileSystem
@@ -22002,7 +22003,7 @@ async function run() {
         const { imageName, functionId, versionId } = await registerSpeckleFunction({
             speckleServerUrl: speckleServerUrlRaw,
             speckleToken: speckleTokenRaw,
-            speckleFunctionRepositoryUrl: `${gitServerUrl}/${gitRepository}`,
+            speckleFunctionRepositoryUrl: `${gitServerUrl}/${gitRepository}.git`,
             speckleFunctionPath: speckleFunctionPathRaw,
             speckleFunctionId: speckleFunctionIdRaw,
             ref: gitRefRaw,

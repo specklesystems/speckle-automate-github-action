@@ -31,7 +31,11 @@ export default {
     })
 
     if (!response.ok) {
-      throw new Error(`Failed to register Speckle Function: ${response.statusText}`)
+      throw new Error(
+        `Failed to register Speckle Function. Status Code: ${
+          response.status
+        }. Status Text: ${response.statusText}. Response Body: ${await response.text()}`
+      ) //FIXME use a more specific error type
     }
 
     let responseBody: SpeckleFunctionPostResponseBody
