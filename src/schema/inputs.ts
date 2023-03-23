@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const SpeckleServerUrlSchema = z.string().url().nonempty()
 export const SpeckleTokenSchema = z.string().nonempty()
+export const SpeckleFunctionRepositorySchema = z.string().nonempty() //TODO validate this as a git+https, https, or ssh url
 export const SpeckleFunctionPathSchema = z
   .string()
   .nonempty()

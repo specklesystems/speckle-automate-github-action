@@ -1,7 +1,7 @@
 import './sourcemap-register.cjs';import { createRequire as __WEBPACK_EXTERNAL_createRequire } from "module";
 /******/ var __webpack_modules__ = ({
 
-/***/ 3748:
+/***/ 2182:
 /***/ ((module, exports, __nccwpck_require__) => {
 
 
@@ -389,7 +389,7 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 
-;// CONCATENATED MODULE: ./.yarn/cache/ufo-npm-1.1.1-5caba43c85-6bd210ed93.zip/node_modules/ufo/dist/index.mjs
+;// CONCATENATED MODULE: ./node_modules/ufo/dist/index.mjs
 const n = /[^\0-\x7E]/;
 const t = /[\x2E\u3002\uFF0E\uFF61]/g;
 const o = {
@@ -861,7 +861,7 @@ function stringifyParsedURL(parsed) {
 
 
 
-;// CONCATENATED MODULE: ./.yarn/cache/radix3-npm-1.0.0-a7f8c376b3-91086baa4d.zip/node_modules/radix3/dist/index.mjs
+;// CONCATENATED MODULE: ./node_modules/radix3/dist/index.mjs
 const NODE_TYPES = {
   NORMAL: 0,
   WILDCARD: 1,
@@ -1073,7 +1073,7 @@ function _routerNodeToTable(initialPath, initialNode) {
 
 
 
-;// CONCATENATED MODULE: ./.yarn/cache/defu-npm-6.1.2-65c0503295-2ec0ff8414.zip/node_modules/defu/dist/defu.mjs
+;// CONCATENATED MODULE: ./node_modules/defu/dist/defu.mjs
 function isObject(value) {
   return value !== null && typeof value === "object";
 }
@@ -1130,7 +1130,7 @@ const defuArrayFn = createDefu((object, key, currentValue) => {
 
 
 
-;// CONCATENATED MODULE: ./.yarn/cache/h3-npm-1.6.2-8f413e9ff2-3a876f414d.zip/node_modules/h3/dist/index.mjs
+;// CONCATENATED MODULE: ./node_modules/h3/dist/index.mjs
 
 
 
@@ -2582,7 +2582,7 @@ const external_node_os_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import
 ;// CONCATENATED MODULE: external "tty"
 const external_tty_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("tty");
 var external_tty_namespaceObject_0 = /*#__PURE__*/__nccwpck_require__.t(external_tty_namespaceObject, 2);
-;// CONCATENATED MODULE: ./.yarn/cache/colorette-npm-2.0.19-f73dfe6a4e-888cf5493f.zip/node_modules/colorette/index.js
+;// CONCATENATED MODULE: ./node_modules/colorette/index.js
 
 
 const {
@@ -2736,7 +2736,7 @@ const {
 
 ;// CONCATENATED MODULE: external "node:net"
 const external_node_net_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:net");
-;// CONCATENATED MODULE: ./.yarn/cache/get-port-please-npm-3.0.1-b00ea347f9-a5de771314.zip/node_modules/get-port-please/dist/index.mjs
+;// CONCATENATED MODULE: ./node_modules/get-port-please/dist/index.mjs
 
 
 
@@ -2989,13 +2989,13 @@ async function findPort(ports, host, _verbose = false, _random = true) {
 
 
 
-// EXTERNAL MODULE: ./.yarn/cache/http-shutdown-npm-1.2.2-e4fdf6986c-5dccd94f4f.zip/node_modules/http-shutdown/index.js
-var http_shutdown = __nccwpck_require__(3748);
+// EXTERNAL MODULE: ./node_modules/http-shutdown/index.js
+var http_shutdown = __nccwpck_require__(2182);
 ;// CONCATENATED MODULE: external "node:child_process"
 const external_node_child_process_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:child_process");
 // EXTERNAL MODULE: external "node:path"
 var external_node_path_ = __nccwpck_require__(9411);
-;// CONCATENATED MODULE: ./.yarn/cache/listhen-npm-1.0.4-9812273d67-9ab54b9d23.zip/node_modules/listhen/dist/index.mjs
+;// CONCATENATED MODULE: ./node_modules/listhen/dist/index.mjs
 
 
 
@@ -3144,7 +3144,7 @@ const baseOpen = async (options) => {
           try {
             (0,external_node_fs_namespaceObject.writeFileSync)(
               (0,external_node_path_.join)(external_node_os_namespaceObject.tmpdir(), "xdg-open"),
-              await __nccwpck_require__.e(/* import() */ 230).then(__nccwpck_require__.bind(__nccwpck_require__, 4230)).then((r) => r.xdgOpenScript()),
+              await __nccwpck_require__.e(/* import() */ 358).then(__nccwpck_require__.bind(__nccwpck_require__, 4358)).then((r) => r.xdgOpenScript()),
               "utf8"
             );
             (0,external_node_fs_namespaceObject.chmodSync)(
@@ -3414,7 +3414,7 @@ async function listen(handle, options_ = {}) {
     return (0,external_node_util_.promisify)(server.shutdown)();
   };
   if (options_.clipboard) {
-    const clipboardy = await __nccwpck_require__.e(/* import() */ 951).then(__nccwpck_require__.bind(__nccwpck_require__, 3951)).then((r) => r.default || r);
+    const clipboardy = await __nccwpck_require__.e(/* import() */ 902).then(__nccwpck_require__.bind(__nccwpck_require__, 9902)).then((r) => r.default || r);
     await clipboardy.write(getURL()).catch(() => {
       options_.clipboard = false;
     });
@@ -3473,7 +3473,7 @@ async function resolveCert(options, host) {
       cert: await r(options.cert)
     };
   }
-  const { generateCA, generateSSLCert } = await __nccwpck_require__.e(/* import() */ 728).then(__nccwpck_require__.bind(__nccwpck_require__, 1728));
+  const { generateCA, generateSSLCert } = await __nccwpck_require__.e(/* import() */ 32).then(__nccwpck_require__.bind(__nccwpck_require__, 6032));
   const ca = await generateCA();
   const cert = await generateSSLCert({
     caCert: ca.cert,

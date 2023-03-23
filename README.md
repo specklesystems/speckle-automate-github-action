@@ -4,7 +4,7 @@
 
 ## Introduction
 
-This repository contains the source code for the Speckle Automate GitHub Action. It is a GitHub Action that builds a Speckle Automate Function from your source code.
+This repository contains the source code for the Speckle Automate GitHub Action. It is a GitHub Action that publishes a Speckle Automate Function to Speckle Automate your source code.
 
 ## Documentation
 
@@ -26,17 +26,36 @@ If you believe your token has been compromised, please revoke it immediately on 
 
 Please note that this is not a Speckle Account token, but a **Speckle Automate API** token. You can create one by logging into the [Speckle Automate Server](https://automate.speckle.xyz) and going to the [API Tokens](https://automate.speckle.xyz/tokens) page.
 
+`speckle_function_path`
+
+The path to the Speckle Automate Function to publish. This path is relative to the root of the repository. If you provide a path to a directory, your Speckle Automate Function must be in a file named `specklefunction.yaml` within that directory.
+
+`function_id`
+
+*Optional.* If you have already registered a Speckle Function, you can use the ID of that Speckle Function to ensure that any changes are associated with it.
+If you do not provide a Function Id, we will attempt to determine the Function ID based on the GitHub server, GitHub repository, Reference (branch), and the Speckle Function Path.
+
+Providing a Speckle Function ID allows you to change one of those values, and update the original Function instead of creating a new one.
+
+Your Speckle Token must have write permissions for the Speckle Function with this ID, otherwise the publish will fail.
+
 ### Outputs
 
 #### `function_id`
 
-The unique ID of the published function.
+The unique ID of the published function. This will be the same as the `function_id` input if it was provided.
 
 #### `version_id`
 
 The unique ID of this version of the published function.
 
+#### `image_name`
+
+The name of the Docker image that you now need to build and push. Your Speckle Automate Token has been granted write permissions for publishing this image to the Speckle Automate Server.
+
 ### Example usage
+
+Speckle Automate GitHub Action will register a Speckle Function with Speckle Automate. This is a necessary, but not sufficient, step in publishing your Speckle Function. You must also build and push the Docker image that contains your Speckle Function.
 
 #### Publish a function to automate.speckle.xyz
 
@@ -44,9 +63,11 @@ The unique ID of this version of the published function.
 uses: actions/speckle-automate-github-action@0.1.0
 with:
   # speckle_server_url is optional and defaults to https://automate.speckle.xyz
-  # speckle_server_url: https://automate.speckle.xyz
+  # The speckle_token is a secret and must be stored in GitHub as an encrypted secret
   # https://docs.github.com/en/actions/security-guides/encrypted-secrets#using-encrypted-secrets-in-a-workflow
-  speckle_token: ${{ secrets.speckle_token }}
+  speckle_token: ${{ secrets.SPECKLE_TOKEN }}
+  # speckle_function_path is optional and defaults to ./specklefunction.yaml
+  # function_id is optional and will be auto-generated if not provided
 ```
 
 #### Publish a function to a self-hosted server
@@ -57,7 +78,70 @@ with:
   # please update to the url of your self-hosted server
   speckle_server_url: https://example.org
   # https://docs.github.com/en/actions/security-guides/encrypted-secrets#using-encrypted-secrets-in-a-workflow
-  speckle_token: ${{ secrets.speckle_token }}
+  speckle_token: ${{ secrets.SPECKLE_TOKEN }}
+  # speckle_function_path is optional and defaults to ./specklefunction.yaml
+  # function_id is optional and will be auto-generated if not provided
+```
+
+### Example usage within an entire GitHub Actions Workflow
+
+#### Publish a Speckle Function, and build the Docker Image using Docker
+
+Docker is the original, and still one of the most popular, ways to build and publish Docker images. It does require that you provide a [Dockerfile](https://docs.docker.com/engine/reference/builder/), which includes instructions to Docker for building your image.
+
+Find out more about Docker and Dockerfiles by following Docker's [Get Started Guide](https://docs.docker.com/get-started/).
+
+You can learn more about Docker's GitHub Action from their documentation in the [GitHub Actions Marketplace](https://github.com/marketplace/actions/build-and-push-docker-images).
+
+```yaml
+name: ci
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        # Checkout the code
+        # Docker's GitHub Action does not require this step
+        # but Speckle Automate does
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        id: speckle
+        name: Register Speckle Function
+        uses: actions/speckle-automate-github-action@0.1.0
+        with:
+          speckle_token: ${{ secrets.SPECKLE_TOKEN }}
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Docker needs to login to Speckle Automate
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.SPECKLE_USERNAME }}
+          password: ${{ secrets.SPECKLE_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          # ## file is optional and defaults to {context}/Dockerfile
+          # file: ./Dockerfile
+          # ## context is optional and defaults to the root directory '.' of the repository
+          # context: .
+          # ## platforms is optional and defaults to linux/amd64
+          # ## platforms must match the platforms that you have registered with Speckle Automate, which also defaults to linux/amd64.
+          # platforms: linux/amd64
+          push: true
+          tags: ${{ steps.speckle.outputs.image_name }}
 ```
 
 ## Developing & Debugging
@@ -73,32 +157,8 @@ with:
 #### Building
 
 1. Clone this repository
-1. Run `yarn install` to install dependencies
-1. Run `yarn build`
-
-#### Running built image
-
-1. Set the Speckle Server URL and Speckle Token environment variables, and run the image:
-
-    ```bash
-    export SPECKLE_SERVER_URL="https://automate.speckle.xyz" # (or your self-hosted server, which may be `localhost:3000` if running a development server)
-    export SPECKLE_TOKEN="ABCD1234" #(replace with your token)
-    docker run --rm \
-    -e SPECKLE_SERVER_URL="${SPECKLE_SERVER_URL}" \
-    -e SPECKLE_TOKEN="${SPECKLE_TOKEN}" \
-    -e SPECKLE_FUNCTION_PATH="./examples/basic" \
-    -e GITHUB_WORKSPACE="/home/runner/work/specklesystems/speckle-automate-github-action" \
-    -e GITHUB_OUTPUT="/output/github_output" \
-    -v "$(pwd):/home/runner/work/specklesystems/speckle-automate-github-action" \
-    -v "/tmp:/output" \
-    speckle/speckle-automate-github-action:local
-    ```
-
-1. Inspect the output at `/tmp/github_output`:
-
-    ```bash
-    cat /tmp/github_output
-    ```
+1. Run `yarn install` to install dependencies.
+1. Run `yarn run all` to validate, build, and test the project.
 
 ### Developing
 
@@ -115,22 +175,22 @@ with:
 
 #### Testing
 
-1. Run unit tests:
+1. Run unit tests with coverage:
 
     ```bash
     yarn test
     ```
 
-1. Run integration tests:
+1. Run unit tests and watch for changes while developing:
 
     ```bash
-    yarn test:e2e
+    yarn test:watch
     ```
 
 #### Linting
 
 1. Run `yarn pre-commit` to run all pre-commit hooks.
-1. Address all linting errors prior to committing changes.
+1. You must address all linting errors prior to committing changes. The CI will fail if there are any linting errors, and you will be unable to merge your PR.
 
 ## Contributing
 

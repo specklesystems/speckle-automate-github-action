@@ -4,7 +4,7 @@ import {
   SpeckleFunctionPostRequestBody
 } from './schema.js'
 import { URL } from 'url'
-import { handleZodError } from '../utils/errors.js'
+import { handleZodError } from '../schema/errors.js'
 import { Logger } from '../logging/logger.js'
 import fetch from 'node-fetch'
 
@@ -13,15 +13,14 @@ export default {
     url: string,
     token: string,
     body: SpeckleFunctionPostRequestBody,
-    logger: Logger
+    logger: Logger,
+    _fetch: typeof fetch = fetch
   ): Promise<SpeckleFunctionPostResponseBody> => {
     if (!url) throw new Error('Speckle Server URL is required')
     if (!token) throw new Error('Speckle Token is required')
-    if (!body) throw new Error('Speckle Function Post Request Body is required')
-    if (!logger) throw new Error('Logger is required')
 
     const endpointUrl = new URL('/api/v1/functions', url)
-    const response = await fetch(endpointUrl.href, {
+    const response = await _fetch(endpointUrl.href, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31,7 +30,11 @@ export default {
     })
 
     if (!response.ok) {
-      throw new Error(`Failed to register Speckle Function: ${response.statusText}`)
+      throw new Error(
+        `Failed to register Speckle Function. Status Code: ${
+          response.status
+        }. Status Text: ${response.statusText}. Response Body: ${await response.text()}`
+      ) //FIXME use a more specific error type
     }
 
     let responseBody: SpeckleFunctionPostResponseBody
