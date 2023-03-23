@@ -18,8 +18,8 @@
     "prettier:check": "prettier --check '**/*.ts'",
     "prettier:fix": "prettier --write '**/*.ts'",
     "run:mockserver": "node dist/testing/mockserver/index.js",
-    "test": "vitest --run  --coverage --config ./vitest.config.ts",
-    "test:watch": "vitest  --config ./vitest.config.ts"
+    "test": "vitest --run  --coverage",
+    "test:watch": "vitest"
   },
   "engines": {
     "node": "^16.19.1"
