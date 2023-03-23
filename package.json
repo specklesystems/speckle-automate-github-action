@@ -21,6 +21,9 @@
     "test": "vitest --run  --coverage --config ./vitest.config.ts",
     "test:watch": "vitest  --config ./vitest.config.ts"
   },
+  "engines": {
+    "node": "^16.19.1"
+  },
   "dependencies": {
     "@actions/core": "^1.10.0",
     "node-fetch": "^3.3.1",
