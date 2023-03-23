@@ -17997,7 +17997,7 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
 
 
 /* harmony default export */ const client = ({
-    postManifest: async (url, token, body, logger) => {
+    postManifest: async (url, token, body, logger, _fetch = fetch) => {
         if (!url)
             throw new Error('Speckle Server URL is required');
         if (!token)
@@ -18007,7 +18007,7 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
         if (!logger)
             throw new Error('Logger is required');
         const endpointUrl = new external_url_namespaceObject.URL('/api/v1/functions', url);
-        const response = await fetch(endpointUrl.href, {
+        const response = await _fetch(endpointUrl.href, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

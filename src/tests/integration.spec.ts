@@ -7,32 +7,7 @@ import { getMinimalSpeckleFunctionExample } from '../schema/specklefunction.spec
 import { ValidationError } from 'zod-validation-error'
 
 describe('integration', () => {
-  const restHandlers = [
-    rest.post(
-      'https://integration1.automate.speckle.example.org/api/v1/functions',
-      async (req, res, ctx) => {
-        expect(req.body).toStrictEqual({
-          functionId: null,
-          url: 'https://github.com/specklesystems/speckle-automate-examples.git',
-          path: 'examples/minimal',
-          ref: 'main',
-          commitSha: '1234567890',
-          manifest: getMinimalSpeckleFunctionExample()
-        })
-        expect(req.headers.get('Authorization')).toBe('Bearer supersecret')
-        return res(
-          ctx.status(201),
-          ctx.json({
-            functionId: 'minimalfunctionid',
-            versionId: 'minimalversionid',
-            imageName: 'speckle/minimalfunctionid:minimalversionid'
-          })
-        )
-      }
-    )
-  ]
-
-  const server = setupServer(...restHandlers)
+  const server = setupServer()
 
   beforeAll(() => {
     server.listen({ onUnhandledRequest: 'error' })
@@ -48,6 +23,30 @@ describe('integration', () => {
     describe('registerSpeckleAutomate', async () => {
       describe('valid input', async () => {
         it('should respond with image name, function id, and version id', async () => {
+          server.use(
+            rest.post(
+              'https://integration1.automate.speckle.example.org/api/v1/functions',
+              async (req, res, ctx) => {
+                expect(req.body).toStrictEqual({
+                  functionId: null,
+                  url: 'https://github.com/specklesystems/speckle-automate-examples.git',
+                  path: 'examples/minimal',
+                  ref: 'main',
+                  commitSha: '1234567890',
+                  manifest: getMinimalSpeckleFunctionExample()
+                })
+                expect(req.headers.get('Authorization')).toBe('Bearer supersecret')
+                return res(
+                  ctx.status(201),
+                  ctx.json({
+                    functionId: 'minimalfunctionid',
+                    versionId: 'minimalversionid',
+                    imageName: 'speckle/minimalfunctionid:minimalversionid'
+                  })
+                )
+              }
+            )
+          )
           const result = await registerSpeckleFunction({
             speckleFunctionId: undefined,
             speckleServerUrl: 'https://integration1.automate.speckle.example.org',
