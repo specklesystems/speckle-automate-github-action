@@ -7,6 +7,9 @@
   "license": "Apache-2.0",
   "main": "lib/main.js",
   "type": "module",
+  "engines": {
+    "node": "16"
+  },
   "scripts": {
     "all": "yarn run build && yarn run prettier:check && yarn run lint && yarn run package && yarn run package:mockserver && yarn run test",
     "build": "tsc -p tsconfig.json",
