@@ -18,8 +18,6 @@ export default {
   ): Promise<SpeckleFunctionPostResponseBody> => {
     if (!url) throw new Error('Speckle Server URL is required')
     if (!token) throw new Error('Speckle Token is required')
-    if (!body) throw new Error('Speckle Function Post Request Body is required')
-    if (!logger) throw new Error('Logger is required')
 
     const endpointUrl = new URL('/api/v1/functions', url)
     const response = await _fetch(endpointUrl.href, {

@@ -19,7 +19,7 @@ describe('filesystem/parser', () => {
             }
           }
         })
-      ).rejects.toThrow()
+      ).rejects.toThrow(Error)
     })
   })
 })

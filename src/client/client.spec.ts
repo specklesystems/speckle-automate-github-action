@@ -47,81 +47,129 @@ describe('client', () => {
             }
           )
         )
-        const response = await httpClient.postManifest(
+
+        const test = httpClient.postManifest(
           'https://success.automate.speckle.example.org',
           'supersecret',
           {
             functionId: null,
-            path: '',
-            url: '',
-            ref: '',
-            commitSha: '',
+            path: 'examples/minimal',
+            url: 'https://github.com/specklesystems/speckle-automate-examples',
+            ref: 'main',
+            commitSha: '1234567890',
             manifest: getMinimalSpeckleFunctionExample() as SpeckleFunction
           },
           getLogger()
         )
 
-        expect(response).toStrictEqual({})
+        await expect(test).resolves.toStrictEqual({
+          functionId: 'minimalfunctionid',
+          versionId: 'minimalversionid',
+          imageName: 'speckle/minimalfunctionid:minimalversionid'
+        })
       })
     })
-    // describe('server responds with a 500 HTTP Status Code', () => {
-    //   it('should throw an error', async () => {
-    //     server.use(
-    //       rest.post(
-    //         'https://failure.automate.speckle.example.org/api/v1/functions',
-    //         async (req, res, ctx) => {
-    //           return res(ctx.status(500))
-    //         }
-    //       )
-    //     )
-    //     expect(
-    //       httpClient.postManifest(
-    //         'https://failure.automate.speckle.example.org',
-    //         'sometoken',
-    //         {
-    //           functionId: null,
-    //           path: '',
-    //           url: '',
-    //           ref: '',
-    //           commitSha: '',
-    //           manifest: getMinimalSpeckleFunctionExample() as SpeckleFunction
-    //         },
-    //         getLogger()
-    //       )
-    //     ).rejects.toThrow()
-    //   })
-    // })
-    // describe('server responds with an unexpected response body', () => {
-    //   it('should throw an error', async () => {
-    //     server.use(
-    //       rest.post(
-    //         'https://unexpectedresponse.automate.speckle.example.org/api/v1/functions',
-    //         async (req, res, ctx) => {
-    //           return res(
-    //             ctx.status(201),
-    //             ctx.json({
-    //               unexpected: 'unexpected'
-    //             })
-    //           )
-    //         }
-    //       )
-    //     )
-    //     expect(
-    //       httpClient.postManifest(
-    //         'https://unexpectedresponse.automate.speckle.example.org',
-    //         'sometoken',
-    //         {
-    //           functionId: null,
-    //           path: '',
-    //           url: '',
-    //           ref: '',
-    //           commitSha: '',
-    //           manifest: getMinimalSpeckleFunctionExample() as SpeckleFunction
-    //         },
-    //         getLogger()
-    //       )
-    //     ).rejects.toThrow(ValidationError)
-    //   })
-    // })
+    describe('server responds with a 500 HTTP Status Code', () => {
+      it('should throw an error', async () => {
+        server.use(
+          rest.post(
+            'https://failure.automate.speckle.example.org/api/v1/functions',
+            async (req, res, ctx) => {
+              const response = await res(ctx.status(500))
+              return response
+            }
+          )
+        )
+        await expect(
+          httpClient.postManifest(
+            'https://failure.automate.speckle.example.org',
+            'sometoken',
+            {
+              functionId: null,
+              path: '',
+              url: '',
+              ref: '',
+              commitSha: '',
+              manifest: getMinimalSpeckleFunctionExample() as SpeckleFunction
+            },
+            getLogger()
+          )
+        ).rejects.toThrow()
+      })
+    })
+    describe('server responds with an unexpected response body', () => {
+      it('should throw an error', async () => {
+        server.use(
+          rest.post(
+            'https://unexpectedresponse.automate.speckle.example.org/api/v1/functions',
+            async (req, res, ctx) => {
+              const response = await res(
+                ctx.status(201),
+                ctx.json({
+                  unexpected: 'unexpected'
+                })
+              )
+              return response
+            }
+          )
+        )
+
+        await expect(
+          httpClient.postManifest(
+            'https://unexpectedresponse.automate.speckle.example.org',
+            'sometoken',
+            {
+              functionId: null,
+              path: '',
+              url: '',
+              ref: '',
+              commitSha: '',
+              manifest: getMinimalSpeckleFunctionExample() as SpeckleFunction
+            },
+            getLogger()
+          )
+        ).rejects.toThrow(ValidationError)
+      })
+    })
+    describe('invalid input', () => {
+      describe('empty url', () => {
+        it('should throw an error', async () => {
+          expect(
+            httpClient.postManifest(
+              '',
+              'supersecret',
+              {
+                functionId: null,
+                path: 'examples/minimal',
+                url: 'https://github.com/specklesystems/speckle-automate-examples',
+                ref: 'main',
+                commitSha: '1234567890',
+                manifest: getMinimalSpeckleFunctionExample() as SpeckleFunction
+              },
+              getLogger()
+            )
+          ).rejects.toThrow(Error)
+        })
+      })
+      describe('empty token', () => {
+        it('should throw an error', async () => {
+          expect(
+            httpClient.postManifest(
+              'https://example.org',
+              '',
+              {
+                functionId: null,
+                path: 'examples/minimal',
+                url: 'https://github.com/specklesystems/speckle-automate-examples',
+                ref: 'main',
+                commitSha: '1234567890',
+                manifest: getMinimalSpeckleFunctionExample() as SpeckleFunction
+              },
+              getLogger()
+            )
+          ).rejects.toThrow(Error)
+        })
+      })
+    })
   })
 })

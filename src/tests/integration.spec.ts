@@ -36,7 +36,7 @@ describe('integration', () => {
                   manifest: getMinimalSpeckleFunctionExample()
                 })
                 expect(req.headers.get('Authorization')).toBe('Bearer supersecret')
-                return res(
+                const response = await res(
                   ctx.status(201),
                   ctx.json({
                     functionId: 'minimalfunctionid',
@@ -44,10 +44,11 @@ describe('integration', () => {
                     imageName: 'speckle/minimalfunctionid:minimalversionid'
                   })
                 )
+                return response
               }
             )
           )
-          const result = await registerSpeckleFunction({
+          const result = registerSpeckleFunction({
             speckleFunctionId: undefined,
             speckleServerUrl: 'https://integration1.automate.speckle.example.org',
             speckleToken: 'supersecret',
@@ -61,12 +62,11 @@ describe('integration', () => {
               loadYaml: async () => getMinimalSpeckleFunctionExample()
             }
           })
-
-          expect(result.functionId).to.equal('minimalfunctionid')
-          expect(result.versionId).to.equal('minimalversionid')
-          expect(result.imageName).to.equal(
-            'speckle/minimalfunctionid:minimalversionid'
-          )
+          await expect(result).resolves.toStrictEqual({
+            functionId: 'minimalfunctionid',
+            versionId: 'minimalversionid',
+            imageName: 'speckle/minimalfunctionid:minimalversionid'
+          })
         })
       })
       describe('invalid input', async () => {

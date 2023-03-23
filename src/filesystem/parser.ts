@@ -20,15 +20,7 @@ export async function findAndParseManifest(
     )
   }
 
-  let speckleFunctionRaw: unknown
-  try {
-    speckleFunctionRaw = await opts.fileSystem.loadYaml(pathToSpeckleFunctionFile)
-  } catch (err) {
-    if (err instanceof Error) {
-      opts.logger.error(err)
-    }
-    throw err
-  }
+  const speckleFunctionRaw = await opts.fileSystem.loadYaml(pathToSpeckleFunctionFile)
 
   let speckleFunction: SpeckleFunction
   try {
