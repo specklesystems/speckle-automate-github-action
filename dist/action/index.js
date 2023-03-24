@@ -1767,6 +1767,168 @@ function isLoopbackAddress(host) {
 
 /***/ }),
 
+/***/ 6494:
+/***/ ((__unused_webpack_module, exports) => {
+
+var __webpack_unused_export__;
+
+__webpack_unused_export__ = ({ value: true });
+function applyDefaults(options) {
+    if (!options) {
+        options = {};
+    }
+    return {
+        delay: (options.delay === undefined) ? 200 : options.delay,
+        initialDelay: (options.initialDelay === undefined) ? 0 : options.initialDelay,
+        minDelay: (options.minDelay === undefined) ? 0 : options.minDelay,
+        maxDelay: (options.maxDelay === undefined) ? 0 : options.maxDelay,
+        factor: (options.factor === undefined) ? 0 : options.factor,
+        maxAttempts: (options.maxAttempts === undefined) ? 3 : options.maxAttempts,
+        timeout: (options.timeout === undefined) ? 0 : options.timeout,
+        jitter: (options.jitter === true),
+        handleError: (options.handleError === undefined) ? null : options.handleError,
+        handleTimeout: (options.handleTimeout === undefined) ? null : options.handleTimeout,
+        beforeAttempt: (options.beforeAttempt === undefined) ? null : options.beforeAttempt,
+        calculateDelay: (options.calculateDelay === undefined) ? null : options.calculateDelay
+    };
+}
+async function sleep(delay) {
+    return new Promise((resolve, reject) => {
+        setTimeout(resolve, delay);
+    });
+}
+__webpack_unused_export__ = sleep;
+function defaultCalculateDelay(context, options) {
+    let delay = options.delay;
+    if (delay === 0) {
+        // no delay between attempts
+        return 0;
+    }
+    if (options.factor) {
+        delay *= Math.pow(options.factor, context.attemptNum - 1);
+        if (options.maxDelay !== 0) {
+            delay = Math.min(delay, options.maxDelay);
+        }
+    }
+    if (options.jitter) {
+        // Jitter will result in a random value between `minDelay` and
+        // calculated delay for a given attempt.
+        // See https://www.awsarchitectureblog.com/2015/03/backoff.html
+        // We're using the "full jitter" strategy.
+        const min = Math.ceil(options.minDelay);
+        const max = Math.floor(delay);
+        delay = Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    return Math.round(delay);
+}
+__webpack_unused_export__ = defaultCalculateDelay;
+async function retry(attemptFunc, attemptOptions) {
+    const options = applyDefaults(attemptOptions);
+    for (const prop of [
+        'delay',
+        'initialDelay',
+        'minDelay',
+        'maxDelay',
+        'maxAttempts',
+        'timeout'
+    ]) {
+        const value = options[prop];
+        if (!Number.isInteger(value) || (value < 0)) {
+            throw new Error(`Value for ${prop} must be an integer greater than or equal to 0`);
+        }
+    }
+    if ((options.factor.constructor !== Number) || (options.factor < 0)) {
+        throw new Error(`Value for factor must be a number greater than or equal to 0`);
+    }
+    if (options.delay < options.minDelay) {
+        throw new Error(`delay cannot be less than minDelay (delay: ${options.delay}, minDelay: ${options.minDelay}`);
+    }
+    const context = {
+        attemptNum: 0,
+        attemptsRemaining: options.maxAttempts ? options.maxAttempts : -1,
+        aborted: false,
+        abort() {
+            context.aborted = true;
+        }
+    };
+    const calculateDelay = options.calculateDelay || defaultCalculateDelay;
+    async function makeAttempt() {
+        if (options.beforeAttempt) {
+            options.beforeAttempt(context, options);
+        }
+        if (context.aborted) {
+            const err = new Error(`Attempt aborted`);
+            err.code = 'ATTEMPT_ABORTED';
+            throw err;
+        }
+        const onError = async (err) => {
+            if (options.handleError) {
+                await options.handleError(err, context, options);
+            }
+            if (context.aborted || (context.attemptsRemaining === 0)) {
+                throw err;
+            }
+            // We are about to try again so increment attempt number
+            context.attemptNum++;
+            const delay = calculateDelay(context, options);
+            if (delay) {
+                await sleep(delay);
+            }
+            return makeAttempt();
+        };
+        if (context.attemptsRemaining > 0) {
+            context.attemptsRemaining--;
+        }
+        if (options.timeout) {
+            return new Promise((resolve, reject) => {
+                const timer = setTimeout(() => {
+                    if (options.handleTimeout) {
+                        // If calling handleTimeout throws an error that is not wrapped in a promise
+                        // we want to catch the error and reject.
+                        try {
+                            resolve(options.handleTimeout(context, options));
+                        }
+                        catch (e) {
+                            reject(e);
+                        }
+                    }
+                    else {
+                        const err = new Error(`Retry timeout (attemptNum: ${context.attemptNum}, timeout: ${options.timeout})`);
+                        err.code = 'ATTEMPT_TIMEOUT';
+                        reject(err);
+                    }
+                }, options.timeout);
+                attemptFunc(context, options).then((result) => {
+                    clearTimeout(timer);
+                    resolve(result);
+                }).catch((err) => {
+                    clearTimeout(timer);
+                    // Calling resolve with a Promise that rejects here will result
+                    // in an unhandled rejection. Calling `reject` with errors
+                    // does not result in an unhandled rejection
+                    onError(err).then(resolve).catch(reject);
+                });
+            });
+        }
+        else {
+            // No timeout provided so wait indefinitely for the returned promise
+            // to be resolved.
+            return attemptFunc(context, options).catch(onError);
+        }
+    }
+    const initialDelay = options.calculateDelay
+        ? options.calculateDelay(context, options)
+        : options.initialDelay;
+    if (initialDelay) {
+        await sleep(initialDelay);
+    }
+    return makeAttempt();
+}
+exports.XD = retry;
+
+
+/***/ }),
+
 /***/ 7760:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -17991,29 +18153,36 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
 	});
 }
 
+// EXTERNAL MODULE: ./node_modules/@lifeomic/attempt/dist/src/index.js
+var src = __nccwpck_require__(6494);
 ;// CONCATENATED MODULE: ./src/client/client.ts
 
 
 
 
+
 /* harmony default export */ const client = ({
-    postManifest: async (url, token, body, logger, _fetch = fetch) => {
+    postManifest: async (url, token, body, logger, _fetch = fetch, errorHandler = defaultClientErrorHandler) => {
         if (!url)
             throw new Error('Speckle Server URL is required');
         if (!token)
             throw new Error('Speckle Token is required');
         const endpointUrl = new external_url_namespaceObject.URL('/api/v1/functions', url);
-        const response = await _fetch(endpointUrl.href, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(body)
-        });
-        if (!response.ok) {
-            throw new Error(`Failed to register Speckle Function. Status Code: ${response.status}. Status Text: ${response.statusText}. Response Body: ${await response.text()}`); //FIXME use a more specific error type
+        let responseBodyStream;
+        try {
+            responseBodyStream = await retryAPIRequest(throwErrorOnClientErrorStatusCode(async () => _fetch(endpointUrl.href, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(body)
+            })), errorHandler);
         }
+        catch (err) {
+            throw new Error('Failed to register Speckle Function.', { cause: err }); //FIXME use a more specific error type
+        }
+        const response = new Response(responseBodyStream);
         let responseBody;
         try {
             responseBody = SpeckleFunctionPostResponseBodySchema.parse(await response.json());
@@ -18024,6 +18193,49 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
         return responseBody;
     }
 });
+function defaultClientErrorHandler(error, context) {
+    if (isNonRetryableError(error)) {
+        context.abort();
+    }
+}
+function isNonRetryableError(error) {
+    return !(error instanceof RetryableError);
+}
+function throwErrorOnClientErrorStatusCode(apiRequest) {
+    return async () => {
+        const response = await apiRequest();
+        // do not retry our failures
+        if (response.status >= 400 && response.status < 500)
+            throw new NonRetryableError('Status code indicates a client error. Not retrying.');
+        if (response.status >= 500)
+            throw new RetryableError('Status code indicates a server error. Retrying.');
+        return response;
+    };
+}
+async function retryAPIRequest(apiRequest, errorHandler) {
+    const { body } = await (0,src/* retry */.XD)(apiRequest, {
+        delay: 200,
+        factor: 2,
+        maxAttempts: 5,
+        minDelay: 100,
+        maxDelay: 500,
+        jitter: true,
+        handleError: errorHandler
+    });
+    return body;
+}
+class RetryableError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'RetryableError';
+    }
+}
+class NonRetryableError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'NonRetryableError';
+    }
+}
 
 ;// CONCATENATED MODULE: ./src/schema/inputs.ts
 

@@ -6,7 +6,8 @@ import {
 import { URL } from 'url'
 import { handleZodError } from '../schema/errors.js'
 import { Logger } from '../logging/logger.js'
-import fetch from 'node-fetch'
+import fetch, { Response } from 'node-fetch'
+import { AttemptContext, HandleError, retry } from '@lifeomic/attempt'
 
 export default {
   postManifest: async (
@@ -14,29 +15,33 @@ export default {
     token: string,
     body: SpeckleFunctionPostRequestBody,
     logger: Logger,
-    _fetch: typeof fetch = fetch
+    _fetch: typeof fetch = fetch,
+    errorHandler = defaultClientErrorHandler
   ): Promise<SpeckleFunctionPostResponseBody> => {
     if (!url) throw new Error('Speckle Server URL is required')
     if (!token) throw new Error('Speckle Token is required')
 
     const endpointUrl = new URL('/api/v1/functions', url)
-    const response = await _fetch(endpointUrl.href, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(body)
-    })
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to register Speckle Function. Status Code: ${
-          response.status
-        }. Status Text: ${response.statusText}. Response Body: ${await response.text()}`
-      ) //FIXME use a more specific error type
+    let responseBodyStream: NodeJS.ReadableStream | null
+    try {
+      responseBodyStream = await retryAPIRequest(
+        throwErrorOnClientErrorStatusCode(async () =>
+          _fetch(endpointUrl.href, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(body)
+          })
+        ),
+        errorHandler
+      )
+    } catch (err) {
+      throw new Error('Failed to register Speckle Function.', { cause: err }) //FIXME use a more specific error type
     }
 
+    const response = new Response(responseBodyStream)
     let responseBody: SpeckleFunctionPostResponseBody
     try {
       responseBody = SpeckleFunctionPostResponseBodySchema.parse(await response.json())
@@ -45,5 +50,62 @@ export default {
     }
 
     return responseBody
+  }
+}
+
+export function defaultClientErrorHandler(
+  error: unknown,
+  context: AttemptContext
+): void {
+  if (isNonRetryableError(error)) {
+    context.abort()
+  }
+}
+
+function isNonRetryableError(error: unknown) {
+  return !(error instanceof RetryableError)
+}
+
+export function throwErrorOnClientErrorStatusCode<T>(
+  apiRequest: () => Promise<{ body: T; status: number }>
+): () => Promise<{ body: T; status: number }> {
+  return async () => {
+    const response = await apiRequest()
+    // do not retry our failures
+    if (response.status >= 400 && response.status < 500)
+      throw new NonRetryableError('Status code indicates a client error. Not retrying.')
+    if (response.status >= 500)
+      throw new RetryableError('Status code indicates a server error. Retrying.')
+    return response
+  }
+}
+
+export async function retryAPIRequest<T>(
+  apiRequest: () => Promise<{ body: T; status: number }>,
+  errorHandler: HandleError<{ body: T; status: number }>
+): Promise<T> {
+  const { body } = await retry(apiRequest, {
+    delay: 200,
+    factor: 2,
+    maxAttempts: 5,
+    minDelay: 100,
+    maxDelay: 500,
+    jitter: true,
+    handleError: errorHandler
+  })
+  return body
+}
+
+export class RetryableError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'RetryableError'
+  }
+}
+
+export class NonRetryableError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'NonRetryableError'
   }
 }
