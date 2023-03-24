@@ -26,11 +26,11 @@ If you believe your token has been compromised, please revoke it immediately on 
 
 Please note that this is not a Speckle Account token, but a **Speckle Automate API** token. You can create one by logging into the [Speckle Automate Server](https://automate.speckle.xyz) and going to the [API Tokens](https://automate.speckle.xyz/tokens) page.
 
-`speckle_function_path`
+#### `speckle_function_path`
 
 The path to the Speckle Automate Function to publish. This path is relative to the root of the repository. If you provide a path to a directory, your Speckle Automate Function must be in a file named `specklefunction.yaml` within that directory.
 
-`function_id`
+#### `function_id`
 
 *Optional.* If you have already registered a Speckle Function, you can use the ID of that Speckle Function to ensure that any changes are associated with it.
 If you do not provide a Function Id, we will attempt to determine the Function ID based on the GitHub server, GitHub repository, Reference (branch), and the Speckle Function Path.
@@ -43,7 +43,7 @@ Your Speckle Token must have write permissions for the Speckle Function with thi
 
 #### `function_id`
 
-The unique ID of the published function. This will be the same as the `function_id` input if it was provided.
+The unique ID of the published function. This will be the same as the `function_id` input if it was provided. If you wish, you can use this ID as `function_id` input.
 
 #### `version_id`
 
