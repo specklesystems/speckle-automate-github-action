@@ -564,6 +564,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lifeomic/attempt@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@lifeomic/attempt@npm:3.0.3"
+  checksum: 837a6684432da2e45d436f70b0dc4cef3b4e8e5a62135f4593a17ee21141c7b9fa675437c918320624f5df09ca9466c0f4b38050d436282ba985f19d169dfc07
+  languageName: node
+  linkType: hard
+
 "@mswjs/cookies@npm:^0.2.2":
   version: 0.2.2
   resolution: "@mswjs/cookies@npm:0.2.2"
@@ -5011,6 +5018,7 @@ __metadata:
   resolution: "speckle-automate-github-action@workspace:."
   dependencies:
     "@actions/core": ^1.10.0
+    "@lifeomic/attempt": ^3.0.3
     "@types/js-yaml": ^4.0.5
     "@types/node": ^18.15.7
     "@typescript-eslint/eslint-plugin": ^5.56.0
