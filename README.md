@@ -189,7 +189,7 @@ jobs:
 
 #### Linting
 
-1. Run `yarn pre-commit` to run all pre-commit hooks.
+1. Run `yarn precommit` to run all pre-commit hooks.
 1. You must address all linting errors prior to committing changes. The CI will fail if there are any linting errors, and you will be unable to merge your PR.
 
 ## Contributing

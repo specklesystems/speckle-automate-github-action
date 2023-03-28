@@ -882,6 +882,7 @@ function createRouter(options = {}) {
   }
   return {
     ctx,
+    // @ts-ignore
     lookup: (path) => lookup(ctx, normalizeTrailingSlash(path)),
     insert: (path, data) => insert(ctx, normalizeTrailingSlash(path), data),
     remove: (path) => remove(ctx, normalizeTrailingSlash(path))
@@ -938,8 +939,7 @@ function insert(ctx, path, data) {
   const sections = path.split("/");
   let node = ctx.rootNode;
   let _unnamedPlaceholderCtr = 0;
-  for (let i = 0; i < sections.length; i++) {
-    const section = sections[i];
+  for (const section of sections) {
     let childNode;
     if (childNode = node.children.get(section)) {
       node = childNode;
@@ -953,7 +953,10 @@ function insert(ctx, path, data) {
         isStaticRoute = false;
       } else if (type === NODE_TYPES.WILDCARD) {
         node.wildcardChildNode = childNode;
-        childNode.paramName = section.substring(3) || "_";
+        childNode.paramName = section.slice(
+          3
+          /* "**:" */
+        ) || "_";
         isStaticRoute = false;
       }
       node = childNode;
@@ -969,8 +972,7 @@ function remove(ctx, path) {
   let success = false;
   const sections = path.split("/");
   let node = ctx.rootNode;
-  for (let i = 0; i < sections.length; i++) {
-    const section = sections[i];
+  for (const section of sections) {
     node = node.children.get(section);
     if (!node) {
       return success;
@@ -981,7 +983,7 @@ function remove(ctx, path) {
     node.data = null;
     if (Object.keys(node.children).length === 0) {
       const parentNode = node.parent;
-      delete parentNode[lastSection];
+      parentNode.children.delete(lastSection);
       parentNode.wildcardChildNode = null;
       parentNode.placeholderChildNode = null;
     }
@@ -1029,14 +1031,14 @@ function _createRouteTable() {
 }
 function _matchRoutes(path, table) {
   const matches = [];
-  for (const [key, value] of table.wildcard) {
+  for (const [key, value] of _sortRoutesMap(table.wildcard)) {
     if (path.startsWith(key)) {
       matches.push(value);
     }
   }
-  for (const [key, value] of table.dynamic) {
+  for (const [key, value] of _sortRoutesMap(table.dynamic)) {
     if (path.startsWith(key + "/")) {
-      const subPath = "/" + path.substring(key.length).split("/").splice(2).join("/");
+      const subPath = "/" + path.slice(key.length).split("/").splice(2).join("/");
       matches.push(..._matchRoutes(subPath, value));
     }
   }
@@ -1045,6 +1047,9 @@ function _matchRoutes(path, table) {
     matches.push(staticMatch);
   }
   return matches.filter(Boolean);
+}
+function _sortRoutesMap(m) {
+  return [...m.entries()].sort((a, b) => a[0].length - b[0].length);
 }
 function _routerNodeToTable(initialPath, initialNode) {
   const table = _createRouteTable();
@@ -1407,12 +1412,12 @@ const ParsedBodySymbol = Symbol.for("h3ParsedBody");
 const PayloadMethods$1 = (/* unused pure expression or super */ null && (["PATCH", "POST", "PUT", "DELETE"]));
 function readRawBody(event, encoding = "utf8") {
   assertMethod(event, PayloadMethods$1);
-  if (RawBodySymbol in event.node.req) {
-    const promise2 = Promise.resolve(event.node.req[RawBodySymbol]);
+  const _rawBody = event.node.req[RawBodySymbol] || event.node.req.body;
+  if (_rawBody) {
+    const promise2 = Promise.resolve(
+      Buffer.isBuffer(_rawBody) ? _rawBody : Buffer.from(_rawBody)
+    );
     return encoding ? promise2.then((buff) => buff.toString(encoding)) : promise2;
-  }
-  if ("body" in event.node.req) {
-    return Promise.resolve(event.node.req.body);
   }
   if (!Number.parseInt(event.node.req.headers["content-length"] || "")) {
     return Promise.resolve(void 0);
@@ -1436,7 +1441,7 @@ async function readBody(event) {
   if (ParsedBodySymbol in event.node.req) {
     return event.node.req[ParsedBodySymbol];
   }
-  const body = await readRawBody(event);
+  const body = await readRawBody(event, "utf8");
   if (event.node.req.headers["content-type"] === "application/x-www-form-urlencoded") {
     const form = new URLSearchParams(body);
     const parsedForm = /* @__PURE__ */ Object.create(null);
