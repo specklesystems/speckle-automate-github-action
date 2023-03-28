@@ -3031,18 +3031,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"h3@npm:^1.6.2":
-  version: 1.6.2
-  resolution: "h3@npm:1.6.2"
+"h3@npm:^1.6.4":
+  version: 1.6.4
+  resolution: "h3@npm:1.6.4"
   dependencies:
     cookie-es: ^0.5.0
     defu: ^6.1.2
     destr: ^1.2.2
     iron-webcrypto: ^0.6.0
-    radix3: ^1.0.0
+    radix3: ^1.0.1
     ufo: ^1.1.1
     uncrypto: ^0.1.2
-  checksum: 3a876f414d6790908b4953684cf2237db1a4e1dd17b46fafd38787f0b1b81ce64d9850342ce0d2ff6b40e8601b07429d666c96a6bd119d9de937ccec7f6ce010
+  checksum: 2a9ed16fdca191207441ba347b92f6005b8ffd27a49975c5d2244877fb6659e7c532f3ca229602b910faf6266808002112fb83302fa02dd8186dd9c6252fef63
   languageName: node
   linkType: hard
 
@@ -4760,10 +4760,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"radix3@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "radix3@npm:1.0.0"
-  checksum: 91086baa4dca048edce44d8267ac142d70a33091e9499853d9e59cf6f310d984224a6d4db20b52aef54cb4e5071b368e472c5f351086748b84173771e184a4a9
+"radix3@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "radix3@npm:1.0.1"
+  checksum: 042e11588464ca444a663f78c2aad11eb35533a26d08a56a53786fd60ddb20a058c720d8f66cad4f010859493753f29ac36aaa47d122b6459675c68a3f74928a
   languageName: node
   linkType: hard
 
@@ -5157,7 +5157,7 @@ __metadata:
     eslint-plugin-prettier: ^4.2.1
     eslint-plugin-vitest: ^0.0.57
     get-port-please: ^3.0.1
-    h3: ^1.6.2
+    h3: ^1.6.4
     js-yaml: ^4.1.0
     listhen: ^1.0.4
     msw: ^1.2.1
