@@ -5176,7 +5176,7 @@ __metadata:
     vite: ^4.2.1
     vitest: ^0.29.8
     zod: ^3.21.4
-    zod-validation-error: ^1.1.0
+    zod-validation-error: ^1.2.1
   languageName: unknown
   linkType: soft
 
@@ -6028,12 +6028,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod-validation-error@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "zod-validation-error@npm:1.1.0"
+"zod-validation-error@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "zod-validation-error@npm:1.2.1"
   peerDependencies:
     zod: ^3.18.0
-  checksum: 4850e8bd88823a6365acc6efffdfa4372193ae1e5dbea2685388c5aed4de6f678c52119aef84d6ca1158b42146372119a296dcb47e34109a14850d5e799c2e5e
+  checksum: 6882e68773a08a194e34480a0b1dcf500002b0de505617c06b6d0af7236051fae9cfdcd0530283b5ae27ebe40e55faf5f10138ae28b87edcf35cf0ec36ee2c5e
   languageName: node
   linkType: hard
 
