@@ -7112,6 +7112,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.isValidationErrorLike = exports.isValidationError = exports.toValidationError = exports.fromZodError = exports.ValidationError = void 0;
 const zod = __importStar(__nccwpck_require__(3301));
 const joinPath_1 = __nccwpck_require__(5406);
+const NonEmptyArray_1 = __nccwpck_require__(7915);
 class ValidationError extends Error {
     details;
     name;
@@ -7139,7 +7140,13 @@ function fromZodIssue(issue, issueSeparator, unionSeparator) {
         }, [])
             .join(unionSeparator);
     }
-    if (issue.path.length > 0) {
+    if ((0, NonEmptyArray_1.isNonEmptyArray)(issue.path)) {
+        if (issue.path.length === 1) {
+            const identifier = issue.path[0];
+            if (typeof identifier === 'number') {
+                return `${issue.message} at index ${identifier}`;
+            }
+        }
         return `${issue.message} at "${(0, joinPath_1.joinPath)(issue.path)}"`;
     }
     return issue.message;
@@ -7193,6 +7200,20 @@ Object.defineProperty(exports, "CC", ({ enumerable: true, get: function () { ret
 
 /***/ }),
 
+/***/ 7915:
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.isNonEmptyArray = void 0;
+function isNonEmptyArray(value) {
+    return value.length !== 0;
+}
+exports.isNonEmptyArray = isNonEmptyArray;
+
+
+/***/ }),
+
 /***/ 5406:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -7200,22 +7221,28 @@ Object.defineProperty(exports, "CC", ({ enumerable: true, get: function () { ret
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.joinPath = void 0;
 const identifierRegex = /[$_\p{ID_Start}][$\u200c\u200d\p{ID_Continue}]*/u;
-function joinPath(arr) {
-    return arr.reduce((acc, value) => {
-        if (typeof value === 'number') {
-            return acc + '[' + value + ']';
+function joinPath(path) {
+    if (path.length === 1) {
+        return path[0].toString();
+    }
+    return path.reduce((acc, item) => {
+        if (typeof item === 'number') {
+            return acc + '[' + item.toString() + ']';
         }
-        if (value.includes('"')) {
-            return acc + '["' + value.replace(/"/g, '\\"') + '"]';
+        if (item.includes('"')) {
+            return acc + '["' + escapeQuotes(item) + '"]';
         }
-        if (!identifierRegex.test(value)) {
-            return acc + '["' + value + '"]';
+        if (!identifierRegex.test(item)) {
+            return acc + '["' + item + '"]';
         }
         const separator = acc.length === 0 ? '' : '.';
-        return acc + separator + value;
+        return acc + separator + item;
     }, '');
 }
 exports.joinPath = joinPath;
+function escapeQuotes(str) {
+    return str.replace(/"/g, '\\"');
+}
 
 
 /***/ }),

@@ -71,7 +71,7 @@ describe('integration', () => {
       })
       describe('invalid input', async () => {
         it('should throw an error', async () => {
-          expect(async () =>
+          await expect(async () =>
             registerSpeckleFunction({
               speckleFunctionId: undefined,
               speckleServerUrl: undefined,
