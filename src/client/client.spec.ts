@@ -59,7 +59,7 @@ describe('client', () => {
                 commitSha: '1234567890',
                 manifest: getMinimalSpeckleFunctionExample()
               })
-              expect(req.headers.get('Authorization')).to.equal('Bearer supersecret')
+              expect(req.headers.get('Authorization')).toBe('Bearer supersecret')
               const response = await res(
                 ctx.status(201),
                 ctx.json({
@@ -165,7 +165,7 @@ describe('client', () => {
     describe('invalid input', () => {
       describe('empty url', () => {
         it('should throw an error', async () => {
-          expect(
+          await expect(
             httpClient.postManifest(
               '',
               'supersecret',
@@ -186,7 +186,7 @@ describe('client', () => {
       })
       describe('empty token', () => {
         it('should throw an error', async () => {
-          expect(
+          await expect(
             httpClient.postManifest(
               'https://example.org',
               '',
@@ -210,27 +210,27 @@ describe('client', () => {
   describe('defaultClientErrorHandler', () => {
     it('aborts unknown errors', () => {
       const context = createFakeContext()
-      expect(context.aborted).to.be.false
+      expect(context.aborted).toBeFalsy()
       defaultClientErrorHandler('🚨', context)
-      expect(context.aborted).to.be.true
+      expect(context.aborted).toBeTruthy()
     })
     it('aborts when the error is a fetch abort error', () => {
       const context = createFakeContext()
-      expect(context.aborted).to.be.false
+      expect(context.aborted).toBeFalsy()
       defaultClientErrorHandler(new AbortError('aborting'), context)
-      expect(context.aborted).to.be.true
+      expect(context.aborted).toBeTruthy()
     })
     it('aborts when the error is a fetch error', () => {
       const context = createFakeContext()
-      expect(context.aborted).to.be.false
+      expect(context.aborted).toBeFalsy()
       defaultClientErrorHandler(new FetchError('not found', 'ENOTFOUND'), context)
-      expect(context.aborted).to.be.true
+      expect(context.aborted).toBeTruthy()
     })
     it('does not abort when the error is a retryable error', () => {
       const context = createFakeContext()
-      expect(context.aborted).to.be.false
+      expect(context.aborted).toBeFalsy()
       defaultClientErrorHandler(new RetryableError('retryable'), context)
-      expect(context.aborted).to.be.false
+      expect(context.aborted).toBeFalsy()
     })
   })
   describe('throwErrorOnClientErrorStatusCode', () => {
@@ -238,43 +238,43 @@ describe('client', () => {
       const result = throwErrorOnClientErrorStatusCode(async () => {
         return { body: '', status: 200 }
       })()
-      expect(result).resolves.toStrictEqual({ body: '', status: 200 })
+      await expect(result).resolves.toStrictEqual({ body: '', status: 200 })
     })
     it('does not throw an error on 3xx', async () => {
       const result = throwErrorOnClientErrorStatusCode(async () => {
         return { body: '', status: 300 }
       })()
-      expect(result).resolves.toStrictEqual({ body: '', status: 300 })
+      await expect(result).resolves.toStrictEqual({ body: '', status: 300 })
     })
     it('throws an error on 4xx', async () => {
       const result = throwErrorOnClientErrorStatusCode(async () => {
         return { body: '', status: 400 }
       })()
-      expect(result).rejects.toThrow(NonRetryableError)
+      await expect(result).rejects.toThrow(NonRetryableError)
     })
     it('throws an error on 5xx', async () => {
       const result = throwErrorOnClientErrorStatusCode(async () => {
         return { body: '', status: 500 }
       })()
-      expect(result).rejects.toThrow(RetryableError)
+      await expect(result).rejects.toThrow(RetryableError)
     })
     it('fetch errors are passed through', async () => {
       const result = throwErrorOnClientErrorStatusCode(async () => {
         throw new FetchError('not found', 'ENOTFOUND')
       })()
-      expect(result).rejects.toThrow(FetchError)
+      await expect(result).rejects.toThrow(FetchError)
     })
     it('abort errors are passed through', async () => {
       const result = throwErrorOnClientErrorStatusCode(async () => {
         throw new AbortError('aborting error')
       })()
-      expect(result).rejects.toThrow(AbortError)
+      await expect(result).rejects.toThrow(AbortError)
     })
     it('unknown errors are passed through', async () => {
       const result = throwErrorOnClientErrorStatusCode(async () => {
         throw new Error('unknown error')
       })()
-      expect(result).rejects.toThrow(Error)
+      await expect(result).rejects.toThrow(Error)
     })
   })
 })

@@ -10,7 +10,7 @@ describe('filesystem/parser', () => {
   })
   describe('No Yaml file', () => {
     it('should throw', async () => {
-      expect(async () =>
+      await expect(async () =>
         findAndParseManifest('doesNotExist', {
           logger: getLogger(),
           fileSystem: {
@@ -49,7 +49,7 @@ describe('Minimal yaml file', () => {
   })
   describe('Invalid yaml file', () => {
     it('should throw', async () => {
-      expect(async () =>
+      await expect(async () =>
         findAndParseManifest('src/tests/data/invalid', {
           logger: getLogger(),
           fileSystem: {
