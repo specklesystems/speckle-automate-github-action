@@ -855,7 +855,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:5.57.1, @typescript-eslint/utils@npm:^5.53.0":
+"@typescript-eslint/utils@npm:5.57.1, @typescript-eslint/utils@npm:^5.57.0":
   version: 5.57.1
   resolution: "@typescript-eslint/utils@npm:5.57.1"
   dependencies:
@@ -2283,14 +2283,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vitest@npm:^0.0.57":
-  version: 0.0.57
-  resolution: "eslint-plugin-vitest@npm:0.0.57"
+"eslint-plugin-vitest@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "eslint-plugin-vitest@npm:0.1.1"
   dependencies:
-    "@typescript-eslint/utils": ^5.53.0
+    "@typescript-eslint/utils": ^5.57.0
   peerDependencies:
     eslint: ">=8.0.0"
-  checksum: f7f02b731a6e8463a001727209fdc24e222327463be72d97c1d00225ed62e8811723f21ab3c0fe07d4c12ce69d54f59903f2a96e38f578403d386c71d4ce01dc
+  checksum: 65cfc95f577f7e31965cef11fd9596dd17b015de70bb47c61f47e7350ec71dbe131f8e6bf75f99e151cecf43d9c6b7ffb570813122e719084a20bde7016a6bdb
   languageName: node
   linkType: hard
 
@@ -5012,7 +5012,7 @@ __metadata:
     eslint-plugin-import: ^2.27.5
     eslint-plugin-no-only-tests: ^3.1.0
     eslint-plugin-prettier: ^4.2.1
-    eslint-plugin-vitest: ^0.0.57
+    eslint-plugin-vitest: ^0.1.1
     get-port-please: ^3.0.1
     h3: ^1.6.4
     js-yaml: ^4.1.0
