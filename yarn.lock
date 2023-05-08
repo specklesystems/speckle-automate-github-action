@@ -1773,10 +1773,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie-es@npm:^0.5.0":
-  version: 0.5.0
-  resolution: "cookie-es@npm:0.5.0"
-  checksum: afe924dd44e2c9aaa60ed77e78182e44324acd0a155ea947bb0174e5c48625ee277b004bfbca1bc6cfd24955f2b4039813c7c88bd9d7921ca475eae0286d2666
+"cookie-es@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "cookie-es@npm:1.0.0"
+  checksum: e8721cf4d38f3e44049c9118874b323f4f674b1c5cef84a2b888f5bf86ad720ad17b51b43150cad7535a375c24e2921da603801ad28aa6125c3d36c031b41468
   languageName: node
   linkType: hard
 
@@ -3044,18 +3044,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"h3@npm:^1.6.4":
-  version: 1.6.4
-  resolution: "h3@npm:1.6.4"
+"h3@npm:^1.6.5":
+  version: 1.6.5
+  resolution: "h3@npm:1.6.5"
   dependencies:
-    cookie-es: ^0.5.0
+    cookie-es: ^1.0.0
     defu: ^6.1.2
     destr: ^1.2.2
-    iron-webcrypto: ^0.6.0
+    iron-webcrypto: ^0.7.0
     radix3: ^1.0.1
-    ufo: ^1.1.1
+    ufo: ^1.1.2
     uncrypto: ^0.1.2
-  checksum: 2a9ed16fdca191207441ba347b92f6005b8ffd27a49975c5d2244877fb6659e7c532f3ca229602b910faf6266808002112fb83302fa02dd8186dd9c6252fef63
+  checksum: 23b34f7cc62a46bcf5ac2e51b39af4a4ff425483b90cde8ca8310e8dcd6d1f7c2377dd72f26c1fcaff88497bd14957f2fd14422e2306990b4541d23077f1e131
   languageName: node
   linkType: hard
 
@@ -3331,10 +3331,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iron-webcrypto@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "iron-webcrypto@npm:0.6.0"
-  checksum: a0f2d8ed4374c0d3e37562f8030cf5cbe5def64c8ffc4103d64f93d0bf7fdda004849bc425b69cb931c2ad1b933ddeb01faa10c9bb023182d472036377278132
+"iron-webcrypto@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "iron-webcrypto@npm:0.7.0"
+  checksum: e866c039bf06444dbb1986821df87706dc90ec1c04a03b27eb7f554f4c8dc43b6647f434645060a22c59990f9acac4b87a454adf47d89e5509e5bd627cd423be
   languageName: node
   linkType: hard
 
@@ -5196,7 +5196,7 @@ __metadata:
     eslint-plugin-prettier: ^4.2.1
     eslint-plugin-vitest: ^0.1.5
     get-port-please: ^3.0.1
-    h3: ^1.6.4
+    h3: ^1.6.5
     js-yaml: ^4.1.0
     listhen: ^1.0.4
     msw: ^1.2.1
@@ -5642,6 +5642,13 @@ __metadata:
   version: 1.1.1
   resolution: "ufo@npm:1.1.1"
   checksum: 6bd210ed93d8c0dedd76c456b1d1dfb0e3b08c2216ee6080e61f0f545de0bac24b3d3a5530cd6a403810855f8d8fc3922583965296142e04cfc287442635e6c7
+  languageName: node
+  linkType: hard
+
+"ufo@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "ufo@npm:1.1.2"
+  checksum: 83c940a6a23b6d4fc0cd116265bb5dcf88ab34a408ad9196e413270ca607a4781c09b547dc518f43caee128a096f20fe80b5a0e62b4bcc0a868619896106d048
   languageName: node
   linkType: hard
 

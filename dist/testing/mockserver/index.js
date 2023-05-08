@@ -389,7 +389,7 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 
-;// CONCATENATED MODULE: ./node_modules/ufo/dist/index.mjs
+;// CONCATENATED MODULE: ./node_modules/h3/node_modules/ufo/dist/index.mjs
 const n = /[^\0-\x7E]/;
 const t = /[\x2E\u3002\uFF0E\uFF61]/g;
 const o = {
@@ -1414,8 +1414,8 @@ function readRawBody(event, encoding = "utf8") {
   assertMethod(event, PayloadMethods$1);
   const _rawBody = event.node.req[RawBodySymbol] || event.node.req.body;
   if (_rawBody) {
-    const promise2 = Promise.resolve(
-      Buffer.isBuffer(_rawBody) ? _rawBody : Buffer.from(_rawBody)
+    const promise2 = Promise.resolve(_rawBody).then(
+      (_resolved) => Buffer.isBuffer(_resolved) ? _resolved : Buffer.from(_resolved)
     );
     return encoding ? promise2.then((buff) => buff.toString(encoding)) : promise2;
   }
