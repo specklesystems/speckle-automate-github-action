@@ -19,9 +19,9 @@ describe('integration', () => {
     server.resetHandlers()
   })
 
-  describe('Load from ./examples directory', async () => {
-    describe('registerSpeckleAutomate', async () => {
-      describe('valid input', async () => {
+  describe('Load from ./examples directory', () => {
+    describe('registerSpeckleAutomate', () => {
+      describe('valid input', () => {
         it('should respond with image name, function id, and version id', async () => {
           server.use(
             rest.post(
@@ -69,7 +69,7 @@ describe('integration', () => {
           })
         })
       })
-      describe('invalid input', async () => {
+      describe('invalid input', () => {
         it('should throw an error', async () => {
           await expect(async () =>
             registerSpeckleFunction({
