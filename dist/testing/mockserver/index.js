@@ -1388,23 +1388,31 @@ function getRequestHeader(event, name) {
   return value;
 }
 const getHeader = (/* unused pure expression or super */ null && (getRequestHeader));
-function getRequestHost(event) {
-  const xForwardedHost = event.node.req.headers["x-forwarded-host"];
-  if (xForwardedHost) {
-    return xForwardedHost;
+function getRequestHost(event, opts = {}) {
+  if (opts.xForwardedHost) {
+    const xForwardedHost = event.node.req.headers["x-forwarded-host"];
+    if (xForwardedHost) {
+      return xForwardedHost;
+    }
   }
   return event.node.req.headers.host || "localhost";
 }
-function getRequestProtocol(event) {
-  if (event.node.req.headers["x-forwarded-proto"] === "https") {
+function getRequestProtocol(event, opts = {}) {
+  if (opts.xForwardedProto !== false && event.node.req.headers["x-forwarded-proto"] === "https") {
     return "https";
   }
   return event.node.req.connection.encrypted ? "https" : "http";
 }
-function getRequestURL(event) {
-  const host = getRequestHost(event);
+const DOUBLE_SLASH_RE = /[/\\]{2,}/g;
+function getRequestPath(event) {
+  const path = (event.node.req.url || "/").replace(DOUBLE_SLASH_RE, "/");
+  return path;
+}
+function getRequestURL(event, opts = {}) {
+  const host = getRequestHost(event, opts);
   const protocol = getRequestProtocol(event);
-  return new URL(event.path || "/", `${protocol}://${host}`);
+  const path = getRequestPath(event);
+  return new URL(path, `${protocol}://${host}`);
 }
 
 const RawBodySymbol = Symbol.for("h3RawBody");
@@ -2216,7 +2224,7 @@ class H3Event {
     this.node = { req, res };
   }
   get path() {
-    return this.req.url;
+    return getRequestPath(this);
   }
   /** @deprecated Please use `event.node.req` instead. **/
   get req() {
