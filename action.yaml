@@ -16,7 +16,7 @@ inputs:
     description: 'Path to the Speckle Function definition (`specklefunction.yaml`) to be published.'
     required: false
     default: '.' # root directory of the checked out source code, ${GITHUB_WORKSPACE}
-  function_id:
+  speckle_function_id:
     description: '(Optional) The unique identifier of the function if it has already been created. If not provided, Speckle Automate will try to find the function ID based on the url, ref, and path. If there are no matches, a new function Id will be generated.'
     required: false
 outputs:
