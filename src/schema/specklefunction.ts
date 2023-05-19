@@ -50,14 +50,6 @@ export const SpeckleFunctionSchema = z.object({
         })
       )
       .optional(),
-    steps: z
-      .array(
-        z.object({
-          name: z.string().nonempty()
-          //TODO
-        })
-      )
-      .nonempty(),
     requirements: z
       .object({
         os: z.enum(['windows', 'linux']).default('linux'),

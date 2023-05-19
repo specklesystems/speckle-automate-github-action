@@ -15961,11 +15961,6 @@ const SpeckleFunctionSchema = z.object({
         //TODO
         }))
             .optional(),
-        steps: z.array(z.object({
-            name: z.string().nonempty()
-            //TODO
-        }))
-            .nonempty(),
         requirements: z.object({
             os: z["enum"](['windows', 'linux']).default('linux'),
             architecture: z["enum"](['amd64']).default('amd64'),
