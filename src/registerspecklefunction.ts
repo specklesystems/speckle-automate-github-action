@@ -5,22 +5,20 @@ import {
   SpeckleTokenSchema,
   SpeckleFunctionPathSchema,
   SpeckleFunctionIdSchema,
-  GitRefSchema,
-  GitCommitShaSchema,
-  SpeckleFunctionRepositorySchema
+  VersionTagSchema,
+  CommitIdSchema
 } from './schema/inputs.js'
 
 import { handleZodError } from './schema/errors.js'
-import { SpeckleFunctionPostRequestBody } from './client/schema.js'
+import { FunctionVersionRequest } from './client/schema.js'
 import { findAndParseManifest } from './filesystem/parser.js'
 import { FileSystem } from './filesystem/files.js'
 
 type ProcessOptions = {
   speckleServerUrl: string | undefined
   speckleToken: string
-  speckleFunctionRepositoryUrl: string
-  ref: string | undefined
-  commitsha: string | undefined
+  versionTag: string
+  commitId: string
   speckleFunctionPath: string | undefined
   speckleFunctionId?: string | undefined
   logger: Logger
@@ -38,21 +36,17 @@ export async function registerSpeckleFunction(
 ): Promise<ProcessResult> {
   let speckleServerUrl: string
   let speckleToken: string
-  let speckleFunctionRepositoryUrl: string
   let speckleFunctionPath: string
-  let speckleFunctionId: string | undefined
-  let gitRef: string
-  let gitCommitSha: string
+  let speckleFunctionId: string
+  let versionTag: string
+  let commitId: string
   try {
     speckleServerUrl = SpeckleServerUrlSchema.parse(opts.speckleServerUrl)
     speckleToken = SpeckleTokenSchema.parse(opts.speckleToken)
-    speckleFunctionRepositoryUrl = SpeckleFunctionRepositorySchema.parse(
-      opts.speckleFunctionRepositoryUrl
-    )
     speckleFunctionPath = SpeckleFunctionPathSchema.parse(opts.speckleFunctionPath)
     speckleFunctionId = SpeckleFunctionIdSchema.parse(opts.speckleFunctionId)
-    gitRef = GitRefSchema.parse(opts.ref)
-    gitCommitSha = GitCommitShaSchema.parse(opts.commitsha)
+    versionTag = VersionTagSchema.parse(opts.versionTag)
+    commitId = CommitIdSchema.parse(opts.commitId)
   } catch (err) {
     throw handleZodError(err, opts.logger)
   }
@@ -60,24 +54,25 @@ export async function registerSpeckleFunction(
   opts.logger.info(`Speckle Server URL: '${speckleServerUrl}'`)
   //token is masked in the logs, so no need to print it here.
   opts.logger.info(`Speckle Function Path: '${speckleFunctionPath}'`)
-  opts.logger.info(`Speckle Function ID (optional): '${speckleFunctionId}'`)
+  opts.logger.info(`Speckle Function ID: '${speckleFunctionId}'`)
 
   const manifest = await findAndParseManifest(speckleFunctionPath, {
     logger: opts.logger,
     fileSystem: opts.fileSystem
   })
 
-  const body: SpeckleFunctionPostRequestBody = {
-    functionId: speckleFunctionId || null,
-    url: speckleFunctionRepositoryUrl,
-    path: speckleFunctionPath,
-    ref: gitRef,
-    commitSha: gitCommitSha,
-    manifest
+  const body: FunctionVersionRequest = {
+    commitId,
+    versionTag,
+    steps: [], //FIXME remove this, one function === one step!
+    inputSchema: {}, //FIXME this needs to be read in from a schema file?
+    annotations: manifest.metadata.annotations
   }
+
   const response = await client.postManifest(
     speckleServerUrl,
     speckleToken,
+    speckleFunctionId,
     body,
     opts.logger
   )

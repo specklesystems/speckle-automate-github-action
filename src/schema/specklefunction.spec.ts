@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { SpeckleFunctionSchema } from './specklefunction.js'
+import { SpeckleFunctionAnnotations, SpeckleFunctionSchema } from './specklefunction.js'
 import { ZodError } from 'zod'
 
 export type NonConformantSpeckleFunction = {
@@ -8,20 +8,10 @@ export type NonConformantSpeckleFunction = {
   metadata:
     | {
         name: string | undefined
+        annotations: SpeckleFunctionAnnotations | undefined
       }
     | undefined
-  spec:
-    | {
-        steps:
-          | [
-              {
-                name: string | undefined
-              }
-            ]
-          | []
-          | undefined
-      }
-    | undefined
+  spec: object | undefined
 }
 
 export function getMinimalSpeckleFunctionExample(): NonConformantSpeckleFunction {
@@ -29,15 +19,12 @@ export function getMinimalSpeckleFunctionExample(): NonConformantSpeckleFunction
     apiVersion: 'speckle.systems/v1alpha1',
     kind: 'SpeckleFunction',
     metadata: {
-      name: 'minimal'
+      name: 'minimal',
+      annotations: {
+        'speckle.systems/v1alpha1/publishing/status': 'draft'
+      }
     },
-    spec: {
-      steps: [
-        {
-          name: 'step1'
-        }
-      ]
-    }
+    spec: {}
   }
 }
 
@@ -93,26 +80,6 @@ describe('speckle function schema', () => {
       it('cannot be missing', async () => {
         minimal.spec = undefined
         expect(() => SpeckleFunctionSchema.parse(minimal)).toThrow(ZodError)
-      })
-      describe('steps', () => {
-        it('cannot be missing', async () => {
-          if (minimal.spec === undefined) throw new Error('spec is undefined') // for typescript
-          minimal.spec.steps = undefined
-          expect(() => SpeckleFunctionSchema.parse(minimal)).toThrow(ZodError)
-        })
-        it('must have at least one item', async () => {
-          if (minimal.spec === undefined) throw new Error('spec is undefined') // for typescript
-          minimal.spec.steps = []
-          expect(() => SpeckleFunctionSchema.parse(minimal)).toThrow(ZodError)
-        })
-        it('items cannot be missing a name', async () => {
-          if (minimal.spec === undefined) throw new Error('spec is undefined') // for typescript
-          if (minimal.spec.steps === undefined) throw new Error('steps is undefined') // for typescript
-          if (minimal.spec.steps[0] === undefined)
-            throw new Error('steps[0] is undefined') // for typescript
-          minimal.spec.steps[0].name = ''
-          expect(() => SpeckleFunctionSchema.parse(minimal)).toThrow(ZodError)
-        })
       })
     })
 

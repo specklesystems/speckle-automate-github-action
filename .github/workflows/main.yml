@@ -27,6 +27,7 @@ jobs:
         with:
           speckle_server_url: 'http://127.0.0.1:3000'
           speckle_token: 'lolzSuperSecretzToken'
+          speckle_function_id: 'functionid'
           speckle_function_path: 'examples/minimal'
   pre-commit:
     runs-on: ubuntu-latest

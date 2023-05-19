@@ -3527,7 +3527,7 @@ function formatURL(url) {
 async function run() {
     const hostname = '127.0.0.1';
     const app = createApp({ debug: false });
-    const router = dist_createRouter().post('/api/v1/functions', eventHandler((event) => {
+    const router = dist_createRouter().post('/api/v1/functions/functionid/versions', eventHandler((event) => {
         event.node.res.statusCode = 201;
         event.node.res.statusMessage = 'Created';
         event.node.res.setHeader('Content-Type', 'application/json');
