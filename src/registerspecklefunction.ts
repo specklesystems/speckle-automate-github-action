@@ -26,9 +26,7 @@ type ProcessOptions = {
 }
 
 type ProcessResult = {
-  functionId: string
   versionId: string
-  imageName: string
 }
 
 export async function registerSpeckleFunction(
@@ -78,7 +76,7 @@ export async function registerSpeckleFunction(
   )
 
   opts.logger.info(
-    `Successfully registered Speckle Function with ID: ${response.functionId}`
+    `Successfully registered version ${response.versionId} of Speckle Function ${speckleFunctionId}`
   )
   return response
 }

@@ -61,9 +61,7 @@ describe('client', () => {
               const response = await res(
                 ctx.status(201),
                 ctx.json({
-                  functionId: 'minimalfunctionid',
-                  versionId: 'minimalversionid',
-                  imageName: 'speckle/minimalfunctionid:minimalversionid'
+                  versionId: 'minimalversionid'
                 })
               )
               return response
@@ -88,9 +86,7 @@ describe('client', () => {
         )
 
         await expect(test).resolves.toStrictEqual({
-          functionId: 'minimalfunctionid',
-          versionId: 'minimalversionid',
-          imageName: 'speckle/minimalfunctionid:minimalversionid'
+          versionId: 'minimalversionid'
         })
       })
     })

@@ -15996,9 +15996,7 @@ const FunctionVersionRequestSchema = z.object({
     annotations: SpeckleFunctionAnnotationsSchema
 });
 const SpeckleFunctionPostResponseBodySchema = z.object({
-    functionId: z.string().nonempty(),
-    versionId: z.string().nonempty(),
-    imageName: z.string().nonempty()
+    versionId: z.string().nonempty()
 });
 
 ;// CONCATENATED MODULE: external "url"
@@ -18310,7 +18308,7 @@ async function registerSpeckleFunction(opts) {
         annotations: manifest.metadata.annotations
     };
     const response = await client.postManifest(speckleServerUrl, speckleToken, speckleFunctionId, body, opts.logger);
-    opts.logger.info(`Successfully registered Speckle Function with ID: ${response.functionId}`);
+    opts.logger.info(`Successfully registered version ${response.versionId} of Speckle Function ${speckleFunctionId}`);
     return response;
 }
 
@@ -22197,7 +22195,7 @@ async function run() {
             throw new Error('GITHUB_REF_NAME is not defined');
         if (!gitRefName)
             throw new Error('GITHUB_REF_NAME is not defined');
-        const { imageName, functionId, versionId } = await registerSpeckleFunction({
+        const { versionId } = await registerSpeckleFunction({
             speckleServerUrl: speckleServerUrlRaw,
             speckleToken: speckleTokenRaw,
             speckleFunctionPath: speckleFunctionPathRaw,
@@ -22207,9 +22205,7 @@ async function run() {
             logger: core,
             fileSystem: files
         });
-        core.setOutput('function_id', functionId);
         core.setOutput('version_id', versionId);
-        core.setOutput('image_name', imageName);
     }
     catch (error) {
         if (error instanceof Error)

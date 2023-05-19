@@ -13,9 +13,7 @@ async function run() {
       event.node.res.statusMessage = 'Created'
       event.node.res.setHeader('Content-Type', 'application/json')
       return {
-        functionId: 'minimalfunctionid',
-        versionId: 'minimalversionid',
-        imageName: 'speckle/minimalfunctionid:minimalversionid'
+        versionId: 'minimalversionid'
       }
     })
   )
