@@ -13,9 +13,7 @@ export const FunctionVersionRequestSchema = z.object({
 export type FunctionVersionRequest = z.infer<typeof FunctionVersionRequestSchema>
 
 export const SpeckleFunctionPostResponseBodySchema = z.object({
-  functionId: z.string().nonempty(),
-  versionId: z.string().nonempty(),
-  imageName: z.string().nonempty()
+  versionId: z.string().nonempty()
 })
 
 export type SpeckleFunctionPostResponseBody = z.infer<

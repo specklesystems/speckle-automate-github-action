@@ -38,9 +38,7 @@ describe('integration', () => {
                 const response = await res(
                   ctx.status(201),
                   ctx.json({
-                    functionId: 'minimalfunctionid',
-                    versionId: 'minimalversionid',
-                    imageName: 'speckle/minimalfunctionid:minimalversionid'
+                    versionId: 'minimalversionid'
                   })
                 )
                 return response
@@ -60,9 +58,7 @@ describe('integration', () => {
             }
           })
           await expect(result).resolves.toStrictEqual({
-            functionId: 'minimalfunctionid',
-            versionId: 'minimalversionid',
-            imageName: 'speckle/minimalfunctionid:minimalversionid'
+            versionId: 'minimalversionid'
           })
         })
       })
