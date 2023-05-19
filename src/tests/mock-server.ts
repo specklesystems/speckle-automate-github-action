@@ -7,7 +7,7 @@ async function run() {
   const hostname = '127.0.0.1'
   const app = createApp({ debug: false })
   const router = createRouter().post(
-    '/api/v1/functions',
+    '/api/v1/functions/functionid/versions',
     eventHandler((event: H3Event): SpeckleFunctionPostResponseBody => {
       event.node.res.statusCode = 201
       event.node.res.statusMessage = 'Created'

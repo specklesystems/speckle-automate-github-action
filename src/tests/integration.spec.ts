@@ -25,15 +25,14 @@ describe('integration', () => {
         it('should respond with image name, function id, and version id', async () => {
           server.use(
             rest.post(
-              'https://integration1.automate.speckle.example.org/api/v1/functions',
+              'https://integration1.automate.speckle.example.org/api/v1/functions/functionid/versions',
               async (req, res, ctx) => {
-                expect(req.body).toStrictEqual({
-                  functionId: null,
-                  url: 'https://github.com/specklesystems/speckle-automate-examples.git',
-                  path: 'examples/minimal',
-                  ref: 'main',
-                  commitSha: '1234567890',
-                  manifest: getMinimalSpeckleFunctionExample()
+                expect(await req.json()).toStrictEqual({
+                  versionTag: 'main',
+                  commitId: '1234567890',
+                  steps: [],
+                  inputSchema: {},
+                  annotations: getMinimalSpeckleFunctionExample().metadata?.annotations
                 })
                 expect(req.headers.get('Authorization')).toBe('Bearer supersecret')
                 const response = await res(
@@ -49,14 +48,12 @@ describe('integration', () => {
             )
           )
           const result = registerSpeckleFunction({
-            speckleFunctionId: undefined,
+            speckleFunctionId: 'functionid',
             speckleServerUrl: 'https://integration1.automate.speckle.example.org',
             speckleToken: 'supersecret',
-            speckleFunctionRepositoryUrl:
-              'https://github.com/specklesystems/speckle-automate-examples.git',
             speckleFunctionPath: 'examples/minimal',
-            ref: 'main',
-            commitsha: '1234567890',
+            versionTag: 'main',
+            commitId: '1234567890',
             logger: getLogger(),
             fileSystem: {
               loadYaml: async () => getMinimalSpeckleFunctionExample()
@@ -73,13 +70,12 @@ describe('integration', () => {
         it('should throw an error', async () => {
           await expect(async () =>
             registerSpeckleFunction({
-              speckleFunctionId: undefined,
-              speckleServerUrl: undefined,
+              speckleFunctionId: 'functionid',
+              speckleServerUrl: 'https://integration1.automate.speckle.example.org',
               speckleToken: '',
-              speckleFunctionRepositoryUrl: '',
               speckleFunctionPath: undefined,
-              ref: undefined,
-              commitsha: undefined,
+              versionTag: '',
+              commitId: '',
               logger: getLogger(),
               fileSystem: {
                 loadYaml: async () => getMinimalSpeckleFunctionExample()

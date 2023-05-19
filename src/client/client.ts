@@ -1,7 +1,7 @@
 import {
   SpeckleFunctionPostResponseBody,
   SpeckleFunctionPostResponseBodySchema,
-  SpeckleFunctionPostRequestBody
+  FunctionVersionRequest
 } from './schema.js'
 import { URL } from 'url'
 import { handleZodError } from '../schema/errors.js'
@@ -13,7 +13,8 @@ export default {
   postManifest: async (
     url: string,
     token: string,
-    body: SpeckleFunctionPostRequestBody,
+    functionId: string,
+    body: FunctionVersionRequest,
     logger: Logger,
     _fetch: typeof fetch = fetch,
     errorHandler = defaultClientErrorHandler
@@ -21,7 +22,7 @@ export default {
     if (!url) throw new Error('Speckle Server URL is required')
     if (!token) throw new Error('Speckle Token is required')
 
-    const endpointUrl = new URL('/api/v1/functions', url)
+    const endpointUrl = new URL(`/api/v1/functions/${functionId}/versions`, url)
     let responseBodyStream: NodeJS.ReadableStream | null
     try {
       responseBodyStream = await retryAPIRequest(
@@ -30,7 +31,7 @@ export default {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
+              authorization: `Bearer ${token}`
             },
             body: JSON.stringify(body)
           })
@@ -38,7 +39,7 @@ export default {
         errorHandler
       )
     } catch (err) {
-      throw new Error('Failed to register Speckle Function.', { cause: err }) //FIXME use a more specific error type
+      throw new Error(`Failed to register Speckle Function: ${err}`, { cause: err }) //FIXME use a more specific error type
     }
 
     const response = new Response(responseBodyStream)

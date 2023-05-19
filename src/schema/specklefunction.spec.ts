@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { SpeckleFunctionSchema } from './specklefunction.js'
+import { SpeckleFunctionAnnotations, SpeckleFunctionSchema } from './specklefunction.js'
 import { ZodError } from 'zod'
 
 export type NonConformantSpeckleFunction = {
@@ -8,6 +8,7 @@ export type NonConformantSpeckleFunction = {
   metadata:
     | {
         name: string | undefined
+        annotations: SpeckleFunctionAnnotations | undefined
       }
     | undefined
   spec:
@@ -29,7 +30,10 @@ export function getMinimalSpeckleFunctionExample(): NonConformantSpeckleFunction
     apiVersion: 'speckle.systems/v1alpha1',
     kind: 'SpeckleFunction',
     metadata: {
-      name: 'minimal'
+      name: 'minimal',
+      annotations: {
+        'speckle.systems/v1alpha1/publishing/status': 'draft'
+      }
     },
     spec: {
       steps: [

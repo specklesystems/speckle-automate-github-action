@@ -9,19 +9,19 @@ async function run(): Promise<void> {
     core.setSecret(speckleTokenRaw)
     const speckleFunctionPathRaw = core.getInput('speckle_function_path')
     const speckleFunctionIdRaw = core.getInput('speckle_function_id')
-    const gitServerUrl = process.env.GITHUB_SERVER_URL
-    const gitRepository = process.env.GITHUB_REPOSITORY
-    const gitRefRaw = process.env.GITHUB_REF_NAME
+    const gitRefName = process.env.GITHUB_REF_NAME
     const gitCommitShaRaw = process.env.GITHUB_SHA
+
+    if (!gitCommitShaRaw) throw new Error('GITHUB_REF_NAME is not defined')
+    if (!gitRefName) throw new Error('GITHUB_REF_NAME is not defined')
 
     const { imageName, functionId, versionId } = await registerSpeckleFunction({
       speckleServerUrl: speckleServerUrlRaw,
       speckleToken: speckleTokenRaw,
-      speckleFunctionRepositoryUrl: `${gitServerUrl}/${gitRepository}.git`,
       speckleFunctionPath: speckleFunctionPathRaw,
       speckleFunctionId: speckleFunctionIdRaw,
-      ref: gitRefRaw,
-      commitsha: gitCommitShaRaw,
+      versionTag: gitRefName,
+      commitId: gitCommitShaRaw,
       logger: core,
       fileSystem: fileUtil
     })

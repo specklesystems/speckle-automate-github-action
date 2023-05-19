@@ -15933,23 +15933,24 @@ var z = /*#__PURE__*/Object.freeze({
 
 const SpeckleFunctionKind = 'SpeckleFunction';
 const SpeckleFunctionApiVersionV1Alpha1 = 'speckle.systems/v1alpha1';
+const SpeckleFunctionAnnotationsSchema = z.object({
+    'speckle.systems/v1alpha1/publishing/status': z["enum"](['publish', 'draft', 'archive'])
+        .default('draft'),
+    'speckle.systems/v1alpha1/author': z.string().optional(),
+    'speckle.systems/v1alpha1/license': z["enum"](['MIT', 'BSD', 'Apache-2.0', 'MPL', 'CC0', 'Unlicense'])
+        .optional(),
+    'speckle.systems/v1alpha1/website': z.string().url().optional(),
+    'speckle.systems/v1alpha1/documentation': z.string().url().optional(),
+    'speckle.systems/v1alpha1/keywords': z.string().optional(),
+    'speckle.systems/v1alpha1/description': z.string().optional()
+})
+    .optional();
 const SpeckleFunctionSchema = z.object({
     kind: z.literal(SpeckleFunctionKind),
     apiVersion: z["enum"]([SpeckleFunctionApiVersionV1Alpha1]),
     metadata: z.object({
         name: z.string().nonempty(),
-        annotations: z.object({
-            'speckle.systems/v1alpha1/publishing/status': z["enum"](['publish', 'draft', 'archive'])
-                .default('draft'),
-            'speckle.systems/v1alpha1/author': z.string().optional(),
-            'speckle.systems/v1alpha1/license': z["enum"](['MIT', 'BSD', 'Apache-2.0', 'MPL', 'CC0', 'Unlicense'])
-                .optional(),
-            'speckle.systems/v1alpha1/website': z.string().url().optional(),
-            'speckle.systems/v1alpha1/documentation': z.string().url().optional(),
-            'speckle.systems/v1alpha1/keywords': z.string().optional(),
-            'speckle.systems/v1alpha1/description': z.string().optional()
-        })
-            .optional()
+        annotations: SpeckleFunctionAnnotationsSchema
     }),
     spec: z.object({
         inputs: z.array(z.object({
@@ -15974,42 +15975,30 @@ const SpeckleFunctionSchema = z.object({
     })
 });
 
-;// CONCATENATED MODULE: external "url"
-const external_url_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("url");
+;// CONCATENATED MODULE: ./src/schema/inputs.ts
+
+const SpeckleServerUrlSchema = z.string().url().nonempty();
+const SpeckleTokenSchema = z.string().nonempty();
+const SpeckleFunctionRepositorySchema = z.string().nonempty(); //TODO validate this as a git+https, https, or ssh url
+const SpeckleFunctionPathSchema = z.string()
+    .nonempty()
+    .refine((value) => !value.startsWith('/'), {
+    message: 'Must not be an absolute path.'
+});
+const SpeckleFunctionIdSchema = z.string().nonempty();
+const VersionTagSchema = z.string().nonempty();
+const CommitIdSchema = z.string().nonempty();
+
 ;// CONCATENATED MODULE: ./src/client/schema.ts
 
 
 
-const SpeckleFunctionPostRequestBodySchema = z.object({
-    functionId: z.union([z.string().nonempty(), z["null"]()]),
-    url: z.string()
-        .url()
-        .refine((data) => {
-        try {
-            const normalizedUrl = new external_url_namespaceObject.URL(data);
-            if (normalizedUrl.password !== '' || normalizedUrl.username !== '') {
-                return false;
-            }
-        }
-        catch {
-            // invalid urls may be valid git ssh uris; we can't tell so we'll return
-            //TODO complex regex for validating all the types of git uri
-            return true;
-        }
-        return true;
-    }, {
-        message: 'HTTP basic authentication is not allowed within the Url. The Url is not stored as an encrypted value and we cannot guarantee the safety of the basic authentication credentials.'
-    }),
-    path: z.string()
-        .nonempty()
-        .refine(() => true, //TODO validate it is a path, and the path is not a directory traversal attack out of the source code directory (such as ../../etc/passwd). We can take much of the directory traversal code from build-instructions-step.
-    {
-        message: 'Must be a valid path.'
-    })
-        .default('.'),
-    ref: z.string().nonempty(),
-    commitSha: z.string().nonempty(),
-    manifest: SpeckleFunctionSchema
+const FunctionVersionRequestSchema = z.object({
+    commitId: CommitIdSchema,
+    versionTag: VersionTagSchema,
+    inputSchema: z.record(z.string(), z.any()),
+    steps: z.array(z.string().nonempty()),
+    annotations: SpeckleFunctionAnnotationsSchema
 });
 const SpeckleFunctionPostResponseBodySchema = z.object({
     functionId: z.string().nonempty(),
@@ -16017,6 +16006,8 @@ const SpeckleFunctionPostResponseBodySchema = z.object({
     imageName: z.string().nonempty()
 });
 
+;// CONCATENATED MODULE: external "url"
+const external_url_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("url");
 // EXTERNAL MODULE: ./node_modules/zod-validation-error/dist/cjs/index.js
 var cjs = __nccwpck_require__(8780);
 ;// CONCATENATED MODULE: ./src/schema/errors.ts
@@ -18189,25 +18180,25 @@ var src = __nccwpck_require__(6494);
 
 
 /* harmony default export */ const client = ({
-    postManifest: async (url, token, body, logger, _fetch = fetch, errorHandler = defaultClientErrorHandler) => {
+    postManifest: async (url, token, functionId, body, logger, _fetch = fetch, errorHandler = defaultClientErrorHandler) => {
         if (!url)
             throw new Error('Speckle Server URL is required');
         if (!token)
             throw new Error('Speckle Token is required');
-        const endpointUrl = new external_url_namespaceObject.URL('/api/v1/functions', url);
+        const endpointUrl = new external_url_namespaceObject.URL(`/api/v1/functions/${functionId}/versions`, url);
         let responseBodyStream;
         try {
             responseBodyStream = await retryAPIRequest(throwErrorOnClientErrorStatusCode(async () => _fetch(endpointUrl.href, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
+                    authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify(body)
             })), errorHandler);
         }
         catch (err) {
-            throw new Error('Failed to register Speckle Function.', { cause: err }); //FIXME use a more specific error type
+            throw new Error(`Failed to register Speckle Function: ${err}`, { cause: err }); //FIXME use a more specific error type
         }
         const response = new Response(responseBodyStream);
         let responseBody;
@@ -18264,20 +18255,6 @@ class NonRetryableError extends Error {
     }
 }
 
-;// CONCATENATED MODULE: ./src/schema/inputs.ts
-
-const SpeckleServerUrlSchema = z.string().url().nonempty();
-const SpeckleTokenSchema = z.string().nonempty();
-const SpeckleFunctionRepositorySchema = z.string().nonempty(); //TODO validate this as a git+https, https, or ssh url
-const SpeckleFunctionPathSchema = z.string()
-    .nonempty()
-    .refine((value) => !value.startsWith('/'), {
-    message: 'Must not be an absolute path.'
-});
-const SpeckleFunctionIdSchema = z.string().optional();
-const GitRefSchema = z.string().nonempty();
-const GitCommitShaSchema = z.string().nonempty();
-
 // EXTERNAL MODULE: external "path"
 var external_path_ = __nccwpck_require__(1017);
 ;// CONCATENATED MODULE: ./src/filesystem/parser.ts
@@ -18307,19 +18284,17 @@ async function findAndParseManifest(pathToSpeckleFunctionFile, opts) {
 async function registerSpeckleFunction(opts) {
     let speckleServerUrl;
     let speckleToken;
-    let speckleFunctionRepositoryUrl;
     let speckleFunctionPath;
     let speckleFunctionId;
-    let gitRef;
-    let gitCommitSha;
+    let versionTag;
+    let commitId;
     try {
         speckleServerUrl = SpeckleServerUrlSchema.parse(opts.speckleServerUrl);
         speckleToken = SpeckleTokenSchema.parse(opts.speckleToken);
-        speckleFunctionRepositoryUrl = SpeckleFunctionRepositorySchema.parse(opts.speckleFunctionRepositoryUrl);
         speckleFunctionPath = SpeckleFunctionPathSchema.parse(opts.speckleFunctionPath);
         speckleFunctionId = SpeckleFunctionIdSchema.parse(opts.speckleFunctionId);
-        gitRef = GitRefSchema.parse(opts.ref);
-        gitCommitSha = GitCommitShaSchema.parse(opts.commitsha);
+        versionTag = VersionTagSchema.parse(opts.versionTag);
+        commitId = CommitIdSchema.parse(opts.commitId);
     }
     catch (err) {
         throw handleZodError(err, opts.logger);
@@ -18327,20 +18302,19 @@ async function registerSpeckleFunction(opts) {
     opts.logger.info(`Speckle Server URL: '${speckleServerUrl}'`);
     //token is masked in the logs, so no need to print it here.
     opts.logger.info(`Speckle Function Path: '${speckleFunctionPath}'`);
-    opts.logger.info(`Speckle Function ID (optional): '${speckleFunctionId}'`);
+    opts.logger.info(`Speckle Function ID: '${speckleFunctionId}'`);
     const manifest = await findAndParseManifest(speckleFunctionPath, {
         logger: opts.logger,
         fileSystem: opts.fileSystem
     });
     const body = {
-        functionId: speckleFunctionId || null,
-        url: speckleFunctionRepositoryUrl,
-        path: speckleFunctionPath,
-        ref: gitRef,
-        commitSha: gitCommitSha,
-        manifest
+        commitId,
+        versionTag,
+        steps: [],
+        inputSchema: {},
+        annotations: manifest.metadata.annotations
     };
-    const response = await client.postManifest(speckleServerUrl, speckleToken, body, opts.logger);
+    const response = await client.postManifest(speckleServerUrl, speckleToken, speckleFunctionId, body, opts.logger);
     opts.logger.info(`Successfully registered Speckle Function with ID: ${response.functionId}`);
     return response;
 }
@@ -22222,18 +22196,19 @@ async function run() {
         core.setSecret(speckleTokenRaw);
         const speckleFunctionPathRaw = core.getInput('speckle_function_path');
         const speckleFunctionIdRaw = core.getInput('speckle_function_id');
-        const gitServerUrl = process.env.GITHUB_SERVER_URL;
-        const gitRepository = process.env.GITHUB_REPOSITORY;
-        const gitRefRaw = process.env.GITHUB_REF_NAME;
+        const gitRefName = process.env.GITHUB_REF_NAME;
         const gitCommitShaRaw = process.env.GITHUB_SHA;
+        if (!gitCommitShaRaw)
+            throw new Error('GITHUB_REF_NAME is not defined');
+        if (!gitRefName)
+            throw new Error('GITHUB_REF_NAME is not defined');
         const { imageName, functionId, versionId } = await registerSpeckleFunction({
             speckleServerUrl: speckleServerUrlRaw,
             speckleToken: speckleTokenRaw,
-            speckleFunctionRepositoryUrl: `${gitServerUrl}/${gitRepository}.git`,
             speckleFunctionPath: speckleFunctionPathRaw,
             speckleFunctionId: speckleFunctionIdRaw,
-            ref: gitRefRaw,
-            commitsha: gitCommitShaRaw,
+            versionTag: gitRefName,
+            commitId: gitCommitShaRaw,
             logger: core,
             fileSystem: files
         });
