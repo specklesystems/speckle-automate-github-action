@@ -1099,9 +1099,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/coverage-istanbul@npm:^0.31.1":
-  version: 0.31.1
-  resolution: "@vitest/coverage-istanbul@npm:0.31.1"
+"@vitest/coverage-istanbul@npm:^0.31.4":
+  version: 0.31.4
+  resolution: "@vitest/coverage-istanbul@npm:0.31.4"
   dependencies:
     istanbul-lib-coverage: ^3.2.0
     istanbul-lib-instrument: ^5.2.1
@@ -1111,7 +1111,7 @@ __metadata:
     test-exclude: ^6.0.0
   peerDependencies:
     vitest: ">=0.30.0 <1"
-  checksum: 0cbf095fb1a799c06aff92df2c0fc3242c27e9ef8b7b813669657eac487452456f46a23eee6043f9595b75b08f3ba839cb2d0d683235038e12d9fd934d495f17
+  checksum: 52158f522b8b4c91044114c72c071e07c049e4e28f207c1130c1e9e1fa79ab8e43197af59860733caade00a8a26caf4615828f63d517b51981865610efaf4836
   languageName: node
   linkType: hard
 
@@ -5260,7 +5260,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.59.8
     "@typescript-eslint/parser": ^5.59.8
     "@vercel/ncc": ^0.36.1
-    "@vitest/coverage-istanbul": ^0.31.1
+    "@vitest/coverage-istanbul": ^0.31.4
     eslint: ^8.41.0
     eslint-import-resolver-typescript: ^3.5.5
     eslint-plugin-eslint-comments: ^3.2.0
