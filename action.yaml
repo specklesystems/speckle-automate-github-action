@@ -20,12 +20,8 @@ inputs:
     description: '(Optional) The unique identifier of the function if it has already been created. If not provided, Speckle Automate will try to find the function ID based on the url, ref, and path. If there are no matches, a new function Id will be generated.'
     required: false
 outputs:
-  function_id:
-    description: 'The unique identifier of the function.'
   version_id:
     description: 'The unique identifier of the function version.'
-  image_name:
-    description: 'The required name of the image of the built function.'
 runs:
   using: 'node16' #FIXME bump to node18 when available
   main: 'dist/action/index.js'

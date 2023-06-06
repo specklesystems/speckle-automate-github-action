@@ -41,17 +41,9 @@ Your Speckle Token must have write permissions for the Speckle Function with thi
 
 ### Outputs
 
-#### `function_id`
-
-The unique ID of the published function. This will be the same as the `speckle_function_id` input if it was provided. If you wish, you can use this ID as `speckle_function_id` input.
-
 #### `version_id`
 
 The unique ID of this version of the published function.
-
-#### `image_name`
-
-The name of the Docker image that you now need to build and push. Your Speckle Automate Token has been granted write permissions for publishing this image to the Speckle Automate Server.
 
 ### Example usage
 
@@ -67,7 +59,7 @@ with:
   # https://docs.github.com/en/actions/security-guides/encrypted-secrets#using-encrypted-secrets-in-a-workflow
   speckle_token: ${{ secrets.SPECKLE_TOKEN }}
   # speckle_function_path is optional and defaults to ./specklefunction.yaml
-  # function_id is optional and will be auto-generated if not provided
+  # speckle_function_id is optional and will be auto-generated if not provided
 ```
 
 #### Publish a function to a self-hosted server
@@ -80,7 +72,7 @@ with:
   # https://docs.github.com/en/actions/security-guides/encrypted-secrets#using-encrypted-secrets-in-a-workflow
   speckle_token: ${{ secrets.SPECKLE_TOKEN }}
   # speckle_function_path is optional and defaults to ./specklefunction.yaml
-  # function_id is optional and will be auto-generated if not provided
+  # speckle_function_id is optional and will be auto-generated if not provided
 ```
 
 ### Example usage within an entire GitHub Actions Workflow
