@@ -1313,7 +1313,7 @@ function createError(input) {
   return err;
 }
 function sendError(event, error, debug) {
-  if (event.node.res.writableEnded) {
+  if (event.handled) {
     return;
   }
   const h3Error = isError(error) ? error : createError(error);
@@ -1326,7 +1326,7 @@ function sendError(event, error, debug) {
   if (debug) {
     responseBody.stack = (h3Error.stack || "").split("\n").map((l) => l.trim());
   }
-  if (event.node.res.writableEnded) {
+  if (event.handled) {
     return;
   }
   const _code = Number.parseInt(h3Error.statusCode);
@@ -1422,9 +1422,15 @@ function readRawBody(event, encoding = "utf8") {
   assertMethod(event, PayloadMethods$1);
   const _rawBody = event.node.req[RawBodySymbol] || event.node.req.body;
   if (_rawBody) {
-    const promise2 = Promise.resolve(_rawBody).then(
-      (_resolved) => Buffer.isBuffer(_resolved) ? _resolved : Buffer.from(_resolved)
-    );
+    const promise2 = Promise.resolve(_rawBody).then((_resolved) => {
+      if (Buffer.isBuffer(_resolved)) {
+        return _resolved;
+      }
+      if (_resolved.constructor === Object) {
+        return Buffer.from(JSON.stringify(_resolved));
+      }
+      return Buffer.from(_resolved);
+    });
     return encoding ? promise2.then((buff) => buff.toString(encoding)) : promise2;
   }
   if (!Number.parseInt(event.node.req.headers["content-length"] || "")) {
@@ -1509,7 +1515,9 @@ function handleCacheHeaders(event, opts) {
   event.node.res.setHeader("cache-control", cacheControls.join(", "));
   if (cacheMatched) {
     event.node.res.statusCode = 304;
-    event.node.res.end();
+    if (!event.handled) {
+      event.node.res.end();
+    }
     return true;
   }
   return false;
@@ -1658,6 +1666,7 @@ async function sendProxy(event, target, opts = {}) {
     event.node.res.statusCode
   );
   event.node.res.statusMessage = sanitizeStatusMessage(response.statusText);
+  const cookies = [];
   for (const [key, value] of response.headers.entries()) {
     if (key === "content-encoding") {
       continue;
@@ -1666,7 +1675,15 @@ async function sendProxy(event, target, opts = {}) {
       continue;
     }
     if (key === "set-cookie") {
-      const cookies = splitCookiesString(value).map((cookie) => {
+      cookies.push(...splitCookiesString(value));
+      continue;
+    }
+    event.node.res.setHeader(key, value);
+  }
+  if (cookies.length > 0) {
+    event.node.res.setHeader(
+      "set-cookie",
+      cookies.map((cookie) => {
         if (opts.cookieDomainRewrite) {
           cookie = rewriteCookieProperty(
             cookie,
@@ -1682,14 +1699,17 @@ async function sendProxy(event, target, opts = {}) {
           );
         }
         return cookie;
-      });
-      event.node.res.setHeader("set-cookie", cookies);
-      continue;
-    }
-    event.node.res.setHeader(key, value);
+      })
+    );
+  }
+  if (opts.onResponse) {
+    await opts.onResponse(event, response);
   }
   if (response._data !== void 0) {
     return response._data;
+  }
+  if (event.handled) {
+    return;
   }
   if (opts.sendStream === false) {
     const data = new Uint8Array(await response.arrayBuffer());
@@ -1749,14 +1769,16 @@ function rewriteCookieProperty(header, map, property) {
   );
 }
 
-const defer = typeof setImmediate !== "undefined" ? setImmediate : (fn) => fn();
+const defer = typeof setImmediate === "undefined" ? (fn) => fn() : setImmediate;
 function send(event, data, type) {
   if (type) {
     defaultContentType(event, type);
   }
   return new Promise((resolve) => {
     defer(() => {
-      event.node.res.end(data);
+      if (!event.handled) {
+        event.node.res.end(data);
+      }
       resolve();
     });
   });
@@ -1766,7 +1788,9 @@ function sendNoContent(event, code = 204) {
   if (event.node.res.statusCode === 204) {
     event.node.res.removeHeader("content-length");
   }
-  event.node.res.end();
+  if (!event.handled) {
+    event.node.res.end();
+  }
 }
 function setResponseStatus(event, code, text) {
   if (code) {
@@ -1949,7 +1973,7 @@ async function getSession(event, config) {
     Object.assign(session, unsealed);
   }
   if (!session.id) {
-    session.id = (config.crypto || crypto).randomUUID();
+    session.id = config.generateId?.() ?? (config.crypto || crypto).randomUUID();
     session.createdAt = Date.now();
     await updateSession(event, config);
   }
@@ -2220,11 +2244,15 @@ class H3Response {
 class H3Event {
   constructor(req, res) {
     this["__is_event__"] = true;
+    this._handled = false;
     this.context = {};
     this.node = { req, res };
   }
   get path() {
     return getRequestPath(this);
+  }
+  get handled() {
+    return this._handled || this.node.res.writableEnded || this.node.res.headersSent;
   }
   /** @deprecated Please use `event.node.req` instead. **/
   get req() {
@@ -2237,35 +2265,37 @@ class H3Event {
   // Implementation of FetchEvent
   respondWith(r) {
     Promise.resolve(r).then((_response) => {
-      if (this.res.writableEnded) {
+      if (this.handled) {
         return;
       }
       const response = _response instanceof H3Response ? _response : new H3Response(_response);
       for (const [key, value] of response.headers.entries()) {
-        this.res.setHeader(key, value);
+        this.node.res.setHeader(key, value);
       }
       if (response.status) {
-        this.res.statusCode = sanitizeStatusCode(
+        this.node.res.statusCode = sanitizeStatusCode(
           response.status,
-          this.res.statusCode
+          this.node.res.statusCode
         );
       }
       if (response.statusText) {
-        this.res.statusMessage = sanitizeStatusMessage(response.statusText);
+        this.node.res.statusMessage = sanitizeStatusMessage(
+          response.statusText
+        );
       }
       if (response.redirected) {
-        this.res.setHeader("location", response.url);
+        this.node.res.setHeader("location", response.url);
       }
       if (!response._body) {
-        return this.res.end();
+        return this.node.res.end();
       }
       if (typeof response._body === "string" || "buffer" in response._body || "byteLength" in response._body) {
-        return this.res.end(response._body);
+        return this.node.res.end(response._body);
       }
       if (!response.headers.has("content-type")) {
         response.headers.set("content-type", MIMES.json);
       }
-      this.res.end(JSON.stringify(response._body));
+      this.node.res.end(JSON.stringify(response._body));
     });
   }
 }
@@ -2391,7 +2421,7 @@ function createAppEventHandler(stack, options) {
         continue;
       }
       const val = await layer.handler(event);
-      if (event.node.res.writableEnded) {
+      if (event.handled) {
         return;
       }
       const type = typeof val;
@@ -2416,10 +2446,10 @@ function createAppEventHandler(stack, options) {
         }
       }
     }
-    if (!event.node.res.writableEnded) {
+    if (!event.handled) {
       throw createError({
         statusCode: 404,
-        statusMessage: `Cannot find any route matching ${event.node.req.url || "/"}.`
+        statusMessage: `Cannot find any path matching ${event.node.req.url || "/"}.`
       });
     }
   });
@@ -2567,15 +2597,25 @@ function dist_createRouter(opts = {}) {
     const method = (event.node.req.method || "get").toLowerCase();
     const handler = matched.handlers[method] || matched.handlers.all;
     if (!handler) {
-      throw createError({
-        statusCode: 405,
-        name: "Method Not Allowed",
-        statusMessage: `Method ${method} is not allowed on this route.`
-      });
+      if (opts.preemptive || opts.preemtive) {
+        throw createError({
+          statusCode: 405,
+          name: "Method Not Allowed",
+          statusMessage: `Method ${method} is not allowed on this route.`
+        });
+      } else {
+        return;
+      }
     }
     const params = matched.params || {};
     event.context.params = params;
-    return handler(event);
+    return Promise.resolve(handler(event)).then((res) => {
+      if (res === void 0 && (opts.preemptive || opts.preemtive)) {
+        setResponseStatus(event, 204);
+        return "";
+      }
+      return res;
+    });
   });
   return router;
 }
