@@ -12,7 +12,6 @@ import {
 
 import { handleZodError } from './schema/errors.js'
 import { FunctionVersionRequest } from './client/schema.js'
-import { findAndParseManifest } from './filesystem/parser.js'
 import { FileSystem } from './filesystem/files.js'
 
 type ProcessOptions = {

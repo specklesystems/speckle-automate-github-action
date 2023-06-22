@@ -32,7 +32,7 @@ describe('integration', () => {
                   versionTag: 'main',
                   commitId: '1234567890',
                   command: ['echo', 'Hello', 'world'],
-                  inputSchema: {},
+                  inputSchema: {}
                   // annotations: getMinimalSpeckleFunctionExample().metadata?.annotations
                 })
                 expect(req.headers.get('Authorization')).toBe('Bearer supersecret')

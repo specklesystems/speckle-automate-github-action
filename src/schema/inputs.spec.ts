@@ -49,7 +49,7 @@ describe('schema', () => {
     })
     it('fails for not object types', () => {
       const inputSchema = '{ "foo": "bar" }'
-      expect(SpeckleFunctionInputSchema.safeParse(inputSchema).success).to.be.false
+      expect(SpeckleFunctionInputSchema.safeParse(inputSchema).success).toBeFalsy()
     })
   })
 })

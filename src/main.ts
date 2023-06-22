@@ -11,11 +11,9 @@ async function run(): Promise<void> {
     const speckleFunctionIdRaw = core.getInput('speckle_function_id')
     const speckleFunctionInputSchema = core.getInput('speckle_function_input_schema')
     const speckleFunctionCommand = core.getInput('speckle_function_command')
-    const gitRefName = process.env.GITHUB_REF_NAME
     const gitCommitShaRaw = process.env.GITHUB_SHA
 
     if (!gitCommitShaRaw) throw new Error('GITHUB_REF_NAME is not defined')
-    if (!gitRefName) throw new Error('GITHUB_REF_NAME is not defined')
 
     const { versionId } = await registerSpeckleFunction({
       speckleServerUrl: speckleServerUrlRaw,
@@ -24,7 +22,7 @@ async function run(): Promise<void> {
       speckleFunctionId: speckleFunctionIdRaw,
       speckleFunctionInputSchema,
       speckleFunctionCommand,
-      versionTag: gitRefName,
+      versionTag: gitCommitShaRaw,
       commitId: gitCommitShaRaw,
       logger: core,
       fileSystem: fileUtil
