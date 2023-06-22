@@ -22,7 +22,7 @@ describe('integration', () => {
   describe('Load from ./examples directory', () => {
     describe('registerSpeckleAutomate', () => {
       describe('valid input', () => {
-        it('should respond with image name, function id, and version id', async () => {
+        it('should respond with the version id', async () => {
           server.use(
             rest.post(
               'https://integration1.automate.speckle.example.org/api/v1/functions/functionid/versions',
