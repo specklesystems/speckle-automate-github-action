@@ -53,7 +53,7 @@ describe('client', () => {
               expect(await req.json()).toStrictEqual({
                 versionTag: 'main',
                 commitId: '1234567890',
-                steps: [],
+                command: [],
                 inputSchema: {},
                 annotations: getMinimalSpeckleFunctionExample().metadata?.annotations
               })
@@ -77,7 +77,7 @@ describe('client', () => {
             versionTag: 'main',
             commitId: '1234567890',
             inputSchema: {},
-            steps: [],
+            command: [],
             annotations: getMinimalSpeckleFunctionExample()?.metadata?.annotations
           },
           getLogger(),
@@ -109,7 +109,7 @@ describe('client', () => {
             {
               versionTag: '',
               commitId: '',
-              steps: [],
+              command: [],
               inputSchema: {},
               annotations: getMinimalSpeckleFunctionExample()?.metadata?.annotations
             },
@@ -145,7 +145,7 @@ describe('client', () => {
             {
               versionTag: '',
               commitId: '',
-              steps: [],
+              command: [],
               inputSchema: {},
               annotations: getMinimalSpeckleFunctionExample()?.metadata?.annotations
             },
@@ -167,7 +167,7 @@ describe('client', () => {
               {
                 versionTag: 'main',
                 commitId: '1234567890',
-                steps: [],
+                command: [],
                 inputSchema: {},
                 annotations: getMinimalSpeckleFunctionExample()?.metadata?.annotations
               },
@@ -189,7 +189,7 @@ describe('client', () => {
                 versionTag: 'main',
                 commitId: '1234567890',
                 inputSchema: {},
-                steps: [],
+                command: [],
                 annotations: getMinimalSpeckleFunctionExample()?.metadata?.annotations
               },
               getLogger(),

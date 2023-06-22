@@ -12,3 +12,4 @@ export const SpeckleFunctionPathSchema = z
 export const SpeckleFunctionIdSchema = z.string().nonempty()
 export const VersionTagSchema = z.string().nonempty()
 export const CommitIdSchema = z.string().nonempty()
+export const SpeckleFunctionInputSchema = z.record(z.string(), z.unknown())

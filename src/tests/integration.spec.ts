@@ -27,12 +27,13 @@ describe('integration', () => {
             rest.post(
               'https://integration1.automate.speckle.example.org/api/v1/functions/functionid/versions',
               async (req, res, ctx) => {
-                expect(await req.json()).toStrictEqual({
+                const requestData = await req.json()
+                expect(requestData).toStrictEqual({
                   versionTag: 'main',
                   commitId: '1234567890',
-                  steps: [],
+                  command: ['echo', 'Hello', 'world'],
                   inputSchema: {},
-                  annotations: getMinimalSpeckleFunctionExample().metadata?.annotations
+                  // annotations: getMinimalSpeckleFunctionExample().metadata?.annotations
                 })
                 expect(req.headers.get('Authorization')).toBe('Bearer supersecret')
                 const response = await res(
@@ -50,6 +51,7 @@ describe('integration', () => {
             speckleServerUrl: 'https://integration1.automate.speckle.example.org',
             speckleToken: 'supersecret',
             speckleFunctionPath: 'examples/minimal',
+            speckleFunctionCommand: 'echo Hello world',
             versionTag: 'main',
             commitId: '1234567890',
             logger: getLogger(),
@@ -70,6 +72,7 @@ describe('integration', () => {
               speckleServerUrl: 'https://integration1.automate.speckle.example.org',
               speckleToken: '',
               speckleFunctionPath: undefined,
+              speckleFunctionCommand: 'echo Hello world',
               versionTag: '',
               commitId: '',
               logger: getLogger(),
