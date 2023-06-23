@@ -12,6 +12,7 @@ import { getLogger } from '../tests/logger.js'
 import { ValidationError } from 'zod-validation-error'
 import { AttemptContext } from '@lifeomic/attempt'
 import fetch, { AbortError, FetchError } from 'node-fetch'
+import { Readable } from 'stream'
 
 describe('client', () => {
   const server = setupServer()
@@ -229,26 +230,26 @@ describe('client', () => {
   })
   describe('throwErrorOnClientErrorStatusCode', () => {
     it('does not throw an error on 2xx', async () => {
-      const result = throwErrorOnClientErrorStatusCode(async () => {
-        return { body: '', status: 200 }
+      const result = await throwErrorOnClientErrorStatusCode(async () => {
+        return { body: Readable.from(''), status: 200 }
       })()
-      await expect(result).resolves.toStrictEqual({ body: '', status: 200 })
+      expect(result.status).toBe(200)
     })
     it('does not throw an error on 3xx', async () => {
-      const result = throwErrorOnClientErrorStatusCode(async () => {
-        return { body: '', status: 300 }
+      const result = await throwErrorOnClientErrorStatusCode(async () => {
+        return { body: Readable.from(''), status: 300 }
       })()
-      await expect(result).resolves.toStrictEqual({ body: '', status: 300 })
+      expect(result.status).toBe(300)
     })
     it('throws an error on 4xx', async () => {
       const result = throwErrorOnClientErrorStatusCode(async () => {
-        return { body: '', status: 400 }
+        return { body: Readable.from(''), status: 400 }
       })()
       await expect(result).rejects.toThrow(NonRetryableError)
     })
     it('throws an error on 5xx', async () => {
       const result = throwErrorOnClientErrorStatusCode(async () => {
-        return { body: '', status: 500 }
+        return { body: Readable.from(''), status: 500 }
       })()
       await expect(result).rejects.toThrow(RetryableError)
     })

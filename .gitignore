@@ -42,3 +42,6 @@ coverage/
 
 # asdf config file
 .tool-versions
+
+# Visual Studio Code
+.vscode/*
