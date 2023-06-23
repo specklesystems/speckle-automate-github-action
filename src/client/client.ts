@@ -74,9 +74,13 @@ export function throwErrorOnClientErrorStatusCode<T>(
     const response = await apiRequest()
     // do not retry our failures
     if (response.status >= 400 && response.status < 500)
-      throw new NonRetryableError('Status code indicates a client error. Not retrying.')
+      throw new NonRetryableError(
+        `Status code indicates a client error. Not retrying. (${response.status}; ${response.body})`
+      )
     if (response.status >= 500)
-      throw new RetryableError('Status code indicates a server error. Retrying.')
+      throw new RetryableError(
+        `Status code indicates a server error. Retrying. (${response.status}; ${response.body})`
+      )
     return response
   }
 }
