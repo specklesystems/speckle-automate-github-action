@@ -7610,7 +7610,7 @@ async function run() {
         catch (err) {
             sendError(event, createError({
                 status: 422,
-                statusText: 'Unprocessable Entity'
+                statusText: `Unprocessable Entity. ${err instanceof Error ? err.message : JSON.stringify(err)}`
             }));
         }
         return {
