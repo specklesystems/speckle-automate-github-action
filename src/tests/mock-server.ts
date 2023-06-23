@@ -6,7 +6,7 @@ import {
   toNodeListener,
   readBody,
   sendError,
-  H3Error
+  createError
 } from 'h3'
 import { listen } from 'listhen'
 import { getPort } from 'get-port-please'
@@ -26,10 +26,13 @@ async function run() {
         event.node.res.statusMessage = 'Created'
         event.node.res.setHeader('Content-Type', 'application/json')
       } catch (err) {
-        event.node.res.statusCode = 422
-        event.node.res.statusMessage = 'Unprocessable Entity'
-        event.node.res.setHeader('Content-Type', 'application/json')
-        sendError(event, new H3Error('unprocessable entity'))
+        sendError(
+          event,
+          createError({
+            status: 422,
+            statusText: 'Unprocessable Entity'
+          })
+        )
       }
 
       return {
