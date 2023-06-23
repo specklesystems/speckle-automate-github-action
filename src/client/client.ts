@@ -67,16 +67,26 @@ function isNonRetryableError(error: unknown) {
   return !(error instanceof RetryableError)
 }
 
-export function throwErrorOnClientErrorStatusCode<T>(
+export function throwErrorOnClientErrorStatusCode<
+  T extends NodeJS.ReadableStream | null
+>(
   apiRequest: () => Promise<{ body: T; status: number }>
 ): () => Promise<{ body: T; status: number }> {
   return async () => {
     const response = await apiRequest()
     // do not retry our failures
     if (response.status >= 400 && response.status < 500)
-      throw new NonRetryableError('Status code indicates a client error. Not retrying.')
+      throw new NonRetryableError(
+        `Status code indicates a client error. Not retrying. (status: "${
+          response.status
+        }"; body: "${await new Response(response.body).text()}")`
+      )
     if (response.status >= 500)
-      throw new RetryableError('Status code indicates a server error. Retrying.')
+      throw new RetryableError(
+        `Status code indicates a server error. Retrying. (status: "${
+          response.status
+        }"; body: "${await new Response(response.body).text()}")`
+      )
     return response
   }
 }

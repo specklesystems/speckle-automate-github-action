@@ -25,7 +25,6 @@ inputs:
   speckle_function_command:
     description: 'The command to run to execute the function in a runtime environment.'
     required: true
-
 outputs:
   version_id:
     description: 'The unique identifier of the function version.'
