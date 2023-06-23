@@ -17,8 +17,14 @@ inputs:
     required: false
     default: '.' # root directory of the checked out source code, ${GITHUB_WORKSPACE}
   speckle_function_id:
-    description: '(Optional) The unique identifier of the function if it has already been created. If not provided, Speckle Automate will try to find the function ID based on the url, ref, and path. If there are no matches, a new function Id will be generated.'
+    description: 'The unique identifier of the function. Go to automate to generate one.'
+    required: true
+  speckle_function_input_schema:
+    description: 'JSON Schema of the parameters object required by the function.'
     required: false
+  speckle_function_command:
+    description: 'The command to run to execute the function in a runtime environment.'
+    required: true
 outputs:
   version_id:
     description: 'The unique identifier of the function version.'

@@ -30,9 +30,9 @@ describe('integration', () => {
                 expect(await req.json()).toStrictEqual({
                   versionTag: 'main',
                   commitId: '1234567890',
-                  steps: [],
-                  inputSchema: {},
-                  annotations: getMinimalSpeckleFunctionExample().metadata?.annotations
+                  command: ['echo', 'Hello', 'world'],
+                  inputSchema: {}
+                  // annotations: getMinimalSpeckleFunctionExample().metadata?.annotations
                 })
                 expect(req.headers.get('Authorization')).toBe('Bearer supersecret')
                 const response = await res(
@@ -52,6 +52,7 @@ describe('integration', () => {
             speckleFunctionPath: 'examples/minimal',
             versionTag: 'main',
             commitId: '1234567890',
+            speckleFunctionCommand: 'echo Hello world',
             logger: getLogger(),
             fileSystem: {
               loadYaml: async () => getMinimalSpeckleFunctionExample()
@@ -72,6 +73,7 @@ describe('integration', () => {
               speckleFunctionPath: undefined,
               versionTag: '',
               commitId: '',
+              speckleFunctionCommand: 'echo Hello world',
               logger: getLogger(),
               fileSystem: {
                 loadYaml: async () => getMinimalSpeckleFunctionExample()

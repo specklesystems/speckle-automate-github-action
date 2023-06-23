@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest'
 import {
   SpeckleFunctionPathSchema,
   SpeckleServerUrlSchema,
-  SpeckleTokenSchema
+  SpeckleTokenSchema,
+  SpeckleFunctionInputSchema
 } from './inputs.js'
 import { ZodError } from 'zod'
 
@@ -34,6 +35,21 @@ describe('schema', () => {
     })
     it('can be at the current directory', async () => {
       expect(SpeckleFunctionPathSchema.parse('.')).toBe('.')
+    })
+  })
+
+  describe('Speckle Function Input Schema', () => {
+    it('can parse objects', () => {
+      const inputSchema = { foo: 'bar' }
+      expect(SpeckleFunctionInputSchema.parse(inputSchema)).toStrictEqual(inputSchema)
+    })
+    it('works for empty objects', () => {
+      const inputSchema = {}
+      expect(SpeckleFunctionInputSchema.parse(inputSchema)).toStrictEqual(inputSchema)
+    })
+    it('fails for not object types', () => {
+      const inputSchema = '{ "foo": "bar" }'
+      expect(SpeckleFunctionInputSchema.safeParse(inputSchema).success).toBeFalsy()
     })
   })
 })

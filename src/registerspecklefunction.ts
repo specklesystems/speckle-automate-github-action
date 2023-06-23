@@ -5,13 +5,14 @@ import {
   SpeckleTokenSchema,
   SpeckleFunctionPathSchema,
   SpeckleFunctionIdSchema,
+  SpeckleFunctionInputSchema,
   VersionTagSchema,
   CommitIdSchema
 } from './schema/inputs.js'
 
 import { handleZodError } from './schema/errors.js'
 import { FunctionVersionRequest } from './client/schema.js'
-import { findAndParseManifest } from './filesystem/parser.js'
+// import { findAndParseManifest } from './filesystem/parser.js'
 import { FileSystem } from './filesystem/files.js'
 
 type ProcessOptions = {
@@ -20,7 +21,9 @@ type ProcessOptions = {
   versionTag: string
   commitId: string
   speckleFunctionPath: string | undefined
-  speckleFunctionId?: string | undefined
+  speckleFunctionId: string
+  speckleFunctionCommand: string
+  speckleFunctionInputSchema?: string | undefined
   logger: Logger
   fileSystem: FileSystem
 }
@@ -36,6 +39,8 @@ export async function registerSpeckleFunction(
   let speckleToken: string
   let speckleFunctionPath: string
   let speckleFunctionId: string
+  let speckleFunctionCommand: string[]
+  let speckleFunctionInputSchema: Record<string, unknown>
   let versionTag: string
   let commitId: string
   try {
@@ -45,6 +50,10 @@ export async function registerSpeckleFunction(
     speckleFunctionId = SpeckleFunctionIdSchema.parse(opts.speckleFunctionId)
     versionTag = VersionTagSchema.parse(opts.versionTag)
     commitId = CommitIdSchema.parse(opts.commitId)
+    speckleFunctionInputSchema = opts.speckleFunctionInputSchema
+      ? SpeckleFunctionInputSchema.parse(JSON.parse(opts.speckleFunctionInputSchema))
+      : {}
+    speckleFunctionCommand = opts.speckleFunctionCommand.split(' ')
   } catch (err) {
     throw handleZodError(err, opts.logger)
   }
@@ -54,17 +63,16 @@ export async function registerSpeckleFunction(
   opts.logger.info(`Speckle Function Path: '${speckleFunctionPath}'`)
   opts.logger.info(`Speckle Function ID: '${speckleFunctionId}'`)
 
-  const manifest = await findAndParseManifest(speckleFunctionPath, {
-    logger: opts.logger,
-    fileSystem: opts.fileSystem
-  })
+  // const manifest = await findAndParseManifest(speckleFunctionPath, {
+  //   logger: opts.logger,
+  //   fileSystem: opts.fileSystem
+  // })
 
   const body: FunctionVersionRequest = {
     commitId,
     versionTag,
-    steps: [], //FIXME remove this, one function === one step!
-    inputSchema: {}, //FIXME this needs to be read in from a schema file?
-    annotations: manifest.metadata.annotations
+    command: speckleFunctionCommand,
+    inputSchema: speckleFunctionInputSchema
   }
 
   const response = await client.postManifest(

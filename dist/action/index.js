@@ -15983,6 +15983,7 @@ const SpeckleFunctionPathSchema = z.string()
 const SpeckleFunctionIdSchema = z.string().nonempty();
 const VersionTagSchema = z.string().nonempty();
 const CommitIdSchema = z.string().nonempty();
+const SpeckleFunctionInputSchema = z.record(z.string(), z.unknown());
 
 ;// CONCATENATED MODULE: ./src/client/schema.ts
 
@@ -15991,8 +15992,8 @@ const CommitIdSchema = z.string().nonempty();
 const FunctionVersionRequestSchema = z.object({
     commitId: CommitIdSchema,
     versionTag: VersionTagSchema,
-    inputSchema: z.record(z.string(), z.any()),
-    steps: z.array(z.string().nonempty()),
+    inputSchema: z.record(z.string(), z.unknown()),
+    command: z.array(z.string().nonempty()),
     annotations: SpeckleFunctionAnnotationsSchema
 });
 const SpeckleFunctionPostResponseBodySchema = z.object({
@@ -18248,29 +18249,7 @@ class NonRetryableError extends Error {
     }
 }
 
-// EXTERNAL MODULE: external "path"
-var external_path_ = __nccwpck_require__(1017);
-;// CONCATENATED MODULE: ./src/filesystem/parser.ts
-
-
-
-async function findAndParseManifest(pathToSpeckleFunctionFile, opts) {
-    if (!pathToSpeckleFunctionFile.toLocaleLowerCase().endsWith('specklefunction.yaml')) {
-        pathToSpeckleFunctionFile = external_path_.join(pathToSpeckleFunctionFile, 'specklefunction.yaml');
-    }
-    const speckleFunctionRaw = await opts.fileSystem.loadYaml(pathToSpeckleFunctionFile);
-    let speckleFunction;
-    try {
-        speckleFunction = await SpeckleFunctionSchema.parseAsync(speckleFunctionRaw);
-    }
-    catch (err) {
-        throw handleZodError(err, opts.logger);
-    }
-    return speckleFunction;
-}
-
 ;// CONCATENATED MODULE: ./src/registerspecklefunction.ts
-
 
 
 
@@ -18279,6 +18258,8 @@ async function registerSpeckleFunction(opts) {
     let speckleToken;
     let speckleFunctionPath;
     let speckleFunctionId;
+    let speckleFunctionCommand;
+    let speckleFunctionInputSchema;
     let versionTag;
     let commitId;
     try {
@@ -18288,6 +18269,10 @@ async function registerSpeckleFunction(opts) {
         speckleFunctionId = SpeckleFunctionIdSchema.parse(opts.speckleFunctionId);
         versionTag = VersionTagSchema.parse(opts.versionTag);
         commitId = CommitIdSchema.parse(opts.commitId);
+        speckleFunctionInputSchema = opts.speckleFunctionInputSchema
+            ? SpeckleFunctionInputSchema.parse(JSON.parse(opts.speckleFunctionInputSchema))
+            : {};
+        speckleFunctionCommand = opts.speckleFunctionCommand.split(' ');
     }
     catch (err) {
         throw handleZodError(err, opts.logger);
@@ -18296,16 +18281,15 @@ async function registerSpeckleFunction(opts) {
     //token is masked in the logs, so no need to print it here.
     opts.logger.info(`Speckle Function Path: '${speckleFunctionPath}'`);
     opts.logger.info(`Speckle Function ID: '${speckleFunctionId}'`);
-    const manifest = await findAndParseManifest(speckleFunctionPath, {
-        logger: opts.logger,
-        fileSystem: opts.fileSystem
-    });
+    // const manifest = await findAndParseManifest(speckleFunctionPath, {
+    //   logger: opts.logger,
+    //   fileSystem: opts.fileSystem
+    // })
     const body = {
         commitId,
         versionTag,
-        steps: [],
-        inputSchema: {},
-        annotations: manifest.metadata.annotations
+        command: speckleFunctionCommand,
+        inputSchema: speckleFunctionInputSchema
     };
     const response = await client.postManifest(speckleServerUrl, speckleToken, speckleFunctionId, body, opts.logger);
     opts.logger.info(`Successfully registered version ${response.versionId} of Speckle Function ${speckleFunctionId}`);
@@ -22189,6 +22173,8 @@ async function run() {
         core.setSecret(speckleTokenRaw);
         const speckleFunctionPathRaw = core.getInput('speckle_function_path');
         const speckleFunctionIdRaw = core.getInput('speckle_function_id');
+        const speckleFunctionInputSchema = core.getInput('speckle_function_input_schema');
+        const speckleFunctionCommand = core.getInput('speckle_function_command');
         const gitRefName = process.env.GITHUB_REF_NAME;
         const gitCommitShaRaw = process.env.GITHUB_SHA;
         if (!gitCommitShaRaw)
@@ -22200,7 +22186,9 @@ async function run() {
             speckleToken: speckleTokenRaw,
             speckleFunctionPath: speckleFunctionPathRaw,
             speckleFunctionId: speckleFunctionIdRaw,
-            versionTag: gitRefName,
+            speckleFunctionInputSchema,
+            speckleFunctionCommand,
+            versionTag: gitCommitShaRaw,
             commitId: gitCommitShaRaw,
             logger: core,
             fileSystem: files

@@ -9,6 +9,8 @@ async function run(): Promise<void> {
     core.setSecret(speckleTokenRaw)
     const speckleFunctionPathRaw = core.getInput('speckle_function_path')
     const speckleFunctionIdRaw = core.getInput('speckle_function_id')
+    const speckleFunctionInputSchema = core.getInput('speckle_function_input_schema')
+    const speckleFunctionCommand = core.getInput('speckle_function_command')
     const gitRefName = process.env.GITHUB_REF_NAME
     const gitCommitShaRaw = process.env.GITHUB_SHA
 
@@ -20,7 +22,9 @@ async function run(): Promise<void> {
       speckleToken: speckleTokenRaw,
       speckleFunctionPath: speckleFunctionPathRaw,
       speckleFunctionId: speckleFunctionIdRaw,
-      versionTag: gitRefName,
+      speckleFunctionInputSchema,
+      speckleFunctionCommand,
+      versionTag: gitCommitShaRaw,
       commitId: gitCommitShaRaw,
       logger: core,
       fileSystem: fileUtil

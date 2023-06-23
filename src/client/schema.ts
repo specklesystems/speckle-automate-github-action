@@ -5,8 +5,8 @@ import { CommitIdSchema, VersionTagSchema } from '../schema/inputs.js'
 export const FunctionVersionRequestSchema = z.object({
   commitId: CommitIdSchema,
   versionTag: VersionTagSchema, // TODO: this should be a valid semver...
-  inputSchema: z.record(z.string(), z.any()),
-  steps: z.array(z.string().nonempty()),
+  inputSchema: z.record(z.string(), z.unknown()),
+  command: z.array(z.string().nonempty()),
   annotations: SpeckleFunctionAnnotationsSchema
 })
 
