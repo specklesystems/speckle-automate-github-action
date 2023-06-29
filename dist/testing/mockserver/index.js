@@ -1315,7 +1315,6 @@ class H3Error extends Error {
     this.statusCode = 500;
     this.fatal = false;
     this.unhandled = false;
-    this.statusMessage = void 0;
   }
   toJSON() {
     const obj = {
@@ -1340,8 +1339,8 @@ function createError(input) {
     return input;
   }
   const err = new H3Error(
-    input.message ?? input.statusMessage,
-    // @ts-ignore
+    input.message ?? input.statusMessage ?? "",
+    // @ts-ignore https://v8.dev/features/error-cause
     input.cause ? { cause: input.cause } : void 0
   );
   if ("stack" in input) {
@@ -1376,7 +1375,7 @@ function createError(input) {
     const sanitizedMessage = sanitizeStatusMessage(err.statusMessage);
     if (sanitizedMessage !== originalMessage) {
       console.warn(
-        "[h3] Please prefer using `message` for longer error messages instead of `statusMessage`. In the future `statusMessage` will be sanitized by default."
+        "[h3] Please prefer using `message` for longer error messages instead of `statusMessage`. In the future, `statusMessage` will be sanitized by default."
       );
     }
   }

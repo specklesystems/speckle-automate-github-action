@@ -3134,9 +3134,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"h3@npm:^1.7.0":
-  version: 1.7.0
-  resolution: "h3@npm:1.7.0"
+"h3@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "h3@npm:1.7.1"
   dependencies:
     cookie-es: ^1.0.0
     defu: ^6.1.2
@@ -3145,7 +3145,7 @@ __metadata:
     radix3: ^1.0.1
     ufo: ^1.1.2
     uncrypto: ^0.1.3
-  checksum: 0fa678543c0430812eff8587c3247efd13338885cd2506e86471b7f82e1f7c5d0367348879c86272b9521967e17d9f13fdf843191cfffa9aa8fd0920f32fb1f1
+  checksum: faf5fc0faea79a939bc91f873a2bd30c4d752011abd51b2c05ddb86ff4606620f017fc3a1b7110417921729d105dc758f348c3cbd5b0c8fc3acdcc00918c02f2
   languageName: node
   linkType: hard
 
@@ -5254,7 +5254,7 @@ __metadata:
     eslint-plugin-prettier: ^4.2.1
     eslint-plugin-vitest: ^0.2.6
     get-port-please: ^3.0.1
-    h3: ^1.7.0
+    h3: ^1.7.1
     js-yaml: ^4.1.0
     listhen: ^1.0.4
     msw: ^1.2.2
