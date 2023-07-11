@@ -394,7 +394,7 @@ __nccwpck_require__.d(__webpack_exports__, {
   "E": () => (/* binding */ FunctionVersionRequestSchema)
 });
 
-;// CONCATENATED MODULE: ./node_modules/h3/node_modules/ufo/dist/index.mjs
+;// CONCATENATED MODULE: ./node_modules/ufo/dist/index.mjs
 const n = /[^\0-\x7E]/;
 const t = /[\x2E\u3002\uFF0E\uFF61]/g;
 const o = {
