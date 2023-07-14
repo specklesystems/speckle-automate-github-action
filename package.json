@@ -46,7 +46,7 @@
     "eslint-plugin-i18n-text": "^1.0.1",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-no-only-tests": "^3.1.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-vitest": "^0.2.6",
     "get-port-please": "^3.0.1",
     "h3": "^1.7.1",
@@ -55,7 +55,7 @@
     "msw": "^1.2.2",
     "pino": "^8.14.1",
     "pino-pretty": "^10.0.0",
-    "prettier": "^2.8.8",
+    "prettier": "^3.0.0",
     "typescript": "^5.1.6",
     "vite": "^4.4.3",
     "vitest": "^0.33.0"
