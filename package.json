@@ -54,7 +54,7 @@
     "listhen": "^1.1.2",
     "msw": "^1.2.3",
     "pino": "^8.14.1",
-    "pino-pretty": "^10.1.0",
+    "pino-pretty": "^10.2.0",
     "prettier": "^3.0.0",
     "typescript": "^5.1.6",
     "vite": "^4.4.7",
