@@ -14,7 +14,7 @@ This repository contains the source code for the Speckle Automate GitHub Action.
 
 The URL of the Speckle Automate Server to publish the function to.
 
-Defaults to [`https://automate.speckle.xyz`](https://automate.speckle.xyz).
+Defaults to [`https://automate.speckle.dev`](https://automate.speckle.dev).
 
 #### `speckle_token`
 
@@ -22,9 +22,9 @@ The Speckle Automate API token to use to publish the function. This token must h
 
 **This must be stored in GitHub as an [encrypted secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets)**. This token must be protected, as it allows anyone with access to it to publish functions as you to your Speckle Automate Server.
 
-If you believe your token has been compromised, please revoke it immediately on your [Speckle Automate Server](https://automate.speckle.xyz/tokens). Please also audit your Speckle Automate Function changes to ensure that they were not made by an unauthorized party.
+If you believe your token has been compromised, please revoke it immediately on your [Speckle Automate Server](https://automate.speckle.dev/tokens). Please also audit your Speckle Automate Function changes to ensure that they were not made by an unauthorized party.
 
-Please note that this is not a Speckle Account token, but a **Speckle Automate API** token. You can create one by logging into the [Speckle Automate Server](https://automate.speckle.xyz) and going to the [API Tokens](https://automate.speckle.xyz/tokens) page.
+Please note that this is not a Speckle Account token, but a **Speckle Automate API** token. You can create one by logging into the [Speckle Automate Server](https://automate.speckle.dev) and going to the [API Tokens](https://automate.speckle.dev/tokens) page.
 
 #### `speckle_function_path`
 
@@ -49,12 +49,12 @@ The unique ID of this version of the published function.
 
 Speckle Automate GitHub Action will register a Speckle Function with Speckle Automate. This is a necessary, but not sufficient, step in publishing your Speckle Function. You must also build and push the Docker image that contains your Speckle Function.
 
-#### Publish a function to automate.speckle.xyz
+#### Publish a function to automate.speckle.dev
 
 ```yaml
 uses: actions/speckle-automate-github-action@0.1.0
 with:
-  # speckle_server_url is optional and defaults to https://automate.speckle.xyz
+  # speckle_server_url is optional and defaults to https://automate.speckle.dev
   # The speckle_token is a secret and must be stored in GitHub as an encrypted secret
   # https://docs.github.com/en/actions/security-guides/encrypted-secrets#using-encrypted-secrets-in-a-workflow
   speckle_token: ${{ secrets.SPECKLE_TOKEN }}

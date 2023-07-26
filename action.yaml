@@ -8,7 +8,7 @@ inputs:
   speckle_server_url:
     description: 'Speckle Automate Server URL.'
     required: false
-    default: 'https://automate.speckle.xyz'
+    default: 'https://automate.speckle.dev'
   speckle_token:
     description: 'Token for authentication to Speckle Automate Server, allowing publishing of Speckle Functions. **The token must be stored in GitHub as an encrypted secret**.'
     required: true
