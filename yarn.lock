@@ -778,10 +778,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.16.19":
-  version: 18.16.19
-  resolution: "@types/node@npm:18.16.19"
-  checksum: 63c31f09616508aa7135380a4c79470a897b75f9ff3a70eb069e534dfabdec3f32fb0f9df5939127f1086614d980ddea0fa5e8cc29a49103c4f74cd687618aaf
+"@types/node@npm:^18.17.1":
+  version: 18.17.1
+  resolution: "@types/node@npm:18.17.1"
+  checksum: 56201bda9a2d05d68602df63b4e67b0545ac8c6d0280bd5fb31701350a978a577a027501fbf49db99bf177f2242ebd1244896bfd35e89042d5bd7dfebff28d4e
   languageName: node
   linkType: hard
 
@@ -5253,7 +5253,7 @@ __metadata:
     "@actions/core": ^1.10.0
     "@lifeomic/attempt": ^3.0.3
     "@types/js-yaml": ^4.0.5
-    "@types/node": ^18.16.19
+    "@types/node": ^18.17.1
     "@typescript-eslint/eslint-plugin": ^6.1.0
     "@typescript-eslint/parser": ^6.1.0
     "@vercel/ncc": ^0.36.1
@@ -5278,7 +5278,7 @@ __metadata:
     pino-pretty: ^10.1.0
     prettier: ^3.0.0
     typescript: ^5.1.6
-    vite: ^4.4.6
+    vite: ^4.4.7
     vitest: ^0.33.0
     zod: ^3.21.4
     zod-validation-error: ^1.3.1
@@ -5887,9 +5887,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^4.4.6":
-  version: 4.4.6
-  resolution: "vite@npm:4.4.6"
+"vite@npm:^4.4.7":
+  version: 4.4.7
+  resolution: "vite@npm:4.4.7"
   dependencies:
     esbuild: ^0.18.10
     fsevents: ~2.3.2
@@ -5923,7 +5923,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 5a821897f1e03f9786f827acb89e3117a79b8901d184bbc3a2e48d6404b37975a5cdeb6b6969ec24ed1e81d96f1959ed6f9426cbb64501d1e4770bdb20f9c02f
+  checksum: 787c4d891da18d0a0545bee07dec73c3201979dcf2b1ea3dc13fdd2d3b9ad76d413bcc0e68502183e309007a612c1f4116adefe0093d95fbbb9cf1c1755f7e41
   languageName: node
   linkType: hard
 
