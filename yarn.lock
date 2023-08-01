@@ -1065,19 +1065,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/coverage-istanbul@npm:^0.33.0":
-  version: 0.33.0
-  resolution: "@vitest/coverage-istanbul@npm:0.33.0"
+"@vitest/coverage-istanbul@npm:^0.34.0":
+  version: 0.34.0
+  resolution: "@vitest/coverage-istanbul@npm:0.34.0"
   dependencies:
     istanbul-lib-coverage: ^3.2.0
-    istanbul-lib-instrument: ^5.2.1
-    istanbul-lib-report: ^3.0.0
+    istanbul-lib-instrument: ^6.0.0
+    istanbul-lib-report: ^3.0.1
     istanbul-lib-source-maps: ^4.0.1
     istanbul-reports: ^3.1.5
     test-exclude: ^6.0.0
   peerDependencies:
     vitest: ">=0.32.0 <1"
-  checksum: 3150306696e41b9edb6f2519b12a833958bf28c4d77f09cb09760273c1a589375e56e5317e698a2d15a599f2ebadde3edd704e9604cbc6b073386faa22327bb8
+  checksum: 615a2a1bc59f2a6c0aa128c7037b8da095315d8e2ee9926bfbd2a3366c9653b4d58a54cd78b6eac0d7f62dab1754ffe9b958632708a7f8448fb56de074aa9e15
   languageName: node
   linkType: hard
 
@@ -3835,16 +3835,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"istanbul-lib-instrument@npm:^5.2.1":
-  version: 5.2.1
-  resolution: "istanbul-lib-instrument@npm:5.2.1"
+"istanbul-lib-instrument@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "istanbul-lib-instrument@npm:6.0.0"
   dependencies:
     "@babel/core": ^7.12.3
     "@babel/parser": ^7.14.7
     "@istanbuljs/schema": ^0.1.2
     istanbul-lib-coverage: ^3.2.0
-    semver: ^6.3.0
-  checksum: bf16f1803ba5e51b28bbd49ed955a736488381e09375d830e42ddeb403855b2006f850711d95ad726f2ba3f1ae8e7366de7e51d2b9ac67dc4d80191ef7ddf272
+    semver: ^7.5.4
+  checksum: b9dc3723a769e65dbe1b912f935088ffc07cf393fa78a3ce79022c91aabb0ad01405ffd56083cdd822e514798e9daae3ea7bfe85633b094ecb335d28eb0a3f97
   languageName: node
   linkType: hard
 
@@ -3856,6 +3856,17 @@ __metadata:
     make-dir: ^3.0.0
     supports-color: ^7.1.0
   checksum: 3f29eb3f53c59b987386e07fe772d24c7f58c6897f34c9d7a296f4000de7ae3de9eb95c3de3df91dc65b134c84dee35c54eee572a56243e8907c48064e34ff1b
+  languageName: node
+  linkType: hard
+
+"istanbul-lib-report@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "istanbul-lib-report@npm:3.0.1"
+  dependencies:
+    istanbul-lib-coverage: ^3.0.0
+    make-dir: ^4.0.0
+    supports-color: ^7.1.0
+  checksum: fd17a1b879e7faf9bb1dc8f80b2a16e9f5b7b8498fe6ed580a618c34df0bfe53d2abd35bf8a0a00e628fb7405462576427c7df20bbe4148d19c14b431c974b21
   languageName: node
   linkType: hard
 
@@ -4168,6 +4179,15 @@ __metadata:
   dependencies:
     semver: ^6.0.0
   checksum: 484200020ab5a1fdf12f393fe5f385fc8e4378824c940fba1729dcd198ae4ff24867bc7a5646331e50cead8abff5d9270c456314386e629acec6dff4b8016b78
+  languageName: node
+  linkType: hard
+
+"make-dir@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "make-dir@npm:4.0.0"
+  dependencies:
+    semver: ^7.5.3
+  checksum: bf0731a2dd3aab4db6f3de1585cea0b746bb73eb5a02e3d8d72757e376e64e6ada190b1eddcde5b2f24a81b688a9897efd5018737d05e02e2a671dda9cff8a8a
   languageName: node
   linkType: hard
 
@@ -5313,7 +5333,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.5, semver@npm:^7.5.4":
+"semver@npm:^7.3.5, semver@npm:^7.5.3, semver@npm:^7.5.4":
   version: 7.5.4
   resolution: "semver@npm:7.5.4"
   dependencies:
@@ -5462,7 +5482,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^6.2.0
     "@typescript-eslint/parser": ^6.2.0
     "@vercel/ncc": ^0.36.1
-    "@vitest/coverage-istanbul": ^0.33.0
+    "@vitest/coverage-istanbul": ^0.34.0
     eslint: ^8.46.0
     eslint-import-resolver-typescript: ^3.5.5
     eslint-plugin-eslint-comments: ^3.2.0
