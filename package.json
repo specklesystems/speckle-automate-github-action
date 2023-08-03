@@ -55,7 +55,7 @@
     "msw": "^1.2.3",
     "pino": "^8.14.2",
     "pino-pretty": "^10.2.0",
-    "prettier": "^3.0.0",
+    "prettier": "^3.0.1",
     "typescript": "^5.1.6",
     "vite": "^4.4.8",
     "vitest": "^0.34.1"
