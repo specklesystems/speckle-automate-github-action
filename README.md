@@ -45,6 +45,10 @@ Your Speckle Token must have write permissions for the Speckle Function with thi
 
 The unique ID of this version of the published function.
 
+#### `speckle_automate_host`
+
+The host component of the Speckle Automate Server URL.
+
 ### Example usage
 
 Speckle Automate GitHub Action will register a Speckle Function with Speckle Automate. This is a necessary, but not sufficient, step in publishing your Speckle Function. You must also build and push the Docker image that contains your Speckle Function.
