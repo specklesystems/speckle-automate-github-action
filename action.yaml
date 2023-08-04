@@ -5,7 +5,7 @@ branding:
   icon: 'upload-cloud'
   color: 'blue'
 inputs:
-  speckle_server_url:
+  speckle_automate_url:
     description: 'Speckle Automate Server URL.'
     required: false
     default: 'https://automate.speckle.dev'
