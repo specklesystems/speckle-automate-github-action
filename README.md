@@ -10,7 +10,7 @@ This repository contains the source code for the Speckle Automate GitHub Action.
 
 ### Inputs
 
-#### `speckle_server_url`
+#### `speckle_automate_url`
 
 The URL of the Speckle Automate Server to publish the function to.
 
@@ -54,7 +54,7 @@ Speckle Automate GitHub Action will register a Speckle Function with Speckle Aut
 ```yaml
 uses: actions/speckle-automate-github-action@0.1.0
 with:
-  # speckle_server_url is optional and defaults to https://automate.speckle.dev
+  # speckle_automate_url is optional and defaults to https://automate.speckle.dev
   # The speckle_token is a secret and must be stored in GitHub as an encrypted secret
   # https://docs.github.com/en/actions/security-guides/encrypted-secrets#using-encrypted-secrets-in-a-workflow
   speckle_token: ${{ secrets.SPECKLE_TOKEN }}
@@ -68,7 +68,7 @@ with:
 uses: actions/speckle-automate-github-action@0.1.0
 with:
   # please update to the url of your self-hosted server
-  speckle_server_url: https://example.org
+  speckle_automate_url: https://example.org
   # https://docs.github.com/en/actions/security-guides/encrypted-secrets#using-encrypted-secrets-in-a-workflow
   speckle_token: ${{ secrets.SPECKLE_TOKEN }}
   # speckle_function_path is optional and defaults to ./specklefunction.yaml

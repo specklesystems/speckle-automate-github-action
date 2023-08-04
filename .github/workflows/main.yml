@@ -25,7 +25,7 @@ jobs:
           yarn run run:mockserver & # run mockserver in background, will be killed when test finishes
       - uses: ./
         with:
-          speckle_server_url: 'http://127.0.0.1:3000'
+          speckle_automate_url: 'http://127.0.0.1:3000'
           speckle_token: 'lolzSuperSecretzToken'
           speckle_function_id: 'functionid'
           speckle_function_path: 'examples/minimal'

@@ -22164,7 +22164,7 @@ const fileUtil = {
 
 async function run() {
     try {
-        const speckleServerUrlRaw = core.getInput('speckle_server_url');
+        const speckleAutomateUrlRaw = core.getInput('speckle_automate_url');
         const speckleTokenRaw = core.getInput('speckle_token');
         core.setSecret(speckleTokenRaw);
         const speckleFunctionPathRaw = core.getInput('speckle_function_path');
@@ -22180,8 +22180,9 @@ async function run() {
             throw new Error('GITHUB_REF_NAME is not defined');
         if (!gitRefType)
             throw new Error('GITHUB_REF_TYPE is not defined');
+        const speckleAutomateHost = new URL(speckleAutomateUrlRaw).host;
         const { versionId } = await registerSpeckleFunction({
-            speckleServerUrl: speckleServerUrlRaw,
+            speckleServerUrl: speckleAutomateUrlRaw,
             speckleToken: speckleTokenRaw,
             speckleFunctionPath: speckleFunctionPathRaw,
             speckleFunctionId: speckleFunctionIdRaw,
@@ -22193,6 +22194,7 @@ async function run() {
             fileSystem: files
         });
         core.setOutput('version_id', versionId);
+        core.setOutput('speckle_automate_host', speckleAutomateHost);
     }
     catch (error) {
         if (error instanceof Error)
