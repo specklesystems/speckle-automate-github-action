@@ -28,6 +28,8 @@ inputs:
 outputs:
   version_id:
     description: 'The unique identifier of the function version.'
+  speckle_automate_host:
+    description: 'The host component of the Speckle Automate Server URL.'
 runs:
   using: 'node16' #FIXME bump to node18 when available
   main: 'dist/action/index.js'
