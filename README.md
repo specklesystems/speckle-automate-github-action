@@ -4,9 +4,15 @@
 
 ## Introduction
 
-This repository contains the source code for the Speckle Automate GitHub Action. It is a GitHub Action that publishes a Speckle Automate Function to Speckle Automate your source code.
+This repository contains the source code for the Speckle Automate GitHub Action.
+It is a GitHub Action that publishes a Speckle Automate Function definition to Speckle's automation platform.
 
 ## Documentation
+
+> [!NOTE]
+> This is a low level building block action.
+> As a Speckle Automate Function developer you probably want to use our [composite action](https://github.com/specklesystems/speckle-automate-github-composite-action)
+
 
 ### Inputs
 
