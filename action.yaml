@@ -1,21 +1,17 @@
-name: 'Speckle Automate Function Publisher'
-description: 'Builds and publishes a Speckle Automate Function to the Speckle Server.'
+name: 'Speckle Automate function version publisher'
+description: 'Publishes a new version of a Speckle Automate Function to the Speckle Automate platform.'
 author: 'Speckle Systems'
 branding:
   icon: 'upload-cloud'
   color: 'blue'
 inputs:
   speckle_automate_url:
-    description: 'Speckle Automate Server URL.'
+    description: 'Speckle Automate URL.'
     required: false
     default: 'https://automate.speckle.dev'
   speckle_token:
-    description: 'Token for authentication to Speckle Automate Server, allowing publishing of Speckle Functions. **The token must be stored in GitHub as an encrypted secret**.'
+    description: 'Token for authentication to Speckle Automate, allowing publishing of Speckle Automate Functions. **The token must be stored in GitHub as an encrypted secret**.'
     required: true
-  speckle_function_path:
-    description: 'Path to the Speckle Function definition (`specklefunction.yaml`) to be published.'
-    required: false
-    default: '.' # root directory of the checked out source code, ${GITHUB_WORKSPACE}
   speckle_function_id:
     description: 'The unique identifier of the function. Go to automate to generate one.'
     required: true
