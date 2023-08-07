@@ -18252,7 +18252,6 @@ class NonRetryableError extends Error {
 async function registerSpeckleFunction(opts) {
     let speckleServerUrl;
     let speckleToken;
-    let speckleFunctionPath;
     let speckleFunctionId;
     let speckleFunctionCommand;
     let speckleFunctionInputSchema;
@@ -18261,7 +18260,6 @@ async function registerSpeckleFunction(opts) {
     try {
         speckleServerUrl = SpeckleServerUrlSchema.parse(opts.speckleServerUrl);
         speckleToken = SpeckleTokenSchema.parse(opts.speckleToken);
-        speckleFunctionPath = SpeckleFunctionPathSchema.parse(opts.speckleFunctionPath);
         speckleFunctionId = SpeckleFunctionIdSchema.parse(opts.speckleFunctionId);
         versionTag = VersionTagSchema.parse(opts.versionTag);
         commitId = CommitIdSchema.parse(opts.commitId);
@@ -18275,7 +18273,6 @@ async function registerSpeckleFunction(opts) {
     }
     opts.logger.info(`Speckle Server URL: '${speckleServerUrl}'`);
     //token is masked in the logs, so no need to print it here.
-    opts.logger.info(`Speckle Function Path: '${speckleFunctionPath}'`);
     opts.logger.info(`Speckle Function ID: '${speckleFunctionId}'`);
     // const manifest = await findAndParseManifest(speckleFunctionPath, {
     //   logger: opts.logger,
@@ -22167,7 +22164,6 @@ async function run() {
         const speckleAutomateUrlRaw = core.getInput('speckle_automate_url');
         const speckleTokenRaw = core.getInput('speckle_token');
         core.setSecret(speckleTokenRaw);
-        const speckleFunctionPathRaw = core.getInput('speckle_function_path');
         const speckleFunctionIdRaw = core.getInput('speckle_function_id');
         const speckleFunctionInputSchema = core.getInput('speckle_function_input_schema');
         const speckleFunctionCommand = core.getInput('speckle_function_command');
@@ -22184,7 +22180,6 @@ async function run() {
         const { versionId } = await registerSpeckleFunction({
             speckleServerUrl: speckleAutomateUrlRaw,
             speckleToken: speckleTokenRaw,
-            speckleFunctionPath: speckleFunctionPathRaw,
             speckleFunctionId: speckleFunctionIdRaw,
             speckleFunctionInputSchema,
             speckleFunctionCommand,

@@ -3,7 +3,6 @@ import { Logger } from './logging/logger.js'
 import {
   SpeckleServerUrlSchema,
   SpeckleTokenSchema,
-  SpeckleFunctionPathSchema,
   SpeckleFunctionIdSchema,
   SpeckleFunctionInputSchema,
   VersionTagSchema,
@@ -20,7 +19,6 @@ type ProcessOptions = {
   speckleToken: string
   versionTag: string
   commitId: string
-  speckleFunctionPath: string | undefined
   speckleFunctionId: string
   speckleFunctionCommand: string
   speckleFunctionInputSchema?: string | undefined
@@ -37,7 +35,6 @@ export async function registerSpeckleFunction(
 ): Promise<ProcessResult> {
   let speckleServerUrl: string
   let speckleToken: string
-  let speckleFunctionPath: string
   let speckleFunctionId: string
   let speckleFunctionCommand: string[]
   let speckleFunctionInputSchema: Record<string, unknown>
@@ -46,7 +43,6 @@ export async function registerSpeckleFunction(
   try {
     speckleServerUrl = SpeckleServerUrlSchema.parse(opts.speckleServerUrl)
     speckleToken = SpeckleTokenSchema.parse(opts.speckleToken)
-    speckleFunctionPath = SpeckleFunctionPathSchema.parse(opts.speckleFunctionPath)
     speckleFunctionId = SpeckleFunctionIdSchema.parse(opts.speckleFunctionId)
     versionTag = VersionTagSchema.parse(opts.versionTag)
     commitId = CommitIdSchema.parse(opts.commitId)
@@ -60,7 +56,6 @@ export async function registerSpeckleFunction(
 
   opts.logger.info(`Speckle Server URL: '${speckleServerUrl}'`)
   //token is masked in the logs, so no need to print it here.
-  opts.logger.info(`Speckle Function Path: '${speckleFunctionPath}'`)
   opts.logger.info(`Speckle Function ID: '${speckleFunctionId}'`)
 
   // const manifest = await findAndParseManifest(speckleFunctionPath, {

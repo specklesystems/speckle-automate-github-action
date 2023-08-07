@@ -7,7 +7,6 @@ async function run(): Promise<void> {
     const speckleAutomateUrlRaw = core.getInput('speckle_automate_url')
     const speckleTokenRaw = core.getInput('speckle_token')
     core.setSecret(speckleTokenRaw)
-    const speckleFunctionPathRaw = core.getInput('speckle_function_path')
     const speckleFunctionIdRaw = core.getInput('speckle_function_id')
     const speckleFunctionInputSchema = core.getInput('speckle_function_input_schema')
     const speckleFunctionCommand = core.getInput('speckle_function_command')
@@ -24,7 +23,6 @@ async function run(): Promise<void> {
     const { versionId } = await registerSpeckleFunction({
       speckleServerUrl: speckleAutomateUrlRaw,
       speckleToken: speckleTokenRaw,
-      speckleFunctionPath: speckleFunctionPathRaw,
       speckleFunctionId: speckleFunctionIdRaw,
       speckleFunctionInputSchema,
       speckleFunctionCommand,
