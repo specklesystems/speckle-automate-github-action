@@ -3,29 +3,6 @@ import { z } from 'zod'
 import fetch from 'node-fetch'
 import { retry } from '@lifeomic/attempt'
 
-async function run(): Promise<void> {
-  core.info('Start registering a new version on the automate instance')
-  const inputVariables = parseInputs()
-  core.info(`Parsed input variables to: ${inputVariables}`)
-  const requiredEnvVars = parseEnvVars()
-  core.info(`Parsed required environment variables to: ${requiredEnvVars}`)
-
-  const { speckleAutomateUrl, speckleFunctionId } = inputVariables
-  core.setOutput('speckle_automate_host', new URL(speckleAutomateUrl).host)
-  core.info(
-    `Sending a new function version definition for function ${speckleFunctionId} to the automate server: ${speckleAutomateUrl}`
-  )
-
-  const { versionId } = await registerNewVersionForTheSpeckleAutomateFunction(
-    inputVariables,
-    requiredEnvVars
-  )
-  core.setOutput('version_id', versionId)
-  core.info(`Registered function version with new id: ${versionId}`)
-}
-
-run()
-
 const InputVariablesSchema = z.object({
   speckleAutomateUrl: z.string().url().nonempty(),
   speckleToken: z.string().nonempty(),
@@ -59,7 +36,7 @@ const parseInputs = (): InputVariables => {
   const inputParseResult = InputVariablesSchema.safeParse(rawInputs)
   if (inputParseResult.success) return inputParseResult.data
   core.setFailed(
-    `The provided inputs do not match the required schema, ${inputParseResult.error}`
+    `The provided inputs do not match the required schema, ${inputParseResult.error.message}`
   )
   throw inputParseResult.error
 }
@@ -80,7 +57,7 @@ const parseEnvVars = (): RequiredEnvVars => {
   } as RequiredEnvVars)
   if (parseResult.success) return parseResult.data
   core.setFailed(
-    `The current execution environment does not have the required variables: ${parseResult.error}`
+    `The current execution environment does not have the required variables: ${parseResult.error.message}`
   )
   throw parseResult.error
 }
@@ -137,6 +114,9 @@ const registerNewVersionForTheSpeckleAutomateFunction = async (
           )
           throw retryFlag
         }
+        throw Error(
+          `Request failed with status ${res.status}. Reason: ${await res.text()} `
+        )
       },
       {
         delay: 200,
@@ -146,7 +126,10 @@ const registerNewVersionForTheSpeckleAutomateFunction = async (
         maxDelay: 500,
         jitter: true,
         handleError: (err, context) => {
-          if (err !== retryFlag) context.abort()
+          if (err !== retryFlag) {
+            context.abort()
+            throw err
+          }
         }
       }
     )
@@ -158,3 +141,28 @@ const registerNewVersionForTheSpeckleAutomateFunction = async (
     throw err
   }
 }
+
+export async function run(): Promise<void> {
+  core.info('Start registering a new version on the automate instance')
+  const inputVariables = parseInputs()
+  core.info(`Parsed input variables to: ${JSON.stringify(inputVariables)}`)
+  const requiredEnvVars = parseEnvVars()
+  core.info(
+    `Parsed required environment variables to: ${JSON.stringify(requiredEnvVars)}`
+  )
+
+  const { speckleAutomateUrl, speckleFunctionId } = inputVariables
+  core.setOutput('speckle_automate_host', new URL(speckleAutomateUrl).host)
+  core.info(
+    `Sending a new function version definition for function ${speckleFunctionId} to the automate server: ${speckleAutomateUrl}`
+  )
+
+  const { versionId } = await registerNewVersionForTheSpeckleAutomateFunction(
+    inputVariables,
+    requiredEnvVars
+  )
+  core.setOutput('version_id', versionId)
+  core.info(`Registered function version with new id: ${versionId}`)
+}
+
+run()

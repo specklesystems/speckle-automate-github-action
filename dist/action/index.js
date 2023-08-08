@@ -7901,6 +7901,11 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 
+// EXPORTS
+__nccwpck_require__.d(__webpack_exports__, {
+  "K": () => (/* binding */ run)
+});
+
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(2186);
 ;// CONCATENATED MODULE: ./node_modules/zod/lib/index.mjs
@@ -14010,20 +14015,6 @@ var src = __nccwpck_require__(6494);
 
 
 
-async function run() {
-    core.info('Start registering a new version on the automate instance');
-    const inputVariables = parseInputs();
-    core.info(`Parsed input variables to: ${inputVariables}`);
-    const requiredEnvVars = parseEnvVars();
-    core.info(`Parsed required environment variables to: ${requiredEnvVars}`);
-    const { speckleAutomateUrl, speckleFunctionId } = inputVariables;
-    core.setOutput('speckle_automate_host', new URL(speckleAutomateUrl).host);
-    core.info(`Sending a new function version definition for function ${speckleFunctionId} to the automate server: ${speckleAutomateUrl}`);
-    const { versionId } = await registerNewVersionForTheSpeckleAutomateFunction(inputVariables, requiredEnvVars);
-    core.setOutput('version_id', versionId);
-    core.info(`Registered function version with new id: ${versionId}`);
-}
-run();
 const InputVariablesSchema = z.object({
     speckleAutomateUrl: z.string().url().nonempty(),
     speckleToken: z.string().nonempty(),
@@ -14054,7 +14045,7 @@ const parseInputs = () => {
     const inputParseResult = InputVariablesSchema.safeParse(rawInputs);
     if (inputParseResult.success)
         return inputParseResult.data;
-    core.setFailed(`The provided inputs do not match the required schema, ${inputParseResult.error}`);
+    core.setFailed(`The provided inputs do not match the required schema, ${inputParseResult.error.message}`);
     throw inputParseResult.error;
 };
 const RequiredEnvVarsSchema = z.object({
@@ -14070,7 +14061,7 @@ const parseEnvVars = () => {
     });
     if (parseResult.success)
         return parseResult.data;
-    core.setFailed(`The current execution environment does not have the required variables: ${parseResult.error}`);
+    core.setFailed(`The current execution environment does not have the required variables: ${parseResult.error.message}`);
     throw parseResult.error;
 };
 const FunctionVersionResponseBodySchema = z.object({
@@ -14101,6 +14092,7 @@ const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomate
                 core.warning(`RETRYING Version creation request since it failed with: ${await res.text()}`);
                 throw retryFlag;
             }
+            throw Error(`Request failed with status ${res.status}. Reason: ${await res.text()} `);
         }, {
             delay: 200,
             factor: 2,
@@ -14109,8 +14101,10 @@ const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomate
             maxDelay: 500,
             jitter: true,
             handleError: (err, context) => {
-                if (err !== retryFlag)
+                if (err !== retryFlag) {
                     context.abort();
+                    throw err;
+                }
             }
         });
         return FunctionVersionResponseBodySchema.parse(response);
@@ -14120,8 +14114,24 @@ const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomate
         throw err;
     }
 };
+async function run() {
+    core.info('Start registering a new version on the automate instance');
+    const inputVariables = parseInputs();
+    core.info(`Parsed input variables to: ${JSON.stringify(inputVariables)}`);
+    const requiredEnvVars = parseEnvVars();
+    core.info(`Parsed required environment variables to: ${JSON.stringify(requiredEnvVars)}`);
+    const { speckleAutomateUrl, speckleFunctionId } = inputVariables;
+    core.setOutput('speckle_automate_host', new URL(speckleAutomateUrl).host);
+    core.info(`Sending a new function version definition for function ${speckleFunctionId} to the automate server: ${speckleAutomateUrl}`);
+    const { versionId } = await registerNewVersionForTheSpeckleAutomateFunction(inputVariables, requiredEnvVars);
+    core.setOutput('version_id', versionId);
+    core.info(`Registered function version with new id: ${versionId}`);
+}
+run();
 
 })();
 
+var __webpack_exports__run = __webpack_exports__.K;
+export { __webpack_exports__run as run };
 
 //# sourceMappingURL=index.js.map
