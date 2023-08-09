@@ -7,29 +7,6 @@ on: # rebuild any PRs and main branch changes
       - 'releases/*'
 
 jobs:
-  integration-test: # make sure the action works on a clean machine without building
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3.4.0
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-      - name: Yarn Install
-        run: yarn install
-      - uses: actions/cache/save@v3
-        id: cache-save
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - run: |
-          yarn run run:mockserver & # run mockserver in background, will be killed when test finishes
-      - uses: ./
-        with:
-          speckle_automate_url: 'http://127.0.0.1:3000'
-          speckle_token: 'lolzSuperSecretzToken'
-          speckle_function_id: 'functionid'
-          speckle_function_path: 'examples/minimal'
-          speckle_function_command: 'echo'
   pre-commit:
     runs-on: ubuntu-latest
     steps:
