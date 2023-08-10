@@ -8,16 +8,14 @@
   "main": "lib/main.js",
   "type": "module",
   "scripts": {
-    "all": "yarn run build && yarn run prettier:check && yarn run lint && yarn run package && yarn run package:mockserver && yarn run test",
+    "all": "yarn run build && yarn run prettier:check && yarn run lint && yarn run package",
     "build": "tsc -p tsconfig.json",
     "build:image": "docker build -t speckle/speckle-automate-github-action:local .",
     "lint": "eslint src/**/*.ts",
     "package": "ncc build --target es2020 --source-map --license licenses.txt -o dist/action src/main.ts",
-    "package:mockserver": "ncc build --target es2020 --source-map --license licenses.txt -o dist/testing/mockserver src/tests/mock-server.ts",
     "precommit": "pre-commit run --all-files",
     "prettier:check": "prettier --check '**/*.ts'",
     "prettier:fix": "prettier --write '**/*.ts'",
-    "run:mockserver": "node dist/testing/mockserver/index.js",
     "test": "vitest --run  --coverage",
     "test:watch": "vitest"
   },
@@ -28,14 +26,13 @@
     "@actions/core": "^1.10.0",
     "@lifeomic/attempt": "^3.0.3",
     "node-fetch": "^3.3.2",
-    "zod": "^3.21.4",
-    "zod-validation-error": "^1.3.1"
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.5",
-    "@types/node": "^18.17.1",
-    "@typescript-eslint/eslint-plugin": "^6.2.1",
-    "@typescript-eslint/parser": "^6.2.1",
+    "@types/node": "^18.17.4",
+    "@typescript-eslint/eslint-plugin": "^6.3.0",
+    "@typescript-eslint/parser": "^6.3.0",
     "@vercel/ncc": "^0.36.1",
     "@vitest/coverage-istanbul": "^0.34.1",
     "eslint": "^8.46.0",
@@ -48,16 +45,9 @@
     "eslint-plugin-no-only-tests": "^3.1.0",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-vitest": "^0.2.8",
-    "get-port-please": "^3.0.1",
-    "h3": "^1.7.1",
-    "js-yaml": "^4.1.0",
-    "listhen": "^1.2.2",
-    "msw": "^1.2.3",
-    "pino": "^8.14.2",
-    "pino-pretty": "^10.2.0",
     "prettier": "^3.0.1",
     "typescript": "^5.1.6",
-    "vite": "^4.4.8",
+    "vite": "^4.4.9",
     "vitest": "^0.34.1"
   }
 }

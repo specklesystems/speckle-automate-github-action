@@ -5,7 +5,6 @@ repos:
       - id: check-yaml
         args:
           - --allow-multiple-documents
-        exclude: deploy/helm
       - id: check-merge-conflict
       - id: check-executables-have-shebangs
       - id: check-shebang-scripts-are-executable
@@ -49,21 +48,6 @@ repos:
         types:
           - ts
         language: system
-      - id: build-mockserver
-        name: build mockserver package
-        entry: yarn run package:mockserver
-        pass_filenames: false
-        types:
-          - ts
-        language: system
-      - id: unit tests
-        name: unit tests
-        entry: yarn run test
-        pass_filenames: false
-        language: system
-        types:
-          - ts
-        exclude: ^dist/
 
   - repo: https://github.com/specklesystems/pre-commit
     rev: '0.2.0'
