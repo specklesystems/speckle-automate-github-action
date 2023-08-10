@@ -14033,6 +14033,7 @@ const parseInputs = () => {
     }
     catch (err) {
         core.setFailed(`Parsing the function input schema failed with: ${err}`);
+        throw err;
     }
     const rawInputs = {
         speckleAutomateUrl: core.getInput('speckle_automate_url', { required: true }),
