@@ -7137,6 +7137,13 @@ module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("net");
 
 /***/ }),
 
+/***/ 7561:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
+
+/***/ }),
+
 /***/ 7742:
 /***/ ((module) => {
 
@@ -7305,7 +7312,7 @@ const File = _File
 
 /***/ }),
 
-/***/ 2777:
+/***/ 7972:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
 
@@ -7316,8 +7323,8 @@ __nccwpck_require__.d(__webpack_exports__, {
 
 // UNUSED EXPORTS: Blob, blobFrom, blobFromSync, default, fileFrom, fileFromSync
 
-;// CONCATENATED MODULE: external "node:fs"
-const external_node_fs_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
+// EXTERNAL MODULE: external "node:fs"
+var external_node_fs_ = __nccwpck_require__(7561);
 ;// CONCATENATED MODULE: external "node:path"
 const external_node_path_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
 // EXTERNAL MODULE: ./node_modules/node-domexception/index.js
@@ -7334,7 +7341,7 @@ var fetch_blob = __nccwpck_require__(1410);
 
 
 
-const { stat } = external_node_fs_namespaceObject.promises
+const { stat } = external_node_fs_.promises
 
 /**
  * @param {string} path filepath on the disk
@@ -13594,8 +13601,8 @@ class AbortError extends FetchBaseError {
 	}
 }
 
-// EXTERNAL MODULE: ./node_modules/fetch-blob/from.js + 2 modules
-var from = __nccwpck_require__(2777);
+// EXTERNAL MODULE: ./node_modules/fetch-blob/from.js + 1 modules
+var from = __nccwpck_require__(7972);
 ;// CONCATENATED MODULE: ./node_modules/node-fetch/src/index.js
 /**
  * Index.js
@@ -14010,7 +14017,10 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
 
 // EXTERNAL MODULE: ./node_modules/@lifeomic/attempt/dist/src/index.js
 var src = __nccwpck_require__(6494);
+// EXTERNAL MODULE: external "node:fs"
+var external_node_fs_ = __nccwpck_require__(7561);
 ;// CONCATENATED MODULE: ./src/main.ts
+
 
 
 
@@ -14027,9 +14037,11 @@ const parseInputs = () => {
     core.setSecret(speckleTokenRaw);
     let speckleFunctionInputSchema = null;
     try {
-        const rawInputSchema = core.getInput('speckle_function_input_schema');
-        if (rawInputSchema)
+        const rawInputSchemaPath = core.getInput('speckle_function_input_schema_file_path');
+        if (rawInputSchemaPath) {
+            const rawInputSchema = (0,external_node_fs_.readFileSync)(rawInputSchemaPath, 'utf-8');
             speckleFunctionInputSchema = JSON.parse(rawInputSchema);
+        }
     }
     catch (err) {
         core.setFailed(`Parsing the function input schema failed with: ${err}`);

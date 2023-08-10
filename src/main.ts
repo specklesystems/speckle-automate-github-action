@@ -2,6 +2,7 @@ import * as core from '@actions/core'
 import { z } from 'zod'
 import fetch from 'node-fetch'
 import { retry } from '@lifeomic/attempt'
+import { readFileSync } from 'node:fs'
 
 const InputVariablesSchema = z.object({
   speckleAutomateUrl: z.string().url().nonempty(),
@@ -19,8 +20,11 @@ const parseInputs = (): InputVariables => {
 
   let speckleFunctionInputSchema: Record<string, unknown> | null = null
   try {
-    const rawInputSchema = core.getInput('speckle_function_input_schema')
-    if (rawInputSchema) speckleFunctionInputSchema = JSON.parse(rawInputSchema)
+    const rawInputSchemaPath = core.getInput('speckle_function_input_schema_file_path')
+    if (rawInputSchemaPath) {
+      const rawInputSchema = readFileSync(rawInputSchemaPath, 'utf-8')
+      speckleFunctionInputSchema = JSON.parse(rawInputSchema)
+    }
   } catch (err) {
     core.setFailed(`Parsing the function input schema failed with: ${err}`)
     throw err
