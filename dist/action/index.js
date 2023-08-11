@@ -7144,6 +7144,13 @@ module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
 
 /***/ }),
 
+/***/ 9411:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
+
+/***/ }),
+
 /***/ 7742:
 /***/ ((module) => {
 
@@ -7312,28 +7319,18 @@ const File = _File
 
 /***/ }),
 
-/***/ 7972:
+/***/ 2185:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
-
-// EXPORTS
-__nccwpck_require__.d(__webpack_exports__, {
-  "$B": () => (/* reexport */ file/* default */.Z)
-});
-
-// UNUSED EXPORTS: Blob, blobFrom, blobFromSync, default, fileFrom, fileFromSync
-
-// EXTERNAL MODULE: external "node:fs"
-var external_node_fs_ = __nccwpck_require__(7561);
-;// CONCATENATED MODULE: external "node:path"
-const external_node_path_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
-// EXTERNAL MODULE: ./node_modules/node-domexception/index.js
-var node_domexception = __nccwpck_require__(7760);
-// EXTERNAL MODULE: ./node_modules/fetch-blob/file.js
-var file = __nccwpck_require__(3213);
-// EXTERNAL MODULE: ./node_modules/fetch-blob/index.js
-var fetch_blob = __nccwpck_require__(1410);
-;// CONCATENATED MODULE: ./node_modules/fetch-blob/from.js
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   "$B": () => (/* reexport safe */ _file_js__WEBPACK_IMPORTED_MODULE_3__.Z)
+/* harmony export */ });
+/* unused harmony exports blobFrom, blobFromSync, fileFrom, fileFromSync */
+/* harmony import */ var node_fs__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7561);
+/* harmony import */ var node_path__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(9411);
+/* harmony import */ var node_domexception__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(7760);
+/* harmony import */ var _file_js__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(3213);
+/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(1410);
 
 
 
@@ -7341,7 +7338,7 @@ var fetch_blob = __nccwpck_require__(1410);
 
 
 
-const { stat } = external_node_fs_.promises
+const { stat } = node_fs__WEBPACK_IMPORTED_MODULE_0__.promises
 
 /**
  * @param {string} path filepath on the disk
@@ -7432,7 +7429,7 @@ class BlobDataItem {
   }
 }
 
-/* harmony default export */ const from = ((/* unused pure expression or super */ null && (blobFromSync)));
+/* unused harmony default export */ var __WEBPACK_DEFAULT_EXPORT__ = ((/* unused pure expression or super */ null && (blobFromSync)));
 
 
 
@@ -13601,8 +13598,8 @@ class AbortError extends FetchBaseError {
 	}
 }
 
-// EXTERNAL MODULE: ./node_modules/fetch-blob/from.js + 1 modules
-var from = __nccwpck_require__(7972);
+// EXTERNAL MODULE: ./node_modules/fetch-blob/from.js
+var from = __nccwpck_require__(2185);
 ;// CONCATENATED MODULE: ./node_modules/node-fetch/src/index.js
 /**
  * Index.js
@@ -14019,7 +14016,10 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
 var src = __nccwpck_require__(6494);
 // EXTERNAL MODULE: external "node:fs"
 var external_node_fs_ = __nccwpck_require__(7561);
+// EXTERNAL MODULE: external "node:path"
+var external_node_path_ = __nccwpck_require__(9411);
 ;// CONCATENATED MODULE: ./src/main.ts
+
 
 
 
@@ -14038,8 +14038,11 @@ const parseInputs = () => {
     let speckleFunctionInputSchema = null;
     try {
         const rawInputSchemaPath = core.getInput('speckle_function_input_schema_file_path');
+        const homeDir = process.env['HOME'];
+        if (!homeDir)
+            throw new Error('The home directory is not defined, cannot load inputSchema');
         if (rawInputSchemaPath) {
-            const rawInputSchema = (0,external_node_fs_.readFileSync)(rawInputSchemaPath, 'utf-8');
+            const rawInputSchema = (0,external_node_fs_.readFileSync)((0,external_node_path_.join)(homeDir, rawInputSchemaPath), 'utf-8');
             speckleFunctionInputSchema = JSON.parse(rawInputSchema);
         }
     }
