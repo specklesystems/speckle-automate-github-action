@@ -14083,11 +14083,13 @@ const parseEnvVars = () => {
 const FunctionVersionResponseBodySchema = z.object({
     versionId: z.string().nonempty()
 });
-const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomateUrl, speckleFunctionCommand, speckleFunctionId, speckleFunctionInputSchema, speckleToken }, { gitCommitSha, gitRefName, gitRefType }) => {
+const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomateUrl, speckleFunctionCommand, speckleFunctionId, speckleFunctionInputSchema, speckleToken }, { commitId, versionTag }
+// { gitCommitSha, gitRefName, gitRefType }: RequiredEnvVars
+) => {
     try {
         const requestBody = {
-            commitId: gitCommitSha,
-            versionTag: gitRefType === 'tag' ? gitRefName : gitCommitSha,
+            commitId,
+            versionTag,
             command: speckleFunctionCommand,
             inputSchema: speckleFunctionInputSchema
         };
@@ -14135,13 +14137,17 @@ async function run() {
     const inputVariables = parseInputs();
     core.info(`Parsed input variables to: ${JSON.stringify(inputVariables)}`);
     const requiredEnvVars = parseEnvVars();
+    const { gitCommitSha, gitRefName, gitRefType } = requiredEnvVars;
     core.info(`Parsed required environment variables to: ${JSON.stringify(requiredEnvVars)}`);
     const { speckleAutomateUrl, speckleFunctionId } = inputVariables;
     core.setOutput('speckle_automate_host', new URL(speckleAutomateUrl).host);
     core.info(`Sending a new function version definition for function ${speckleFunctionId} to the automate server: ${speckleAutomateUrl}`);
-    const { versionId } = await registerNewVersionForTheSpeckleAutomateFunction(inputVariables, requiredEnvVars);
-    core.setOutput('version_id', versionId);
+    // github uses 7 chars to identify commits
+    const commitId = gitCommitSha.substring(0, 7);
+    const versionTag = gitRefType === 'tag' ? gitRefName : commitId;
+    const { versionId } = await registerNewVersionForTheSpeckleAutomateFunction(inputVariables, { versionTag, commitId });
     core.info(`Registered function version with new id: ${versionId}`);
+    core.setOutput('version_tag', versionTag);
 }
 run();
 
