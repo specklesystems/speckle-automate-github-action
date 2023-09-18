@@ -722,10 +722,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.17.4":
-  version: 18.17.4
-  resolution: "@types/node@npm:18.17.4"
-  checksum: d4c458202d82c999f38d85ca9ae8a2d3e521645c7f1b908cd6a0303d0e13c7d5eb3f888c41f584ba029ecf802d0a0005b7816c149400371a3c035abc4bd9a4c5
+"@types/node@npm:^18.17.17":
+  version: 18.17.17
+  resolution: "@types/node@npm:18.17.17"
+  checksum: ff28f347c77723780836f9bb2ffa6db0cd72490bfd7604397c03db31db34f1f2899e82f0aaf3e825efeb09c15bd94d076ea9aca19a1407e1b56cb4603318936c
   languageName: node
   linkType: hard
 
@@ -4626,7 +4626,7 @@ __metadata:
     "@actions/core": ^1.10.0
     "@lifeomic/attempt": ^3.0.3
     "@types/js-yaml": ^4.0.5
-    "@types/node": ^18.17.4
+    "@types/node": ^18.17.17
     "@typescript-eslint/eslint-plugin": ^6.3.0
     "@typescript-eslint/parser": ^6.3.0
     "@vercel/ncc": ^0.36.1
