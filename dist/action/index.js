@@ -14030,7 +14030,8 @@ const InputVariablesSchema = z.object({
     speckleToken: z.string().nonempty(),
     speckleFunctionId: z.string().nonempty(),
     speckleFunctionInputSchema: z.record(z.string().nonempty(), z.unknown()).nullable(),
-    speckleFunctionCommand: z.string().nonempty().array()
+    speckleFunctionCommand: z.string().nonempty().array(),
+    speckleFunctionReleaseTag: z.string().max(10).nonempty()
 });
 const parseInputs = () => {
     const speckleTokenRaw = core.getInput('speckle_token', { required: true });
@@ -14056,7 +14057,10 @@ const parseInputs = () => {
         speckleFunctionId: core.getInput('speckle_function_id', { required: true }),
         speckleFunctionInputSchema,
         speckleFunctionCommand: core.getInput('speckle_function_command', { required: true })
-            .split(' ')
+            .split(' '),
+        speckleFunctionReleaseTag: core.getInput('speckle_function_release_tag', {
+            required: true
+        })
     };
     const inputParseResult = InputVariablesSchema.safeParse(rawInputs);
     if (inputParseResult.success)
@@ -14065,15 +14069,11 @@ const parseInputs = () => {
     throw inputParseResult.error;
 };
 const RequiredEnvVarsSchema = z.object({
-    gitRefName: z.string().nonempty(),
-    gitRefType: z.string().nonempty(),
     gitCommitSha: z.string().nonempty()
 });
 const parseEnvVars = () => {
     const parseResult = RequiredEnvVarsSchema.safeParse({
-        gitCommitSha: process.env.GITHUB_SHA,
-        gitRefType: process.env.GITHUB_REF_TYPE,
-        gitRefName: process.env.GITHUB_REF_NAME
+        gitCommitSha: process.env.GITHUB_SHA
     });
     if (parseResult.success)
         return parseResult.data;
@@ -14083,13 +14083,13 @@ const parseEnvVars = () => {
 const FunctionVersionResponseBodySchema = z.object({
     versionId: z.string().nonempty()
 });
-const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomateUrl, speckleFunctionCommand, speckleFunctionId, speckleFunctionInputSchema, speckleToken }, { commitId, versionTag }
+const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomateUrl, speckleFunctionCommand, speckleFunctionId, speckleFunctionInputSchema, speckleToken, speckleFunctionReleaseTag }, commitId
 // { gitCommitSha, gitRefName, gitRefType }: RequiredEnvVars
 ) => {
     try {
         const requestBody = {
             commitId,
-            versionTag,
+            versionTag: speckleFunctionReleaseTag,
             command: speckleFunctionCommand,
             inputSchema: speckleFunctionInputSchema
         };
@@ -14137,17 +14137,15 @@ async function run() {
     const inputVariables = parseInputs();
     core.info(`Parsed input variables to: ${JSON.stringify(inputVariables)}`);
     const requiredEnvVars = parseEnvVars();
-    const { gitCommitSha, gitRefName, gitRefType } = requiredEnvVars;
+    const { gitCommitSha } = requiredEnvVars;
     core.info(`Parsed required environment variables to: ${JSON.stringify(requiredEnvVars)}`);
     const { speckleAutomateUrl, speckleFunctionId } = inputVariables;
     core.setOutput('speckle_automate_host', new URL(speckleAutomateUrl).host);
     core.info(`Sending a new function version definition for function ${speckleFunctionId} to the automate server: ${speckleAutomateUrl}`);
     // github uses 7 chars to identify commits
     const commitId = gitCommitSha.substring(0, 7);
-    const versionTag = gitRefType === 'tag' ? gitRefName : commitId;
-    const { versionId } = await registerNewVersionForTheSpeckleAutomateFunction(inputVariables, { versionTag, commitId });
-    core.info(`Registered function version with new id: ${versionId}`);
-    core.setOutput('version_tag', versionTag);
+    const { versionId } = await registerNewVersionForTheSpeckleAutomateFunction(inputVariables, commitId);
+    core.info(`Registered function version tagged as ${inputVariables.speckleFunctionReleaseTag} with new id: ${versionId}`);
 }
 run();
 
