@@ -14146,6 +14146,7 @@ async function run() {
     const commitId = gitCommitSha.substring(0, 7);
     const { versionId } = await registerNewVersionForTheSpeckleAutomateFunction(inputVariables, commitId);
     core.info(`Registered function version tagged as ${inputVariables.speckleFunctionReleaseTag} with new id: ${versionId}`);
+    core.setOutput('speckle_automate_function_release_id', versionId);
 }
 run();
 

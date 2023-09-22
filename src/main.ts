@@ -179,6 +179,7 @@ export async function run(): Promise<void> {
   core.info(
     `Registered function version tagged as ${inputVariables.speckleFunctionReleaseTag} with new id: ${versionId}`
   )
+  core.setOutput('speckle_automate_function_release_id', versionId)
 }
 
 run()

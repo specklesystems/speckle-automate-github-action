@@ -21,11 +21,12 @@ inputs:
   speckle_function_command:
     description: 'The command to run to execute the function in a runtime environment.'
     required: true
+  speckle_function_release_tag:
+    description: 'User defined tag for the function release'
+    required: true
 outputs:
-  version_id:
-    description: 'The unique identifier of the function version.'
-  speckle_automate_host:
-    description: 'The host component of the Speckle Automate Server URL.'
+  speckle_automate_function_release_id:
+    description: 'The unique identifier of the function release.'
 runs:
   using: 'node16' #FIXME bump to node18 when available
   main: 'dist/action/index.js'
