@@ -7,7 +7,7 @@ on: # rebuild any PRs and main branch changes
       - 'releases/*'
 
 jobs:
-  pre-commit:
+  pre-commit-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
