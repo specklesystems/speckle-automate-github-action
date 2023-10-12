@@ -16,7 +16,7 @@
     "precommit": "pre-commit run --all-files",
     "prettier:check": "prettier --check '**/*.ts'",
     "prettier:fix": "prettier --write '**/*.ts'",
-    "test": "vitest --run  --coverage",
+    "test": "vitest --run --coverage",
     "test:watch": "vitest"
   },
   "engines": {
