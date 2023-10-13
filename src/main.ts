@@ -27,10 +27,7 @@ const parseInputs = (): InputVariables => {
     throw err
   }
   try {
-    const rawInputSchemaPath = core.getInput(
-      'speckle_function_input_schema_file_path',
-      { required: true }
-    )
+    const rawInputSchemaPath = core.getInput('speckle_function_input_schema_file_path')
     const homeDir = process.env['HOME']
     if (!homeDir)
       throw new Error('The home directory is not defined, cannot load inputSchema')
