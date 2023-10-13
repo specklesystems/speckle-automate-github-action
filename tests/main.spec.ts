@@ -18,6 +18,7 @@ import { z } from 'zod'
 
 describe('Register new version', () => {
   let tmpDir: string
+  let countHappyPath = 0
   let count500Errors = 0
 
   const server = setupServer(
@@ -26,6 +27,7 @@ describe('Register new version', () => {
       async (req, res, ctx) => {
         const parseResult = FunctionVersionRequestSchema.safeParse(await req.json())
         expect(parseResult.success).to.be.true
+        countHappyPath++
         return res(ctx.status(201), ctx.json({ versionId: 'fake_version_id' }))
       }
     ),
@@ -74,7 +76,9 @@ describe('Register new version', () => {
     vi.stubEnv('GITHUB_SHA', 'commitSha')
     vi.stubEnv('GITHUB_REF_TYPE', 'commit')
     vi.stubEnv('GITHUB_REF_NAME', 'version')
-    expect(run()).resolves.not.toThrow()
+    await expect(run()).resolves.not.toThrow()
+    expect(countHappyPath).to.equal(1)
+    countHappyPath = 0
   })
   it('handles network errors', async () => {
     writeFileSync(join(tmpDir, 'schema.json'), '{}')
@@ -88,7 +92,7 @@ describe('Register new version', () => {
     vi.stubEnv('GITHUB_SHA', 'commitSha')
     vi.stubEnv('GITHUB_REF_TYPE', 'commit')
     vi.stubEnv('GITHUB_REF_NAME', 'version')
-    expect(run()).rejects.toThrow(
+    await expect(run()).rejects.toThrow(
       'Failed to register new function version to the automate server'
     )
   })
@@ -122,7 +126,9 @@ describe('Register new version', () => {
     vi.stubEnv('GITHUB_SHA', 'commitSha')
     vi.stubEnv('GITHUB_REF_TYPE', 'commit')
     vi.stubEnv('GITHUB_REF_NAME', 'version')
-    expect(run()).rejects.toThrow('Input required and not supplied: speckle_token')
+    await expect(run()).rejects.toThrow(
+      'Input required and not supplied: speckle_token'
+    )
   })
   it('errors if the environment variable is empty', async () => {
     writeFileSync(join(tmpDir, 'schema.json'), '{}')
@@ -136,7 +142,7 @@ describe('Register new version', () => {
     vi.stubEnv('GITHUB_SHA', '')
     vi.stubEnv('GITHUB_REF_TYPE', 'commit')
     vi.stubEnv('GITHUB_REF_NAME', 'version')
-    expect(run()).rejects.toThrow('gitCommitSha')
+    await expect(run()).rejects.toThrow('gitCommitSha')
   })
 })
 
