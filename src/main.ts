@@ -144,30 +144,32 @@ const registerNewVersionForTheSpeckleAutomateFunction = async (
   }
 }
 
+const failAndReject = async (
+  e: unknown,
+  errorMessageForUnknownObjectType: string
+): Promise<never> => {
+  if (e instanceof ZodError || e instanceof Error) {
+    core.setFailed(e.message)
+    return Promise.reject(e.message)
+  }
+  core.setFailed(errorMessageForUnknownObjectType)
+  return Promise.reject(e)
+}
+
 export async function run(): Promise<void> {
   core.info('Start registering a new version on the automate instance')
   let inputVariables: InputVariables = {} as InputVariables
   try {
     inputVariables = parseInputs()
   } catch (e: unknown) {
-    if (e instanceof ZodError || e instanceof Error) {
-      core.setFailed(e.message)
-      return Promise.reject(e.message)
-    }
-    core.setFailed('Failed to parse the input variables')
-    return Promise.reject(e)
+    return failAndReject(e, 'Failed to parse the input variables')
   }
   core.info(`Parsed input variables to: ${JSON.stringify(inputVariables)}`)
   let requiredEnvVars: RequiredEnvVars = {} as RequiredEnvVars
   try {
     requiredEnvVars = parseEnvVars()
   } catch (e: unknown) {
-    if (e instanceof ZodError || e instanceof Error) {
-      core.setFailed(e.message)
-      return Promise.reject(e.message)
-    }
-    core.setFailed('Failed to parse the required environment variables')
-    return Promise.reject(e)
+    return failAndReject(e, 'Failed to parse the required environment variables')
   }
 
   const { gitCommitSha } = requiredEnvVars
@@ -184,7 +186,7 @@ export async function run(): Promise<void> {
   // github uses 7 chars to identify commits
   const commitId = gitCommitSha.substring(0, 7)
 
-  let versionId: string
+  let versionId = ''
   try {
     const registrationResponse = await registerNewVersionForTheSpeckleAutomateFunction(
       inputVariables,
@@ -192,12 +194,7 @@ export async function run(): Promise<void> {
     )
     versionId = registrationResponse.versionId
   } catch (e: unknown) {
-    if (e instanceof ZodError || e instanceof Error) {
-      core.setFailed(e.message)
-      return Promise.reject(e.message)
-    }
-    core.setFailed('Failed to register the new function version')
-    return Promise.reject(e)
+    return failAndReject(e, 'Failed to register the new function version')
   }
   core.info(
     `Registered function version tagged as ${inputVariables.speckleFunctionReleaseTag} with new id: ${versionId}`

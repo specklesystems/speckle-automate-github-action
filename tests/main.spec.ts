@@ -18,6 +18,7 @@ import { z } from 'zod'
 
 describe('Register new version', () => {
   let tmpDir: string
+  let count500Errors = 0
 
   const server = setupServer(
     rest.post(
@@ -26,6 +27,23 @@ describe('Register new version', () => {
         const parseResult = FunctionVersionRequestSchema.safeParse(await req.json())
         expect(parseResult.success).to.be.true
         return res(ctx.status(201), ctx.json({ versionId: 'fake_version_id' }))
+      }
+    ),
+    rest.post(
+      'http://myfakeautomate.speckle.internal/api/v1/functions/network_error/versions',
+      async (req, res, ctx) => {
+        const parseResult = FunctionVersionRequestSchema.safeParse(await req.json())
+        expect(parseResult.success).to.be.true
+        return res.networkError('Failed to connect to server')
+      }
+    ),
+    rest.post(
+      'http://myfakeautomate.speckle.internal/api/v1/functions/500_response/versions',
+      async (req, res, ctx) => {
+        const parseResult = FunctionVersionRequestSchema.safeParse(await req.json())
+        expect(parseResult.success).to.be.true
+        count500Errors++
+        return res(ctx.status(500))
       }
     )
   )
@@ -57,6 +75,40 @@ describe('Register new version', () => {
     vi.stubEnv('GITHUB_REF_TYPE', 'commit')
     vi.stubEnv('GITHUB_REF_NAME', 'version')
     expect(run()).resolves.not.toThrow()
+  })
+  it('handles network errors', async () => {
+    writeFileSync(join(tmpDir, 'schema.json'), '{}')
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_ID', 'network_error')
+    vi.stubEnv('INPUT_SPECKLE_TOKEN', '{token}')
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_COMMAND', 'echo "hello automate"')
+    vi.stubEnv('HOME', tmpDir) // the input schema file path is assumed to be relative to the home directory
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_INPUT_SCHEMA_FILE_PATH', './schema.json')
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_RELEASE_TAG', 'v1.0.0')
+    vi.stubEnv('INPUT_SPECKLE_AUTOMATE_URL', 'http://myfakeautomate.speckle.internal')
+    vi.stubEnv('GITHUB_SHA', 'commitSha')
+    vi.stubEnv('GITHUB_REF_TYPE', 'commit')
+    vi.stubEnv('GITHUB_REF_NAME', 'version')
+    expect(run()).rejects.toThrow(
+      'Failed to register new function version to the automate server'
+    )
+  })
+  it('handles 500 responses', async () => {
+    writeFileSync(join(tmpDir, 'schema.json'), '{}')
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_ID', '500_response')
+    vi.stubEnv('INPUT_SPECKLE_TOKEN', '{token}')
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_COMMAND', 'echo "hello automate"')
+    vi.stubEnv('HOME', tmpDir) // the input schema file path is assumed to be relative to the home directory
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_INPUT_SCHEMA_FILE_PATH', './schema.json')
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_RELEASE_TAG', 'v1.0.0')
+    vi.stubEnv('INPUT_SPECKLE_AUTOMATE_URL', 'http://myfakeautomate.speckle.internal')
+    vi.stubEnv('GITHUB_SHA', 'commitSha')
+    vi.stubEnv('GITHUB_REF_TYPE', 'commit')
+    vi.stubEnv('GITHUB_REF_NAME', 'version')
+    await expect(run()).rejects.toThrow(
+      'Failed to register new function version to the automate server'
+    )
+    expect(count500Errors).to.toBeGreaterThan(1) // we expect the action to retry the request
+    count500Errors = 0
   })
   it('errors if the token is empty', async () => {
     writeFileSync(join(tmpDir, 'schema.json'), '{}')

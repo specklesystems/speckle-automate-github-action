@@ -14128,6 +14128,14 @@ const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomate
         });
     }
 };
+const failAndReject = async (e, errorMessageForUnknownObjectType) => {
+    if (e instanceof ZodError || e instanceof Error) {
+        core.setFailed(e.message);
+        return Promise.reject(e.message);
+    }
+    core.setFailed(errorMessageForUnknownObjectType);
+    return Promise.reject(e);
+};
 async function run() {
     core.info('Start registering a new version on the automate instance');
     let inputVariables = {};
@@ -14135,12 +14143,7 @@ async function run() {
         inputVariables = parseInputs();
     }
     catch (e) {
-        if (e instanceof ZodError || e instanceof Error) {
-            core.setFailed(e.message);
-            return Promise.reject(e.message);
-        }
-        core.setFailed('Failed to parse the input variables');
-        return Promise.reject(e);
+        return failAndReject(e, 'Failed to parse the input variables');
     }
     core.info(`Parsed input variables to: ${JSON.stringify(inputVariables)}`);
     let requiredEnvVars = {};
@@ -14148,12 +14151,7 @@ async function run() {
         requiredEnvVars = parseEnvVars();
     }
     catch (e) {
-        if (e instanceof ZodError || e instanceof Error) {
-            core.setFailed(e.message);
-            return Promise.reject(e.message);
-        }
-        core.setFailed('Failed to parse the required environment variables');
-        return Promise.reject(e);
+        return failAndReject(e, 'Failed to parse the required environment variables');
     }
     const { gitCommitSha } = requiredEnvVars;
     core.info(`Parsed required environment variables to: ${JSON.stringify(requiredEnvVars)}`);
@@ -14162,18 +14160,13 @@ async function run() {
     core.info(`Sending a new function version definition for function ${speckleFunctionId} to the automate server: ${speckleAutomateUrl}`);
     // github uses 7 chars to identify commits
     const commitId = gitCommitSha.substring(0, 7);
-    let versionId;
+    let versionId = '';
     try {
         const registrationResponse = await registerNewVersionForTheSpeckleAutomateFunction(inputVariables, commitId);
         versionId = registrationResponse.versionId;
     }
     catch (e) {
-        if (e instanceof ZodError || e instanceof Error) {
-            core.setFailed(e.message);
-            return Promise.reject(e.message);
-        }
-        core.setFailed('Failed to register the new function version');
-        return Promise.reject(e);
+        return failAndReject(e, 'Failed to register the new function version');
     }
     core.info(`Registered function version tagged as ${inputVariables.speckleFunctionReleaseTag} with new id: ${versionId}`);
     core.setOutput('speckle_automate_function_release_id', versionId);
