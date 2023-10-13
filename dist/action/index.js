@@ -14034,29 +14034,16 @@ const InputVariablesSchema = z.object({
     speckleFunctionReleaseTag: z.string().max(10).nonempty()
 });
 const parseInputs = () => {
+    const speckleTokenRaw = core.getInput('speckle_token', { required: true });
+    core.setSecret(speckleTokenRaw);
+    const rawInputSchemaPath = core.getInput('speckle_function_input_schema_file_path');
+    const homeDir = process.env['HOME'];
+    if (!homeDir)
+        throw new Error('The home directory is not defined, cannot load inputSchema');
     let speckleFunctionInputSchema = null;
-    let speckleTokenRaw;
-    try {
-        speckleTokenRaw = core.getInput('speckle_token', { required: true });
-        core.setSecret(speckleTokenRaw);
-    }
-    catch (err) {
-        core.setFailed(`Parsing the token failed with: ${err}`);
-        throw err;
-    }
-    try {
-        const rawInputSchemaPath = core.getInput('speckle_function_input_schema_file_path');
-        const homeDir = process.env['HOME'];
-        if (!homeDir)
-            throw new Error('The home directory is not defined, cannot load inputSchema');
-        if (rawInputSchemaPath) {
-            const rawInputSchema = (0,external_node_fs_.readFileSync)((0,external_node_path_.join)(homeDir, rawInputSchemaPath), 'utf-8');
-            speckleFunctionInputSchema = JSON.parse(rawInputSchema);
-        }
-    }
-    catch (err) {
-        core.setFailed(`Parsing the function input schema failed with: ${err}`);
-        throw err;
+    if (rawInputSchemaPath) {
+        const rawInputSchema = (0,external_node_fs_.readFileSync)((0,external_node_path_.join)(homeDir, rawInputSchemaPath), 'utf-8');
+        speckleFunctionInputSchema = JSON.parse(rawInputSchema);
     }
     const rawInputs = {
         speckleAutomateUrl: core.getInput('speckle_automate_url', { required: true }),
@@ -14136,8 +14123,9 @@ const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomate
         throw parsedResult.error;
     }
     catch (err) {
-        core.setFailed(`Failed to register new function version to the automate server: ${err}`);
-        throw err;
+        throw Error('Failed to register new function version to the automate server', {
+            cause: err
+        });
     }
 };
 async function run() {
@@ -14174,7 +14162,19 @@ async function run() {
     core.info(`Sending a new function version definition for function ${speckleFunctionId} to the automate server: ${speckleAutomateUrl}`);
     // github uses 7 chars to identify commits
     const commitId = gitCommitSha.substring(0, 7);
-    const { versionId } = await registerNewVersionForTheSpeckleAutomateFunction(inputVariables, commitId);
+    let versionId;
+    try {
+        const registrationResponse = await registerNewVersionForTheSpeckleAutomateFunction(inputVariables, commitId);
+        versionId = registrationResponse.versionId;
+    }
+    catch (e) {
+        if (e instanceof ZodError || e instanceof Error) {
+            core.setFailed(e.message);
+            return Promise.reject(e.message);
+        }
+        core.setFailed('Failed to register the new function version');
+        return Promise.reject(e);
+    }
     core.info(`Registered function version tagged as ${inputVariables.speckleFunctionReleaseTag} with new id: ${versionId}`);
     core.setOutput('speckle_automate_function_release_id', versionId);
 }
