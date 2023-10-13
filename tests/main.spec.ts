@@ -15,7 +15,6 @@ import { tmpdir } from 'node:os'
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
 import { z } from 'zod'
-import exp from 'node:constants'
 
 describe('Register new version', () => {
   let tmpDir: string
