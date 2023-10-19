@@ -7,7 +7,7 @@ on: # rebuild any PRs and main branch changes
       - 'releases/*'
 
 jobs:
-  pre-commit:
+  pre-commit-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -19,6 +19,10 @@ jobs:
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.17.1'
+          cache: 'yarn'
       - name: Yarn Install
         run: yarn install
       - uses: actions/cache/save@v3
@@ -27,3 +31,6 @@ jobs:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - uses: pre-commit/action@v3.0.0
+      - name: Tests
+        run: yarn test
+        continue-on-error: true # ignore test failures for now

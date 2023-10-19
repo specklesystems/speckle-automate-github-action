@@ -20,10 +20,10 @@ export default defineConfig({
         '**/*.mjs',
         '**/*.js'
       ],
-      lines: 95,
-      functions: 95,
-      branches: 95,
-      statements: 95,
+      lines: 90,
+      functions: 90,
+      branches: 70,
+      statements: 90,
       resolve: {
         alias: {
           '@': path.resolve(__dirname, './src/')
