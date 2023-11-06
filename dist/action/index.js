@@ -14090,12 +14090,24 @@ var external_node_path_ = __nccwpck_require__(9411);
 
 
 const InputVariablesSchema = z.object({
-    speckleAutomateUrl: z.string().url().nonempty(),
-    speckleToken: z.string().nonempty(),
-    speckleFunctionId: z.string().nonempty(),
+    speckleAutomateUrl: z.string().url().min(1),
+    speckleToken: z.string().min(1),
+    speckleFunctionId: z.string().min(1),
     speckleFunctionInputSchema: z.record(z.string().nonempty(), z.unknown()).nullable(),
-    speckleFunctionCommand: z.string().nonempty().array(),
-    speckleFunctionReleaseTag: z.string().max(10).nonempty()
+    speckleFunctionCommand: z.string().min(1).array(),
+    speckleFunctionReleaseTag: z.string().max(10).min(1),
+    speckleFunctionRecommendedCPUm: z.number()
+        .int()
+        .finite()
+        .gte(100)
+        .lte(16000)
+        .optional(),
+    speckleFunctionRecommendedMemoryMi: z.number()
+        .int()
+        .finite()
+        .gte(1)
+        .lte(8000)
+        .optional()
 });
 const parseInputs = () => {
     const speckleTokenRaw = core.getInput('speckle_token', { required: true });
@@ -14118,7 +14130,11 @@ const parseInputs = () => {
             .split(' '),
         speckleFunctionReleaseTag: core.getInput('speckle_function_release_tag', {
             required: true
-        })
+        }),
+        speckleFunctionRecommendedCPUm: parseInt(core.getInput('speckle_function_recommended_cpu_m', {
+            required: false
+        })),
+        speckleFunctionRecommendedMemoryMi: parseInt(core.getInput('speckle_function_recommended_memory_mi', { required: false }))
     };
     const inputParseResult = InputVariablesSchema.safeParse(rawInputs);
     if (inputParseResult.success)
@@ -14139,7 +14155,7 @@ const parseEnvVars = () => {
 const FunctionVersionResponseBodySchema = z.object({
     versionId: z.string().nonempty()
 });
-const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomateUrl, speckleFunctionCommand, speckleFunctionId, speckleFunctionInputSchema, speckleToken, speckleFunctionReleaseTag }, commitId
+const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomateUrl, speckleFunctionCommand, speckleFunctionId, speckleFunctionInputSchema, speckleToken, speckleFunctionReleaseTag, speckleFunctionRecommendedCPUm, speckleFunctionRecommendedMemoryMi }, commitId
 // { gitCommitSha, gitRefName, gitRefType }: RequiredEnvVars
 ) => {
     try {
@@ -14147,7 +14163,9 @@ const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomate
             commitId,
             versionTag: speckleFunctionReleaseTag,
             command: speckleFunctionCommand,
-            inputSchema: speckleFunctionInputSchema
+            inputSchema: speckleFunctionInputSchema,
+            recommendedCPUm: speckleFunctionRecommendedCPUm,
+            recommendedMemoryMi: speckleFunctionRecommendedMemoryMi
         };
         const versionRegisterUrl = new URL(`/api/v1/functions/${speckleFunctionId}/versions`, speckleAutomateUrl);
         const retryFlag = 'RETRY THIS';
@@ -14232,7 +14250,7 @@ async function run() {
     catch (e) {
         return failAndReject(e, 'Failed to register the new function version');
     }
-    core.info(`Registered function version tagged as ${inputVariables.speckleFunctionReleaseTag} with new id: ${versionId}`);
+    core.info(`Registered function version tagged as ${inputVariables.speckleFunctionReleaseTag} with new id: ${versionId}. Recommended CPU: ${inputVariables.speckleFunctionRecommendedCPUm}m, recommended memory: ${inputVariables.speckleFunctionRecommendedMemoryMi}Mi.`);
     core.setOutput('speckle_automate_function_release_id', versionId);
 }
 run();

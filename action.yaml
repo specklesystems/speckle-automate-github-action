@@ -24,6 +24,12 @@ inputs:
   speckle_function_release_tag:
     description: 'User defined tag for the function release'
     required: true
+  speckle_function_recommended_cpu_m:
+    description: 'The recommended maximum CPU in millicores for the function. 1000 millicores = 1 CPU core. Defaults to 1000 millicores (1 CPU core). If the Function exceeds this limit, it will be throttled to run within the limit.'
+    required: false
+  speckle_function_recommended_memory_mi:
+    description: 'The recommended maximum memory in mebibytes for the function. 1024 mebibytes = 1 gibibyte. Defaults to 100 mebibytes. If the Function exceeds this limit, it will be terminated.'
+    required: false
 outputs:
   speckle_automate_function_release_id:
     description: 'The unique identifier of the function release.'
