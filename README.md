@@ -45,6 +45,18 @@ Providing a Speckle Function ID allows you to change one of those values, and up
 
 Your Speckle Token must have write permissions for the Speckle Function with this ID, otherwise the publish will fail.
 
+#### `speckle_function_recommended_cpu_m`
+
+*Optional.*  The recommended maximum CPU in millicores for the function. If the Function exceeds this limit, it will be throttled to run within the limit.
+
+1000 millicores = 1 CPU core. Defaults to 1000 millicores (1 CPU core).
+
+#### `speckle_function_recommended_memory_mi`
+
+*Optional.* The recommended maximum memory in mebibytes for the function. If the Function exceeds this limit, it will be **terminated**.
+
+1024 mebibytes = 1 gibibyte. Defaults to 100 mebibytes.
+
 ### Outputs
 
 #### `version_id`
