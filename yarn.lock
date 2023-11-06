@@ -1214,19 +1214,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/coverage-istanbul@npm:^0.34.1":
-  version: 0.34.1
-  resolution: "@vitest/coverage-istanbul@npm:0.34.1"
+"@vitest/coverage-istanbul@npm:^0.34.6":
+  version: 0.34.6
+  resolution: "@vitest/coverage-istanbul@npm:0.34.6"
   dependencies:
     istanbul-lib-coverage: ^3.2.0
     istanbul-lib-instrument: ^6.0.0
     istanbul-lib-report: ^3.0.1
     istanbul-lib-source-maps: ^4.0.1
     istanbul-reports: ^3.1.5
+    picocolors: ^1.0.0
     test-exclude: ^6.0.0
   peerDependencies:
     vitest: ">=0.32.0 <1"
-  checksum: eb47438695139e1110f48d4146bace250521c6cc32a86b20a9c575541a2f90df2ed085756838ad9cb6952762b59858c13eeee7e3f860b8a42c698aece9f7af68
+  checksum: b9d990897415c86bbac811874d96a9375bd02a1203653f72e2e15ae45c755e895782622f5382b009e2b5e31ca80d101d37e7529dfa54355b9a2dac0076d4fbe8
   languageName: node
   linkType: hard
 
@@ -5242,7 +5243,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^6.3.0
     "@typescript-eslint/parser": ^6.9.1
     "@vercel/ncc": ^0.36.1
-    "@vitest/coverage-istanbul": ^0.34.1
+    "@vitest/coverage-istanbul": ^0.34.6
     eslint: ^8.53.0
     eslint-import-resolver-typescript: ^3.6.1
     eslint-plugin-eslint-comments: ^3.2.0
