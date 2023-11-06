@@ -72,6 +72,8 @@ describe('Register new version', () => {
     vi.stubEnv('HOME', tmpDir) // the input schema file path is assumed to be relative to the home directory
     vi.stubEnv('INPUT_SPECKLE_FUNCTION_INPUT_SCHEMA_FILE_PATH', './schema.json')
     vi.stubEnv('INPUT_SPECKLE_FUNCTION_RELEASE_TAG', 'v1.0.0')
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_RECOMMENDED_CPU_M', '1000')
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_RECOMMENDED_MEMORY_MI', '500')
     vi.stubEnv('INPUT_SPECKLE_AUTOMATE_URL', 'http://myfakeautomate.speckle.internal')
     vi.stubEnv('GITHUB_SHA', 'commitSha')
     vi.stubEnv('GITHUB_REF_TYPE', 'commit')
