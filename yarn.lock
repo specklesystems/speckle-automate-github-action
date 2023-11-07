@@ -2861,9 +2861,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-github@npm:^4.9.2":
-  version: 4.9.2
-  resolution: "eslint-plugin-github@npm:4.9.2"
+"eslint-plugin-github@npm:^4.10.1":
+  version: 4.10.1
+  resolution: "eslint-plugin-github@npm:4.10.1"
   dependencies:
     "@github/browserslist-config": ^1.0.0
     "@typescript-eslint/eslint-plugin": ^6.0.0
@@ -2886,7 +2886,7 @@ __metadata:
     eslint: ^8.0.1
   bin:
     eslint-ignore-errors: bin/eslint-ignore-errors.js
-  checksum: 32d1bb452004fb8910d534d3b6dda5f754804946b756098ea7bc10a8f2932eca1e83fc3190be6b067b4ad8964b4a78b814ec15fc789444d048695caa9304b0e4
+  checksum: b4addbf8cb5599f9cca27a53a66651ea84e0aeb9a51251d61cb53d6634bfd69843199bcc1c8d39af4b1fee2044dc63951781e79b0ea35c88524ab76142336ed3
   languageName: node
   linkType: hard
 
@@ -5846,7 +5846,7 @@ __metadata:
     eslint-import-resolver-typescript: ^3.6.1
     eslint-plugin-eslint-comments: ^3.2.0
     eslint-plugin-filenames: latest
-    eslint-plugin-github: ^4.9.2
+    eslint-plugin-github: ^4.10.1
     eslint-plugin-i18n-text: ^1.0.1
     eslint-plugin-import: ^2.29.0
     eslint-plugin-no-only-tests: ^3.1.0
