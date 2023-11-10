@@ -13,7 +13,7 @@ import { mkdtempSync, writeFileSync, rmdirSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { setupServer } from 'msw/node'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { z } from 'zod'
 
 describe('Register new version', () => {
@@ -22,30 +22,37 @@ describe('Register new version', () => {
   let count500Errors = 0
 
   const server = setupServer(
-    rest.post(
+    http.post(
       'http://myfakeautomate.speckle.internal/api/v1/functions/fake_function_id/versions',
-      async (req, res, ctx) => {
-        const parseResult = FunctionVersionRequestSchema.safeParse(await req.json())
+      async ({ request }) => {
+        const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
         expect(parseResult.success).to.be.true
         countHappyPath++
-        return res(ctx.status(201), ctx.json({ versionId: 'fake_version_id' }))
+        return new HttpResponse(JSON.stringify({ versionId: 'fake_version_id' }), {
+          status: 201,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
       }
     ),
-    rest.post(
+    http.post(
       'http://myfakeautomate.speckle.internal/api/v1/functions/network_error/versions',
-      async (req, res, ctx) => {
-        const parseResult = FunctionVersionRequestSchema.safeParse(await req.json())
+      async ({ request }) => {
+        const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
         expect(parseResult.success).to.be.true
-        return res.networkError('Failed to connect to server')
+        return HttpResponse.error() // simulates a network error
       }
     ),
-    rest.post(
+    http.post(
       'http://myfakeautomate.speckle.internal/api/v1/functions/500_response/versions',
-      async (req, res, ctx) => {
-        const parseResult = FunctionVersionRequestSchema.safeParse(await req.json())
+      async ({ request }) => {
+        const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
         expect(parseResult.success).to.be.true
         count500Errors++
-        return res(ctx.status(500))
+        return new HttpResponse(null, {
+          status: 500
+        })
       }
     )
   )
@@ -155,8 +162,56 @@ const FunctionVersionRequestSchema = z.object({
     .trim()
     .min(6)
     .transform((arg: string) => arg.substring(0, 10)),
-  versionTag: z.string(),
-  inputSchema: z.record(z.string(), z.unknown()).nullable(),
+  versionTag: z
+    .string()
+    .regex(
+      new RegExp('^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$'),
+      'A maximum of 128 characters are permitted. The first character must be alphanumeric (of lower or upper case) or an underscore, the subsequent characters may be alphanumeric (or lower or upper case), underscore, hyphen, or period.'
+    ), // regex as per OCI distribution spec https://github.com/opencontainers/distribution-spec/blob/main/spec.md#pulling-manifests
+  inputSchema: z.record(z.string(), z.unknown()).nullable(), // TODO:  we need to validate the jsonschema somehow
   command: z.array(z.string().nonempty()),
-  annotations: z.object({}).optional()
+  annotations: z
+    .object({
+      'speckle.systems/v1alpha1/publishing/status': z
+        .enum(['publish', 'draft', 'archive'], {
+          description:
+            'Whether this Function is published (and should appear in the library), a draft, or archived.'
+        })
+        .default('draft'),
+      'speckle.systems/v1alpha1/author': z
+        .string({
+          description:
+            'The name of the authoring organization or individual of this Function.'
+        })
+        .optional(),
+      'speckle.systems/v1alpha1/license': z
+        .enum(['MIT', 'BSD', 'Apache-2.0', 'MPL', 'CC0', 'Unlicense'], {
+          description:
+            'The license under under which this Function is made available. This must match the license in the source code repository.'
+        })
+        .optional(), //TODO match the specification for license names
+      'speckle.systems/v1alpha1/website': z
+        .string({
+          description: 'The marketing website for this Function or its authors.'
+        })
+        .url()
+        .optional(),
+      'speckle.systems/v1alpha1/documentation': z
+        .string({
+          description:
+            'The documentation website for this function. For example, this could be a url to the README in the source code repository.'
+        })
+        .url()
+        .optional(),
+      'speckle.systems/v1alpha1/keywords': z
+        .string({
+          description:
+            'Comma separated list of keywords used for categorizing this function.'
+        })
+        .optional(),
+      'speckle.systems/v1alpha1/description': z.string().optional()
+    })
+    .optional(),
+  recommendedCPUm: z.number().gte(100).lte(16000).finite().optional().default(1000),
+  recommendedMemoryMi: z.number().gte(1).lte(8000).finite().optional().default(100)
 })
