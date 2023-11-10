@@ -55,14 +55,16 @@ const parseInputs = (): InputVariables => {
     speckleFunctionReleaseTag: core.getInput('speckle_function_release_tag', {
       required: true
     }),
-    speckleFunctionRecommendedCPUm: parseInt(
-      core.getInput('speckle_function_recommended_cpu_m', {
-        required: false
-      })
-    ),
-    speckleFunctionRecommendedMemoryMi: parseInt(
-      core.getInput('speckle_function_recommended_memory_mi', { required: false })
-    )
+    speckleFunctionRecommendedCPUm:
+      parseInt(
+        core.getInput('speckle_function_recommended_cpu_m', {
+          required: false
+        })
+      ) || undefined,
+    speckleFunctionRecommendedMemoryMi:
+      parseInt(
+        core.getInput('speckle_function_recommended_memory_mi', { required: false })
+      ) || undefined
   }
   const inputParseResult = InputVariablesSchema.safeParse(rawInputs)
   if (inputParseResult.success) return inputParseResult.data
