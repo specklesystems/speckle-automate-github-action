@@ -13,7 +13,7 @@ import { mkdtempSync, writeFileSync, rmdirSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { setupServer } from 'msw/node'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { z } from 'zod'
 
 describe('Register new version', () => {
@@ -22,30 +22,37 @@ describe('Register new version', () => {
   let count500Errors = 0
 
   const server = setupServer(
-    rest.post(
+    http.post(
       'http://myfakeautomate.speckle.internal/api/v1/functions/fake_function_id/versions',
-      async (req, res, ctx) => {
-        const parseResult = FunctionVersionRequestSchema.safeParse(await req.json())
+      async ({ request }) => {
+        const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
         expect(parseResult.success).to.be.true
         countHappyPath++
-        return res(ctx.status(201), ctx.json({ versionId: 'fake_version_id' }))
+        return new HttpResponse(JSON.stringify({ versionId: 'fake_version_id' }), {
+          status: 201,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
       }
     ),
-    rest.post(
+    http.post(
       'http://myfakeautomate.speckle.internal/api/v1/functions/network_error/versions',
-      async (req, res, ctx) => {
-        const parseResult = FunctionVersionRequestSchema.safeParse(await req.json())
+      async ({ request }) => {
+        const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
         expect(parseResult.success).to.be.true
-        return res.networkError('Failed to connect to server')
+        return HttpResponse.error() // simulates a network error
       }
     ),
-    rest.post(
+    http.post(
       'http://myfakeautomate.speckle.internal/api/v1/functions/500_response/versions',
-      async (req, res, ctx) => {
-        const parseResult = FunctionVersionRequestSchema.safeParse(await req.json())
+      async ({ request }) => {
+        const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
         expect(parseResult.success).to.be.true
         count500Errors++
-        return res(ctx.status(500))
+        return new HttpResponse(null, {
+          status: 500
+        })
       }
     )
   )
