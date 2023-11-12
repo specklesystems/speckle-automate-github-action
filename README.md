@@ -39,7 +39,7 @@ Your Speckle Token must have write permissions for the Speckle Function with thi
 
 #### `speckle_function_release_tag`
 
-The release tag for this version of the Speckle Function. This is intended to provide a more human understandable name for this version, and we recommend using the [Semver](https://semver.org) naming conventions. The name must conform to the following:
+The release tag for this version of the Speckle Function. This is intended to provide a more human understandable name for this version, and we recommend using the Git SHA of the commit used to generate this function version. The name must conform to the following:
 
 - A minimum of 1 character is required.
 - A maximum of 128 characters are permitted.
