@@ -13,7 +13,6 @@ It is a GitHub Action that publishes a Speckle Automate Function definition to S
 > This is a low level building block action.
 > As a Speckle Automate Function developer you probably want to use our [composite action](https://github.com/specklesystems/speckle-automate-github-composite-action)
 
-
 ### Inputs
 
 #### `speckle_automate_url`
@@ -32,18 +31,20 @@ If you believe your token has been compromised, please revoke it immediately on 
 
 Please note that this is not a Speckle Account token, but a **Speckle Automate API** token. You can create one by logging into the [Speckle Automate Server](https://automate.speckle.dev) and going to the [API Tokens](https://automate.speckle.dev/tokens) page.
 
-#### `speckle_function_path`
-
-The path to the Speckle Automate Function to publish. This path is relative to the root of the repository. If you provide a path to a directory, your Speckle Automate Function must be in a file named `specklefunction.yaml` within that directory.
-
 #### `speckle_function_id`
 
-*Optional.* If you have already registered a Speckle Function, you can use the ID of that Speckle Function to ensure that any changes are associated with it.
-If you do not provide a Function Id, we will attempt to determine the Function ID based on the GitHub server, GitHub repository, Reference (branch), and the Speckle Function Path.
-
-Providing a Speckle Function ID allows you to change one of those values, and update the original Function instead of creating a new one.
+Associates this new version with the given ID of a Speckle Function.
 
 Your Speckle Token must have write permissions for the Speckle Function with this ID, otherwise the publish will fail.
+
+#### `speckle_function_release_tag`
+
+The release tag for this version of the Speckle Function. This is intended to provide a more human understandable name for this version, and we recommend using the [Semver](https://semver.org) naming conventions. The name must conform to the following:
+
+- A minimum of 1 character is required.
+- A maximum of 128 characters are permitted.
+- The first character must be alphanumeric (of lower or upper case) or an underscor.
+- Subsequent characters, if any, must be either alphanumeric (lower or upper case), underscore, hyphen, or a period.
 
 #### `speckle_function_recommended_cpu_m`
 
@@ -79,9 +80,9 @@ with:
   # speckle_automate_url is optional and defaults to https://automate.speckle.dev
   # The speckle_token is a secret and must be stored in GitHub as an encrypted secret
   # https://docs.github.com/en/actions/security-guides/encrypted-secrets#using-encrypted-secrets-in-a-workflow
-  speckle_token: ${{ secrets.SPECKLE_TOKEN }}
-  # speckle_function_path is optional and defaults to ./specklefunction.yaml
-  # speckle_function_id is optional and will be auto-generated if not provided
+  speckle_token: "${{ secrets.SPECKLE_TOKEN }}"
+  speckle_function_id: "abcdefghij"
+  speckle_function_release_tag: "1.0.0"
 ```
 
 #### Publish a function to a self-hosted server
@@ -93,8 +94,8 @@ with:
   speckle_automate_url: https://example.org
   # https://docs.github.com/en/actions/security-guides/encrypted-secrets#using-encrypted-secrets-in-a-workflow
   speckle_token: ${{ secrets.SPECKLE_TOKEN }}
-  # speckle_function_path is optional and defaults to ./specklefunction.yaml
-  # speckle_function_id is optional and will be auto-generated if not provided
+  speckle_function_id: "abcdefghij"
+  speckle_function_release_tag: "1.0.0"
 ```
 
 ### Example usage within an entire GitHub Actions Workflow
@@ -126,12 +127,6 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
       -
-        id: speckle
-        name: Register Speckle Function
-        uses: actions/speckle-automate-github-action@0.1.0
-        with:
-          speckle_token: ${{ secrets.SPECKLE_TOKEN }}
-      -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       -
@@ -155,7 +150,17 @@ jobs:
           # ## platforms must match the platforms that you have registered with Speckle Automate, which also defaults to linux/amd64.
           # platforms: linux/amd64
           push: true
-          tags: ${{ steps.speckle.outputs.image_name }}
+          # The name of the image to build and push.
+          # This must be the automate url host, followed by the function id, followed by the release tag.
+          tags: automate.speckle.dev/abcdefghij:1.0.0
+      -
+        id: speckle
+        name: Register Speckle Function
+        uses: actions/speckle-automate-github-action@0.1.0
+        with:
+          speckle_token: ${{ secrets.SPECKLE_TOKEN }}
+          speckle_function_id: "abcdefghij"
+          speckle_function_release_tag: "1.0.0"
 ```
 
 ## Developing & Debugging
