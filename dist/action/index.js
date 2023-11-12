@@ -14093,9 +14093,10 @@ const InputVariablesSchema = z.object({
     speckleAutomateUrl: z.string().url().min(1),
     speckleToken: z.string().min(1),
     speckleFunctionId: z.string().min(1),
-    speckleFunctionInputSchema: z.record(z.string().nonempty(), z.unknown()).nullable(),
-    speckleFunctionCommand: z.string().min(1).array(),
-    speckleFunctionReleaseTag: z.string().max(10).min(1),
+    speckleFunctionInputSchema: z.record(z.string().min(1), z.unknown()).nullable(),
+    speckleFunctionCommand: z.array(z.string().min(1)),
+    speckleFunctionReleaseTag: z.string()
+        .regex(new RegExp('^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$'), 'A maximum of 128 characters are permitted. The first character must be alphanumeric (of lower or upper case) or an underscore, the subsequent characters may be alphanumeric (or lower or upper case), underscore, hyphen, or period.'),
     speckleFunctionRecommendedCPUm: z.number()
         .int()
         .finite()
