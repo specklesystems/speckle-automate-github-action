@@ -20,6 +20,49 @@ describe('Register new version', () => {
   let tmpDir: string
   let countHappyPath = 0
   let count500Errors = 0
+  let count422Errors = 0
+
+  const error422 = {
+    type: 'H3Error',
+    message: 'Body parsing failed',
+    stack: `Error: Body parsing failed
+            at createError...`,
+    statusCode: 422,
+    fatal: false,
+    unhandled: false,
+    statusMessage: 'Body parsing failed',
+    data: {
+      type: 'ZodError',
+      message:
+        '[\n  {\n    "code": "custom",\n    "message": "Invalid JSON schema: strict mode: unknown keyword: \\"IAmInvalid\\"",\n    "path": [\n      "inputSchema"\n    ]\n  }\n]',
+      stack: {
+        ZodError: [
+          {
+            code: 'custom',
+            message: 'Invalid JSON schema: strict mode: unknown keyword: "IAmInvalid"',
+            path: ['inputSchema']
+          }
+        ]
+      },
+      aggregateErrors: [
+        {
+          type: 'Object',
+          message: 'Invalid JSON schema: strict mode: unknown keyword: "IAmInvalid"',
+          stack: {},
+          code: 'custom',
+          path: ['inputSchema']
+        }
+      ],
+      issues: [
+        {
+          code: 'custom',
+          message: 'Invalid JSON schema: strict mode: unknown keyword: "IAmInvalid"',
+          path: ['inputSchema']
+        }
+      ],
+      name: 'ZodError'
+    }
+  }
 
   const server = setupServer(
     http.post(
@@ -45,14 +88,28 @@ describe('Register new version', () => {
       }
     ),
     http.post(
+      'http://myfakeautomate.speckle.internal/api/v1/functions/422_response/versions',
+      async ({ request }) => {
+        const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
+        expect(parseResult.success).to.be.true
+        count422Errors++
+        return HttpResponse.json(error422, {
+          status: 422
+        })
+      }
+    ),
+    http.post(
       'http://myfakeautomate.speckle.internal/api/v1/functions/500_response/versions',
       async ({ request }) => {
         const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
         expect(parseResult.success).to.be.true
         count500Errors++
-        return new HttpResponse(null, {
-          status: 500
-        })
+        return HttpResponse.json(
+          {},
+          {
+            status: 500
+          }
+        )
       }
     )
   )
@@ -122,6 +179,24 @@ describe('Register new version', () => {
     )
     expect(count500Errors).to.toBeGreaterThan(1) // we expect the action to retry the request
     count500Errors = 0
+  })
+  it('handles 422 responses', async () => {
+    writeFileSync(join(tmpDir, 'schema.json'), '{}')
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_ID', '422_response')
+    vi.stubEnv('INPUT_SPECKLE_TOKEN', '{token}')
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_COMMAND', 'echo "hello automate"')
+    vi.stubEnv('HOME', tmpDir) // the input schema file path is assumed to be relative to the home directory
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_INPUT_SCHEMA_FILE_PATH', './schema.json')
+    vi.stubEnv('INPUT_SPECKLE_FUNCTION_RELEASE_TAG', 'v1.0.0')
+    vi.stubEnv('INPUT_SPECKLE_AUTOMATE_URL', 'http://myfakeautomate.speckle.internal')
+    vi.stubEnv('GITHUB_SHA', 'commitSha')
+    vi.stubEnv('GITHUB_REF_TYPE', 'commit')
+    vi.stubEnv('GITHUB_REF_NAME', 'version')
+    await expect(run()).rejects.toThrow(
+      'Failed to register new function version to the automate server'
+    )
+    expect(count422Errors).to.eq(1) // we expect the action not to retry the request
+    count422Errors = 0 // reset the count after the test
   })
   it('errors if the token is empty', async () => {
     writeFileSync(join(tmpDir, 'schema.json'), '{}')

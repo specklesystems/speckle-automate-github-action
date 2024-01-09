@@ -38372,7 +38372,12 @@ const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomate
         throw parsedResult.error;
     }
     catch (err) {
-        throw Error('Failed to register new function version to the automate server', {
+        if (err instanceof Error) {
+            throw Error(`Failed to register new function version to the automate server. ${err.message}`, {
+                cause: err
+            });
+        }
+        throw Error(`Failed to register new function version to the automate server. ${err}`, {
             cause: err
         });
     }

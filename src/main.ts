@@ -173,9 +173,20 @@ const registerNewVersionForTheSpeckleAutomateFunction = async (
     if (parsedResult.success) return parsedResult.data
     throw parsedResult.error
   } catch (err) {
-    throw Error('Failed to register new function version to the automate server', {
-      cause: err
-    })
+    if (err instanceof Error) {
+      throw Error(
+        `Failed to register new function version to the automate server. ${err.message}`,
+        {
+          cause: err
+        }
+      )
+    }
+    throw Error(
+      `Failed to register new function version to the automate server. ${err}`,
+      {
+        cause: err
+      }
+    )
   }
 }
 
