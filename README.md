@@ -37,6 +37,14 @@ Associates this new version with the given ID of a Speckle Function.
 
 Your Speckle Token must have write permissions for the Speckle Function with this ID, otherwise the publish will fail.
 
+#### `speckle_function_input_schema_file_path`
+
+*Optional.* The path to the JSON Schema file that describes the input schema for this version of the Speckle Function. This file is used to define the input form that will be presented to users when they compose an Automation based on this Function. If not provided, no input form will be presented to users.
+
+#### `speckle_function_command`
+
+The command to run when this version of the Speckle Function is invoked. This command must be a valid command for the Docker image that contains the Speckle Function. This command must be a single string.
+
 #### `speckle_function_release_tag`
 
 The release tag for this version of the Speckle Function. This is intended to provide a more human understandable name for this version, and we recommend using the Git SHA of the commit used to generate this function version. The name must conform to the following:
