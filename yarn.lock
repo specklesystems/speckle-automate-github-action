@@ -4817,7 +4817,7 @@ __metadata:
     node-fetch: ^3.3.2
     prettier: ^3.2.5
     typescript: ^5.2.2
-    vite: ^5.1.0
+    vite: ^5.1.2
     vitest: ^1.2.2
     zod: ^3.22.3
   languageName: unknown
@@ -5360,9 +5360,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "vite@npm:5.1.0"
+"vite@npm:^5.1.2":
+  version: 5.1.2
+  resolution: "vite@npm:5.1.2"
   dependencies:
     esbuild: ^0.19.3
     fsevents: ~2.3.3
@@ -5396,7 +5396,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 36b289414c2cc91f03b2e88dbac68b2714c50b1fbc5735f48987f2ba34dd18eb91dc2604e8cbccda776649a1d49d171db5239377e54941bc3a8a705c50a65474
+  checksum: deb606eda820912ffc5361b732bbd763bf82ac4c982f9b6ddfafd7c035067cba78adcdc34d053d5bb0ed3a191f99b17e80012b38e23e7cb9376e45ad6813fe23
   languageName: node
   linkType: hard
 
