@@ -913,12 +913,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.19.16":
-  version: 18.19.16
-  resolution: "@types/node@npm:18.19.16"
+"@types/node@npm:^18.19.17":
+  version: 18.19.17
+  resolution: "@types/node@npm:18.19.17"
   dependencies:
     undici-types: ~5.26.4
-  checksum: 415b04a6ac41ca38e57f11f7633380b7d31835a58c532e7854f3ff51ef888a90cbe7d278f960a1cf8b22ce4a12eaf25d70f07e078333f4c310771a0eb8cbf858
+  checksum: f04c46ddcb33eb8b2ae6e6ae1a50b40bd5478462f8e80ea2023325e256ac10c4d033a2f62f49cdeba156a570979b1fc6cb6d9809167e2a60a18da80c32da0733
   languageName: node
   linkType: hard
 
@@ -4797,7 +4797,7 @@ __metadata:
     "@actions/core": ^1.10.1
     "@lifeomic/attempt": ^3.0.3
     "@types/js-yaml": ^4.0.9
-    "@types/node": ^18.19.16
+    "@types/node": ^18.19.17
     "@typescript-eslint/eslint-plugin": ^7.0.1
     "@typescript-eslint/parser": ^7.0.1
     "@vercel/ncc": ^0.38.1
