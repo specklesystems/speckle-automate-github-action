@@ -38280,12 +38280,16 @@ const parseInputs = () => {
     const speckleTokenRaw = core.getInput('speckle_token', { required: true });
     core.setSecret(speckleTokenRaw);
     const rawInputSchemaPath = core.getInput('speckle_function_input_schema_file_path');
-    const homeDir = process.env['HOME'];
-    if (!homeDir)
-        throw new Error('The home directory is not defined, cannot load inputSchema');
+    let rawInputSchemaPathAbsolute = rawInputSchemaPath;
+    if (!(0,external_node_path_.isAbsolute)(rawInputSchemaPath)) {
+        const homeDir = process.env['HOME'];
+        if (!homeDir)
+            throw new Error('The home directory is not defined, cannot load inputSchema');
+        rawInputSchemaPathAbsolute = (0,external_node_path_.join)(homeDir, rawInputSchemaPath);
+    }
     let speckleFunctionInputSchema = null;
-    if (rawInputSchemaPath) {
-        const rawInputSchema = (0,external_node_fs_.readFileSync)((0,external_node_path_.join)(homeDir, rawInputSchemaPath), 'utf-8');
+    if (rawInputSchemaPathAbsolute) {
+        const rawInputSchema = (0,external_node_fs_.readFileSync)(rawInputSchemaPathAbsolute, 'utf-8');
         speckleFunctionInputSchema = JSON.parse(rawInputSchema);
     }
     const rawInputs = {

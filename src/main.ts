@@ -3,7 +3,7 @@ import { ZodError, z } from 'zod'
 import fetch from 'node-fetch'
 import { retry } from '@lifeomic/attempt'
 import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { isAbsolute, join } from 'node:path'
 
 const InputVariablesSchema = z.object({
   speckleAutomateUrl: z.string().url().min(1),
@@ -40,12 +40,18 @@ const parseInputs = (): InputVariables => {
   core.setSecret(speckleTokenRaw)
 
   const rawInputSchemaPath = core.getInput('speckle_function_input_schema_file_path')
-  const homeDir = process.env['HOME']
-  if (!homeDir)
-    throw new Error('The home directory is not defined, cannot load inputSchema')
+
+  let rawInputSchemaPathAbsolute = rawInputSchemaPath
+  if (!isAbsolute(rawInputSchemaPath)) {
+    const homeDir = process.env['HOME']
+    if (!homeDir)
+      throw new Error('The home directory is not defined, cannot load inputSchema')
+    rawInputSchemaPathAbsolute = join(homeDir, rawInputSchemaPath)
+  }
+
   let speckleFunctionInputSchema: Record<string, unknown> | null = null
-  if (rawInputSchemaPath) {
-    const rawInputSchema = readFileSync(join(homeDir, rawInputSchemaPath), 'utf-8')
+  if (rawInputSchemaPathAbsolute) {
+    const rawInputSchema = readFileSync(rawInputSchemaPathAbsolute, 'utf-8')
     speckleFunctionInputSchema = JSON.parse(rawInputSchema)
   }
 
