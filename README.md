@@ -40,6 +40,7 @@ Your Speckle Token must have write permissions for the Speckle Function with thi
 #### `speckle_function_input_schema_file_path`
 
 *Optional.* The path to the JSON Schema file that describes the input schema for this version of the Speckle Function. This file is used to define the input form that will be presented to users when they compose an Automation based on this Function. If not provided, no input form will be presented to users.
+This can be an absolute path, or a path relative to the Home directory of the GitHub Action runner.
 
 #### `speckle_function_command`
 
