@@ -34,7 +34,7 @@
     "@typescript-eslint/eslint-plugin": "^7.0.1",
     "@typescript-eslint/parser": "^7.9.0",
     "@vercel/ncc": "^0.38.1",
-    "@vitest/coverage-istanbul": "^1.6.0",
+    "@vitest/coverage-istanbul": "^2.1.2",
     "eslint": "^8.56.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-eslint-comments": "^3.2.0",
