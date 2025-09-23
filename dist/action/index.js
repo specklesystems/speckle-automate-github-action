@@ -38490,7 +38490,7 @@ const InputVariablesSchema = z.object({
         .int()
         .finite()
         .gte(1)
-        .lte(8000)
+        .lte(60000)
         .optional()
 });
 const parseInputs = () => {
