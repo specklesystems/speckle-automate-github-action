@@ -12,7 +12,7 @@ repos:
       - id: check-vcs-permalinks
         exclude: ^dist/
       - id: trailing-whitespace
-        exclude: ^dist/
+        exclude: ^dist/|^\.yarn/
       - id: end-of-file-fixer
         exclude: ^dist/
 
