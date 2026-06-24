@@ -9,7 +9,7 @@ import {
   beforeAll,
   afterAll
 } from 'vitest'
-import { mkdtempSync, writeFileSync, rmdirSync, rmSync } from 'node:fs'
+import { mkdtempSync, writeFileSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { setupServer } from 'msw/node'
@@ -69,7 +69,7 @@ describe('Register new version', () => {
       'http://myfakeautomate.speckle.internal/api/v1/functions/fake_function_id/versions',
       async ({ request }) => {
         const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
-        expect(parseResult.success).to.be.true
+        expect(parseResult.success).toBe(true)
         countHappyPath++
         return new HttpResponse(JSON.stringify({ versionId: 'fake_version_id' }), {
           status: 201,
@@ -83,7 +83,7 @@ describe('Register new version', () => {
       'http://myfakeautomate.speckle.internal/api/v1/functions/network_error/versions',
       async ({ request }) => {
         const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
-        expect(parseResult.success).to.be.true
+        expect(parseResult.success).toBe(true)
         return HttpResponse.error() // simulates a network error
       }
     ),
@@ -91,7 +91,7 @@ describe('Register new version', () => {
       'http://myfakeautomate.speckle.internal/api/v1/functions/422_response/versions',
       async ({ request }) => {
         const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
-        expect(parseResult.success).to.be.true
+        expect(parseResult.success).toBe(true)
         count422Errors++
         return HttpResponse.json(error422, {
           status: 422
@@ -102,7 +102,7 @@ describe('Register new version', () => {
       'http://myfakeautomate.speckle.internal/api/v1/functions/500_response/versions',
       async ({ request }) => {
         const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
-        expect(parseResult.success).to.be.true
+        expect(parseResult.success).toBe(true)
         count500Errors++
         return HttpResponse.json(
           {},
@@ -143,7 +143,7 @@ describe('Register new version', () => {
     vi.stubEnv('GITHUB_REF_TYPE', 'commit')
     vi.stubEnv('GITHUB_REF_NAME', 'version')
     await expect(run()).resolves.not.toThrow()
-    expect(countHappyPath).to.equal(1)
+    expect(countHappyPath).toBe(1)
     countHappyPath = 0
   })
   it('handles network errors', async () => {
@@ -177,7 +177,7 @@ describe('Register new version', () => {
     await expect(run()).rejects.toThrow(
       'Failed to register new function version to the automate server'
     )
-    expect(count500Errors).to.toBeGreaterThan(1) // we expect the action to retry the request
+    expect(count500Errors).toBeGreaterThan(1) // we expect the action to retry the request
     count500Errors = 0
   })
   it('handles 422 responses', async () => {
@@ -195,7 +195,7 @@ describe('Register new version', () => {
     await expect(run()).rejects.toThrow(
       'Failed to register new function version to the automate server'
     )
-    expect(count422Errors).to.eq(1) // we expect the action not to retry the request
+    expect(count422Errors).toBe(1) // we expect the action not to retry the request
     count422Errors = 0 // reset the count after the test
   })
   it('errors if the token is empty', async () => {

@@ -254,4 +254,9 @@ export async function run(): Promise<void> {
   core.setOutput('speckle_automate_function_release_id', versionId)
 }
 
-run()
+try {
+  await run()
+} catch {
+  // Failures are already surfaced via core.setFailed within run(); swallow the
+  // rejection here so it does not become an unhandled promise rejection.
+}
