@@ -417,6 +417,23 @@ describe('Register new version', () => {
     })
   })
 
+  describe('non-Error failures', () => {
+    it('handles a thrown value that is neither an Error nor a ZodError', async () => {
+      const setFailed = vi.spyOn(core, 'setFailed')
+      // Force a dependency to throw a bare primitive (not an Error/ZodError),
+      // exercising the fallback branch in failAndReject that reports the
+      // generic message and rejects with the raw value.
+      const thrown = 'a string, not an Error instance'
+      vi.spyOn(core, 'getInput').mockImplementation(() => {
+        throw thrown
+      })
+      writeFileSync(join(tmpDir, 'schema.json'), '{}')
+      applyEnv(baseEnv(tmpDir))
+      await expect(run()).rejects.toBe(thrown)
+      expect(setFailed).toHaveBeenCalledWith('Failed to parse the input variables')
+    })
+  })
+
   describe('response validation', () => {
     it('fails when the response is missing the versionId', async () => {
       server.use(
