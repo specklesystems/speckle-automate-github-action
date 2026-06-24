@@ -96,7 +96,7 @@ describe('Register new version', () => {
   const server = setupServer(
     http.post(versionsUrl('fake_function_id'), async ({ request }) => {
       const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
-      expect(parseResult.success).to.be.true
+      expect(parseResult.success).toBe(true)
       countHappyPath++
       return new HttpResponse(JSON.stringify({ versionId: 'fake_version_id' }), {
         status: 201,
@@ -107,12 +107,12 @@ describe('Register new version', () => {
     }),
     http.post(versionsUrl('network_error'), async ({ request }) => {
       const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
-      expect(parseResult.success).to.be.true
+      expect(parseResult.success).toBe(true)
       return HttpResponse.error() // simulates a network error
     }),
     http.post(versionsUrl('422_response'), async ({ request }) => {
       const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
-      expect(parseResult.success).to.be.true
+      expect(parseResult.success).toBe(true)
       count422Errors++
       return HttpResponse.json(error422, {
         status: 422
@@ -120,7 +120,7 @@ describe('Register new version', () => {
     }),
     http.post(versionsUrl('500_response'), async ({ request }) => {
       const parseResult = FunctionVersionRequestSchema.safeParse(await request.json())
-      expect(parseResult.success).to.be.true
+      expect(parseResult.success).toBe(true)
       count500Errors++
       return HttpResponse.json(
         {},
@@ -159,7 +159,7 @@ describe('Register new version', () => {
       INPUT_SPECKLE_FUNCTION_RECOMMENDED_MEMORY_MI: '500'
     })
     await expect(run()).resolves.not.toThrow()
-    expect(countHappyPath).to.equal(1)
+    expect(countHappyPath).toBe(1)
   })
 
   it('sends the expected request body and sets the action outputs', async () => {
@@ -267,7 +267,7 @@ describe('Register new version', () => {
     await expect(run()).rejects.toThrow(
       'Failed to register new function version to the automate server'
     )
-    expect(count422Errors).to.eq(1) // we expect the action not to retry the request
+    expect(count422Errors).toBe(1) // we expect the action not to retry the request
   })
 
   it('does not retry on a 401 unauthorized response', async () => {
@@ -366,7 +366,7 @@ describe('Register new version', () => {
     const tag = `a${'b'.repeat(127)}` // 128 characters, the documented maximum
     applyEnv({ ...baseEnv(tmpDir), INPUT_SPECKLE_FUNCTION_RELEASE_TAG: tag })
     await expect(run()).resolves.not.toThrow()
-    expect(countHappyPath).to.equal(1)
+    expect(countHappyPath).toBe(1)
   })
 
   it('rejects a recommended CPU below the allowed minimum', async () => {
