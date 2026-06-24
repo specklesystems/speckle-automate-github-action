@@ -6,31 +6,38 @@ on: # rebuild any PRs and main branch changes
       - main
       - 'releases/*'
 
+permissions: {} # no permissions by default; to be individually overridden by the jobs below
+
 jobs:
   pre-commit-and-test:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-      - uses: actions/cache/restore@v4
-        id: cache-restore
+      - uses: useblacksmith/checkout@41cdeedae8edb2e684ba22896a5fd2a3cb85db6b # v1.0.0-beta
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - uses: actions/setup-node@v4
+          persist-credentials: false
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.4.0 # zizmor: ignore[cache-poisoning] see package-manager-cache below
         with:
-          node-version: '18.17.1'
-          cache: 'yarn'
+          node-version: 22
+          cache: yarn
+          package-manager-cache: ${{ github.event_name == 'pull_request' }} # we only cache on pull requests to avoid cache poisoning attacks.
       - name: Yarn Install
         run: yarn install
-      - uses: actions/cache/save@v4
-        id: cache-save
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - uses: pre-commit/action@v3.0.1
+      - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
       - name: Tests
         run: yarn test
         continue-on-error: true # ignore test failures for now
+  zizmor:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: useblacksmith/checkout@41cdeedae8edb2e684ba22896a5fd2a3cb85db6b # v1.0.0-beta
+        with:
+          persist-credentials: false
+
+      - name: Run zizmor 🌈
+        uses: zizmorcore/zizmor-action@192e21d79ab29983730a13d1382995c2307fbcaa # v0.5.7
