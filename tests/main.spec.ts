@@ -16,6 +16,9 @@ import { tmpdir } from 'node:os'
 import { setupServer } from 'msw/node'
 import { http, HttpResponse } from 'msw'
 import { z } from 'zod'
+import { Ajv } from 'ajv'
+
+const ajv = new Ajv()
 
 const automateUrl = 'http://myfakeautomate.speckle.internal'
 const versionsUrl = (functionId: string): string =>
@@ -280,6 +283,14 @@ describe('Register new version', () => {
       await expect(run()).rejects.toThrow(/JSON/)
     })
 
+    it('fails when the input schema is valid JSON but not a valid JSON Schema', async () => {
+      // `type` must be one of the allowed JSON Schema types; ajv's meta-schema
+      // validation rejects this, so the superRefine adds an "Invalid JSON Schema" issue
+      writeFileSync(join(tmpDir, 'schema.json'), '{"type":"invalidType"}')
+      applyEnv(baseEnv(tmpDir))
+      await expect(run()).rejects.toThrow(/Invalid JSON Schema/)
+    })
+
     it('fails when HOME is unset and the schema path is relative', async () => {
       writeFileSync(join(tmpDir, 'schema.json'), '{}')
       applyEnv({ ...baseEnv(tmpDir), HOME: null }) // HOME genuinely unset
@@ -462,7 +473,19 @@ const FunctionVersionRequestSchema = z.object({
       new RegExp('^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$'),
       'A maximum of 128 characters are permitted. The first character must be alphanumeric (of lower or upper case) or an underscore, the subsequent characters may be alphanumeric (or lower or upper case), underscore, hyphen, or period.'
     ), // regex as per OCI distribution spec https://github.com/opencontainers/distribution-spec/blob/main/spec.md#pulling-manifests
-  inputSchema: z.record(z.string(), z.unknown()).nullable(), // TODO:  we need to validate the jsonschema somehow
+  inputSchema: z
+    .record(z.string(), z.unknown())
+    .nullable()
+    .superRefine((val, ctx) => {
+      if (val === null) return
+      const ok = ajv.validateSchema(val)
+      if (!ok) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Invalid JSON Schema: ${ajv.errorsText(ajv.errors)}`
+        })
+      }
+    }),
   command: z.array(z.string().nonempty()),
   annotations: z
     .object({
