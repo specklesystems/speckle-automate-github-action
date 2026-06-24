@@ -7,9 +7,13 @@ on: # rebuild any PRs and main branch changes
       - 'releases/*'
 
 permissions: {} # no permissions by default; to be individually overridden by the jobs below
+concurrency:
+  group: ${{ github.workflow }}-main-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   pre-commit-and-test:
+    name: Run Tests
     runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:
       contents: read
@@ -29,9 +33,9 @@ jobs:
         run: yarn test
         continue-on-error: true # ignore test failures for now
   zizmor:
-    runs-on: ubuntu-latest
+    name: GitHub Actions Linter
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:
-      security-events: write
       contents: read
     steps:
       - name: Checkout repository
@@ -41,3 +45,5 @@ jobs:
 
       - name: Run zizmor 🌈
         uses: zizmorcore/zizmor-action@192e21d79ab29983730a13d1382995c2307fbcaa # v0.5.7
+        with:
+          advanced-security: false
