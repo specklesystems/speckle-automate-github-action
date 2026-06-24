@@ -29762,12 +29762,14 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7484);
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var zod__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(4383);
-/* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(4034);
+/* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_6__ = __nccwpck_require__(4034);
 /* harmony import */ var _lifeomic_attempt__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7552);
 /* harmony import */ var node_fs__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(3024);
 /* harmony import */ var node_fs__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(node_fs__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var node_path__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(6760);
 /* harmony import */ var node_path__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(node_path__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var string_argv__WEBPACK_IMPORTED_MODULE_5__ = __nccwpck_require__(8579);
+
 
 
 
@@ -29819,8 +29821,7 @@ const parseInputs = () => {
         speckleToken: speckleTokenRaw,
         speckleFunctionId: _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('speckle_function_id', { required: true }),
         speckleFunctionInputSchema,
-        speckleFunctionCommand: _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('speckle_function_command', { required: true })
-            .split(' '),
+        speckleFunctionCommand: (0,string_argv__WEBPACK_IMPORTED_MODULE_5__/* .parseArgsStringToArgv */ .R)(_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('speckle_function_command', { required: true })),
         speckleFunctionReleaseTag: _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('speckle_function_release_tag', {
             required: true
         }),
@@ -29863,7 +29864,7 @@ const registerNewVersionForTheSpeckleAutomateFunction = async ({ speckleAutomate
         const versionRegisterUrl = new URL(`/api/v1/functions/${speckleFunctionId}/versions`, speckleAutomateUrl);
         const retryFlag = 'RETRY THIS';
         const response = await (0,_lifeomic_attempt__WEBPACK_IMPORTED_MODULE_1__/* .retry */ .L5)(async () => {
-            const res = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Ay)(versionRegisterUrl, {
+            const res = await (0,node_fetch__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Ay)(versionRegisterUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -34500,6 +34501,58 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
 			socket.removeListener('data', onData);
 		});
 	});
+}
+
+
+/***/ }),
+
+/***/ 8579:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   R: () => (/* binding */ parseArgsStringToArgv)
+/* harmony export */ });
+/* unused harmony export default */
+
+function parseArgsStringToArgv(value, env, file) {
+    // ([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*) Matches nested quotes until the first space outside of quotes
+    // [^\s'"]+ or Match if not a space ' or "
+    // (['"])([^\5]*?)\5 or Match "quoted text" without quotes
+    // `\3` and `\5` are a backreference to the quote style (' or ") captured
+    var myRegexp = /([^\s'"]([^\s'"]*(['"])([^\3]*?)\3)+[^\s'"]*)|[^\s'"]+|(['"])([^\5]*?)\5/gi;
+    var myString = value;
+    var myArray = [];
+    if (env) {
+        myArray.push(env);
+    }
+    if (file) {
+        myArray.push(file);
+    }
+    var match;
+    do {
+        // Each call to exec returns the next regex match as an array
+        match = myRegexp.exec(myString);
+        if (match !== null) {
+            // Index 1 in the array is the captured group if it exists
+            // Index 0 is the matched text, which we use if no captured group exists
+            myArray.push(firstString(match[1], match[6], match[0]));
+        }
+    } while (match !== null);
+    return myArray;
+}
+// Accepts any number of arguments, and returns the first one that is a string
+// (even an empty string)
+function firstString() {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        args[_i] = arguments[_i];
+    }
+    for (var i = 0; i < args.length; i++) {
+        var arg = args[i];
+        if (typeof arg === "string") {
+            return arg;
+        }
+    }
 }
 
 

@@ -4633,6 +4633,7 @@ __metadata:
     msw: "npm:^2.3.0"
     node-fetch: "npm:^3.3.2"
     prettier: "npm:^3.2.5"
+    string-argv: "npm:^0.3.2"
     typescript: "npm:^5.2.2"
     vite: "npm:^8.0.16"
     vitest: "npm:^4.1.9"
@@ -4681,6 +4682,13 @@ __metadata:
   version: 0.5.1
   resolution: "strict-event-emitter@npm:0.5.1"
   checksum: 10/25c84d88be85940d3547db665b871bfecea4ea0bedfeb22aae8db48126820cfb2b0bc2fba695392592a09b1aa36b686d6eede499e1ecd151593c03fe5a50d512
+  languageName: node
+  linkType: hard
+
+"string-argv@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "string-argv@npm:0.3.2"
+  checksum: 10/f9d3addf887026b4b5f997a271149e93bf71efc8692e7dc0816e8807f960b18bcb9787b45beedf0f97ff459575ee389af3f189d8b649834cac602f2e857e75af
   languageName: node
   linkType: hard
 

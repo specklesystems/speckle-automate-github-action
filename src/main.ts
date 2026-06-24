@@ -4,6 +4,7 @@ import fetch from 'node-fetch'
 import { retry } from '@lifeomic/attempt'
 import { readFileSync } from 'node:fs'
 import { isAbsolute, join } from 'node:path'
+import { parseArgsStringToArgv } from 'string-argv'
 
 const InputVariablesSchema = z.object({
   speckleAutomateUrl: z.string().url().min(1),
@@ -60,9 +61,9 @@ const parseInputs = (): InputVariables => {
     speckleToken: speckleTokenRaw,
     speckleFunctionId: core.getInput('speckle_function_id', { required: true }),
     speckleFunctionInputSchema,
-    speckleFunctionCommand: core
-      .getInput('speckle_function_command', { required: true })
-      .split(' '),
+    speckleFunctionCommand: parseArgsStringToArgv(
+      core.getInput('speckle_function_command', { required: true })
+    ),
     speckleFunctionReleaseTag: core.getInput('speckle_function_release_tag', {
       required: true
     }),

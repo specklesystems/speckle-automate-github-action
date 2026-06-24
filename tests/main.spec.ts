@@ -158,10 +158,7 @@ describe('Register new version', () => {
         // GITHUB_SHA 'commitSha' is truncated to the first 7 characters
         commitId: 'commitS',
         versionTag: 'v1.0.0',
-        // TODO(#issue): the command is naively split on spaces, so a quoted
-        // argument is broken apart. This assertion documents the current
-        // (buggy) behaviour and must be updated once the splitting is fixed.
-        command: ['echo', '"hello', 'automate"'],
+        command: ['echo', 'hello automate'],
         inputSchema: { type: 'object' },
         recommendedCPUm: 1000,
         recommendedMemoryMi: 500
