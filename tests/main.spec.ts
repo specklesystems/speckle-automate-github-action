@@ -298,8 +298,7 @@ describe('Register new version', () => {
     })
 
     it('fails when the optional schema path is omitted', async () => {
-      // an empty input path is what GitHub supplies for an omitted
-      // optional input. Because `isAbsolute('')` is false, the code joins it onto
+      // Because `isAbsolute('')` is false, the code joins it onto
       // HOME and ends up trying to read the home directory itself, which throws
       // EISDIR.
       applyEnv({
