@@ -297,12 +297,11 @@ describe('Register new version', () => {
       await expect(run()).rejects.toThrow('The home directory is not defined')
     })
 
-    it('fails when the optional schema path is omitted (documents EISDIR bug)', async () => {
-      // TODO(#issue): an empty input path is what GitHub supplies for an omitted
+    it('fails when the optional schema path is omitted', async () => {
+      // an empty input path is what GitHub supplies for an omitted
       // optional input. Because `isAbsolute('')` is false, the code joins it onto
       // HOME and ends up trying to read the home directory itself, which throws
-      // EISDIR. The "optional" schema input therefore cannot currently be
-      // omitted; update this test once that is fixed.
+      // EISDIR.
       applyEnv({
         ...baseEnv(tmpDir),
         INPUT_SPECKLE_FUNCTION_INPUT_SCHEMA_FILE_PATH: ''
