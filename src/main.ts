@@ -4,12 +4,27 @@ import fetch from 'node-fetch'
 import { retry } from '@lifeomic/attempt'
 import { readFileSync } from 'node:fs'
 import { isAbsolute, join } from 'node:path'
+import { parseArgsStringToArgv } from 'string-argv'
+import { Ajv } from 'ajv'
 
+const ajv = new Ajv()
 const InputVariablesSchema = z.object({
   speckleAutomateUrl: z.string().url().min(1),
   speckleToken: z.string().min(1),
   speckleFunctionId: z.string().min(1),
-  speckleFunctionInputSchema: z.record(z.string().min(1), z.unknown()).nullable(),
+  speckleFunctionInputSchema: z
+    .record(z.string(), z.unknown())
+    .nullable()
+    .superRefine((val, ctx) => {
+      if (val === null) return
+      const ok = ajv.validateSchema(val)
+      if (!ok) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Invalid JSON Schema: ${ajv.errorsText(ajv.errors)}`
+        })
+      }
+    }),
   speckleFunctionCommand: z.array(z.string().min(1)),
   speckleFunctionReleaseTag: z
     .string()
@@ -60,9 +75,9 @@ const parseInputs = (): InputVariables => {
     speckleToken: speckleTokenRaw,
     speckleFunctionId: core.getInput('speckle_function_id', { required: true }),
     speckleFunctionInputSchema,
-    speckleFunctionCommand: core
-      .getInput('speckle_function_command', { required: true })
-      .split(' '),
+    speckleFunctionCommand: parseArgsStringToArgv(
+      core.getInput('speckle_function_command', { required: true })
+    ),
     speckleFunctionReleaseTag: core.getInput('speckle_function_release_tag', {
       required: true
     }),
