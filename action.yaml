@@ -17,7 +17,7 @@ inputs:
     required: true
   speckle_function_input_schema_file_path:
     description: 'File path containing JSON Schema of the parameters object required by the function.'
-    required: false
+    required: true
   speckle_function_command:
     description: 'The command to run to execute the function in a runtime environment.'
     required: true
