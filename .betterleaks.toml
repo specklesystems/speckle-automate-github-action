@@ -11,7 +11,6 @@ filter = '''
 let path = attributes["path"];
 let rule = finding["rule_id"];
 let secret = finding["secret"];
-let generic = rule in ["generic-api-key", "generic-credential-uri", "generic-password"];
 
 // Bundled source map of the action: an example password in a dependency's docs.
 (rule == "generic-password" && secret == "password" && matchesAny(path, [`(?:^|/)dist/.*\.map$`]))

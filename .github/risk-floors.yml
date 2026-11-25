@@ -17,9 +17,11 @@ yellow:
   - '**/.betterleaks.toml'
   - '**/.betterleaksignore'
   - '**/.gitleaksignore'
-  # The action's inputs and entry point: a release tag ships them to every
-  # Automate function that publishes through this action
+  # The action: a release tag ships its inputs, entry point and code, which
+  # receives the function's Speckle token, to every Automate function that
+  # publishes through it (dist/ is rebuilt from src/ by the required check)
   - action.yaml
+  - src/**
 red:
   - .github/**
 # Machine accounts with write access: their color reviews and approvals never count.
