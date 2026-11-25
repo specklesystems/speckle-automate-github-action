@@ -49,8 +49,7 @@ repos:
           - ts
         language: system
 
-  - repo: https://github.com/specklesystems/pre-commit
-    rev: '0.2.0'
+  - repo: https://github.com/betterleaks/betterleaks
+    rev: '8d77e1712fb06fd14444cc648686f1d5655e28a8' # pinned to v1.10.0
     hooks:
-      - id: ggshield-not-ci
-        name: ggshield
+      - id: betterleaks
